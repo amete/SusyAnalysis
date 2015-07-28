@@ -26,6 +26,7 @@ while read line; do
               -o "${LOGDIR}/${SYST}_${runNumber}.log" \
               runMakeMiniNtupleOnBatch.sh;
        echo "================================================="
+       sleep 0.5;
        break
      fi
      if [[ "${substr}" == "data15_13TeV" ||  "${substr}" == "mc15_13TeV" ]]; then

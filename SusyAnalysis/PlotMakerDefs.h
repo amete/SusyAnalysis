@@ -44,27 +44,31 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"  , (int)kBlack    )
                                                    ("Zmumu" , (int)kAzure-9  );
 
 /// \brief Sample Names
-TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
-                                                  ("ttst"  , "t#bar{t} + Wt")
-                                                  ("WW"    , "WW"           )
-                                                  ("Zjets" , "Z+jets"       )
-                                                  ("ZV"    , "ZV"           )
-                                                  ("Higgs" , "Higgs"        )
-                                                  ("Fakes" , "Fake leptons" )
-                                                  ("Zmumu" , "Z#rightarrow#mu#mu"       );
+TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2015"          )
+                                                  ("ttst"  , "t#bar{t} + Wt"      )
+                                                  ("WW"    , "WW"                 )
+                                                  ("Zjets" , "Z+jets"             )
+                                                  ("ZV"    , "ZV"                 )
+                                                  ("Higgs" , "Higgs"              )
+                                                  ("Fakes" , "Fake leptons"       )
+                                                  ("Zmumu" , "Z#rightarrow#mu#mu" );
 
 
 /// \brief Define the variables
-TS2TSMap VariableNames = boost::assign::map_list_of ("ptL0"  , "l_pt[0]"     )
-                                                    ("ptL1"  , "l_pt[1]"     )
-                                                    ("etaL0" , "l_eta[0]"    )
-                                                    ("etaL1" , "l_eta[1]"    )
-                                                    ("phiL0" , "l_phi[0]"    )
-                                                    ("phiL1" , "l_phi[1]"    )
-                                                    ("ptvarcone20L0" , "l_ptvarcone20[0]"    )
-                                                    ("ptvarcone20L1" , "l_ptvarcone20[1]"    )
-                                                    ("ptvarcone30L0" , "l_ptvarcone30[0]"    )
-                                                    ("ptvarcone30L1" , "l_ptvarcone30[1]"    )
+TS2TSMap VariableNames = boost::assign::map_list_of ("ptL0"          , "l_pt[0]"          )
+                                                    ("ptL1"          , "l_pt[1]"          )
+                                                    ("etaL0"         , "l_eta[0]"         )
+                                                    ("etaL1"         , "l_eta[1]"         )
+                                                    ("phiL0"         , "l_phi[0]"         )
+                                                    ("phiL1"         , "l_phi[1]"         )
+                                                    ("ptvarcone20L0" , "l_ptvarcone20[0]" )
+                                                    ("ptvarcone20L1" , "l_ptvarcone20[1]" )
+                                                    ("ptvarcone30L0" , "l_ptvarcone30[0]" )
+                                                    ("ptvarcone30L1" , "l_ptvarcone30[1]" )
+                                                    ("mll"           , "mll"              )
+                                                    ("ptll"          , "ptll"             )
+                                                    ("drll"          , "drll"             )
+                                                    ("dphill"        , "dphill"           )
 ;
 
 #endif

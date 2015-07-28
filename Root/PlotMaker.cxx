@@ -116,7 +116,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   int      dataIndex      = -1; 
 
   // Ad-hoc fix, normalize Zmumu to data - currently!!!
-  histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
+  //histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
+  histograms[0]->Scale(0.963);
 
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
@@ -217,22 +218,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     ylabel.Append(" GeV");
   TString xlabel = "";
 
-  if( variable.EqualTo("mT2") ) {
-    xlabel = "m_{T2} [GeV]";
-  }
-  else if( variable.EqualTo("mll") ) {
-    xlabel = "m_{ll} [GeV]";
-  }
-  else if( variable.EqualTo("mjj") ) {
-    xlabel = "m_{jj} [GeV]";
-  }
-  else if( variable.EqualTo("metRel") ) {
-    xlabel = "E_{T}^{miss,rel} [GeV]";
-  }
-  else if( variable.EqualTo("met") ) {
-    xlabel = "E_{T}^{miss} [GeV]";
-  }
-  else if( variable.EqualTo("ptL0") ) {
+  if( variable.EqualTo("ptL0") ) {
     xlabel = "p_{T,l0} [GeV]";
   }
   else if( variable.EqualTo("ptL1") ) {
@@ -262,8 +248,26 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   else if( variable.EqualTo("phiL1") ) {
     xlabel = "#phi_{l1}";
   }
+  else if( variable.EqualTo("mT2") ) {
+    xlabel = "m_{T2} [GeV]";
+  }
+  else if( variable.EqualTo("mll") ) {
+    xlabel = "m_{ll} [GeV]";
+  }
   else if( variable.EqualTo("ptll") ) {
     xlabel = "p_{T,ll} [GeV]";
+  }
+  else if( variable.EqualTo("drll") ) {
+    xlabel = "#DeltaR_{ll}";
+  }
+  else if( variable.EqualTo("dphill") ) {
+    xlabel = "#Delta#phi_{ll}";
+  }
+  else if( variable.EqualTo("metRel") ) {
+    xlabel = "E_{T}^{miss,rel} [GeV]";
+  }
+  else if( variable.EqualTo("met") ) {
+    xlabel = "E_{T}^{miss} [GeV]";
   }
   else {
     xlabel = variable;
@@ -449,11 +453,9 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
 
     // Fill the temp histogram
     if(m_convertToGeV)
-      //tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
-      tree->Draw( varToPlot + "/1000.>>temp" , "(" + cutToApply + ")" );
+      tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
     else
-      //tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
-      tree->Draw( varToPlot + ">>temp"       , "(" + cutToApply + ")" );
+      tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
 
     // Clone and beautify
     histos[i] = (TH1D*) temp->Clone();

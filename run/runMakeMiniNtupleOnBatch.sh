@@ -16,5 +16,5 @@ cd ${RUNDIR}/Ntuples
 
 # Call the app
 makeMiniNtuple \
--f ${SAMPLE};
+-f "${SAMPLE}";
 #-n 100;

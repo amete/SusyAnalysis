@@ -122,7 +122,8 @@ int main(int argc, char* argv[])
   Superflow* cutflow = new Superflow(); // initialize the cutflow
   cutflow->setAnaName("SuperflowAna");                // arbitrary
   cutflow->setAnaType(AnalysisType::Ana_2Lep);        // analysis type, passed to SusyNt ?
-  cutflow->setLumi(LUMI_A_A4);                        // set the MC normalized to lumi periods A1-A4
+  //cutflow->setLumi(LUMI_A_A4);                        // set the MC normalized to lumi periods A1-A4
+  cutflow->setLumi(6.356);                              // set the MC normalized to 6.6 pb-1
   cutflow->setSampleName(input_file);                 // sample name, check to make sure it's set OK
   cutflow->setRunMode(run_mode);                      // make configurable via run_mode
   cutflow->setCountWeights(true);                     // print the weighted cutflows
@@ -173,8 +174,8 @@ int main(int argc, char* argv[])
   };
 
   //  Analysis Cuts
-  *cutflow << CutName("at least 2 baseline leptons") << [](Superlink* sl) -> bool {
-      return sl->baseLeptons->size() >= 2;
+  *cutflow << CutName("exactly two baseline leptons") << [](Superlink* sl) -> bool {
+      return (sl->baseLeptons->size() == 2);
   };
 
   //  Output Ntuple Setup
@@ -210,6 +211,7 @@ int main(int argc, char* argv[])
   // Lepton variables
   LeptonVector baseLeptons;
   *cutflow << [&](Superlink* sl, var_void*) { baseLeptons = *sl->baseLeptons; };
+  cout << "SERHAN :: " << baseLeptons.size() << endl;
 
   *cutflow << NewVar("number of baseline leptons"); {
     *cutflow << HFTname("nBaseLeptons");
@@ -360,8 +362,45 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
+  // Leptonic event variables
+  TLorentzVector lepton0 ; 
+  TLorentzVector lepton1 ; 
+  TLorentzVector dileptonP4 ;
+  *cutflow << [&](Superlink* /*sl*/, var_void*) {
+    lepton0 = *baseLeptons.at(0); 
+    lepton1 = *baseLeptons.at(1); 
+    dileptonP4 = lepton0 + lepton1;
+  };
+
+  *cutflow << NewVar("mass of di-lepton system, M_ll"); {
+    *cutflow << HFTname("mll");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { return dileptonP4.M(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("Pt of di-lepton system, Pt_ll"); {
+    *cutflow << HFTname("ptll");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { return dileptonP4.Pt(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("delta Phi of di-lepton system"); {
+    *cutflow << HFTname("dphill");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { return lepton0.DeltaPhi(lepton1); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("delta R of di-lepton system"); {
+    *cutflow << HFTname("drll");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { return lepton0.DeltaR(lepton1); };
+    *cutflow << SaveVar();
+  }
+
   // Jet variables
   // MET variables
+
+  // Clear 
+  *cutflow << [&](Superlink* /*sl*/, var_void*) { baseLeptons.clear(); };
 
   ///////////////////////////////////////////////////////////////////////
   // Superflow methods end here
