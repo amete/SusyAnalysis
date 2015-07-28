@@ -26,18 +26,15 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "mm"                               ; vector<string> channelList   ;
-  //string regions      = "SRpremT2"                         ; vector<string> regionList    ;
-  //string variables    = "mT2"                              ; vector<string> variableList  ;
-  //string samples      = "Higgs,Fakes,ZV,Zjets,ttst,WW,Data"; vector<string> sampleList    ;
   string regions      = "CRzjets"                          ; vector<string> regionList    ;
-  string variables    = "l_pt"                              ; vector<string> variableList  ;
+  string variables    = "l_pt"                             ; vector<string> variableList  ;
   string samples      = "Zmumu,Data"                       ; vector<string> sampleList    ;
-  string binValues    = "20,0,200"                         ; vector<string> binValueList  ;
+  string binValues    = "40,0,400"                         ; vector<string> binValueList  ;
   //string systematics  = "JER,JES_DN,JES_UP,EER_DN,EER_UP,EES_LOW_DN,EES_LOW_UP,EES_MAT_DN,EES_MAT_UP,EES_PS_DN,EES_PS_UP,EES_Z_DN,EES_Z_UP,ID_DN,ID_UP,MS_DN,MS_UP,RESOST,SCALEST_DN,SCALEST_UP"; 
   string systematics  = ""; 
   vector<string> systematicList;
-  //bool   convertToGeV = true;
   bool   convertToGeV = false;
+  bool   plotLog = false;
 
   for(int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "--channels") == 0)
@@ -54,6 +51,8 @@ int main(int argc, char** argv)
       binValues    = argv[++i];
     else if (strcmp(argv[i], "--isGeV") == 0)
       convertToGeV = true;
+    else if (strcmp(argv[i], "--plotLog") == 0)
+      plotLog = true;
     else {
       help();
       return 0; 
@@ -88,6 +87,7 @@ int main(int argc, char** argv)
   plots->setSystematicsList(systematicList);
   plots->setBinValuesList  (binValueList  );
   plots->setGeVFlag        (convertToGeV  );
+  plots->setLogFlag        (plotLog       );
 
   // Loop over all combinations
   for(unsigned ii = 0; ii < channelList.size(); ++ii) {
@@ -130,24 +130,27 @@ void help()
    cout << "                 currently implemented ee/mm/em"                  << endl;
    cout << "                 default is mm"                                   << endl;
 
-   cout << "   --regions     regions to be plotted "                          << endl;
-   cout << "                 currently implemented all mT2 SR/CRs"            << endl;
-   cout << "                 default is SRpremT2"                             << endl;
+   cout << "   --regions     regions to be plotted "                           << endl;
+   cout << "                 currently implemented --"                         << endl;
+   cout << "                 default is CRzjets"                               << endl;
 
-   cout << "   --variables   variables to be plotted "                        << endl;
-   cout << "                 currently implemented mT2, metRel, met, ptl1, ptl2, ptll, mll, mjj" << endl;
-   cout << "                 default is mT2"                                  << endl;
+   cout << "   --variables   variables to be plotted "                         << endl;
+   cout << "                 currently ptl0, ptl1, etal0, etal1, phil0, phil1" << endl;
+   cout << "                 default is ptl0"                                  << endl;
 
    cout << "   --systematics systematics to be added to the error band"       << endl;
    cout << "                 currently only Tree based systematics"           << endl;
 
    cout << "   --samples     samples to be included in the plot"              << endl;
-   cout << "                 currently implemented Higgs, Fakes, ZV, Zjets, ttst, WW, Data (default)" << endl;
+   cout << "                 currently implemented Zmumu, Data (default)"     << endl;
    cout << "                 order is preserved for the stack"                << endl;
 
    cout << "   --binValues   follows the logic: nbin,xmin,xmax"               << endl;
-   cout << "                 default is 20,0,200"                             << endl;
+   cout << "                 default is 40,0,400"                             << endl;
 
    cout << "   --isGeV       converts variable into GeV"                      << endl;
-   cout << "                 default is true"                                 << endl;          
+   cout << "                 default is false"                                << endl;          
+
+   cout << "   --plotLog     plots on a log scale"                            << endl;
+   cout << "                 default is false"                                << endl;          
 }

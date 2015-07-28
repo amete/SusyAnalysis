@@ -1,3 +1,14 @@
+//////////////////////////////////////////////////////////////////////////////////////////
+// \project:    ATLAS Experiment at CERN's LHC
+// \package:    SusyAnalysis
+// \class:      PlotMaker
+// \file:       $Id$
+// \author:     Alaettin.Serhan.Mete@cern.ch
+// \history:    N/A 
+// 
+// Copyright (C) 2015 University of California, Irvine
+//////////////////////////////////////////////////////////////////////////////////////////
+
 // std include(s)
 //#include <cstdlib>  // << for atoi
 //#include "unistd.h" // << for getopt
@@ -9,6 +20,22 @@
 #include "SusyNtuple/string_utils.h"
 
 using namespace sflow;
+
+///////////////////////////////////////////////////////////////////////
+// Usage
+///////////////////////////////////////////////////////////////////////
+void usage(std::string progName)
+{
+  printf("=================================================================\n");
+  printf("%s [options]\n",progName.c_str());
+  printf("=================================================================\n");
+  printf("Options:\n");
+  printf("-h        Print this help\n");
+  printf("-n        Number of events to be processed (default: -1)\n");
+  printf("-f        Input file as *.root, list of *.root in a *.txt,\n"); 
+  printf("          or a DIR/ containing *.root (default: none)\n");
+  printf("=================================================================\n");
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Main function
@@ -24,7 +51,7 @@ int main(int argc, char* argv[])
   int c;
 
   opterr = 0;
-  while ((c = getopt (argc, argv, "f:n:")) != -1)
+  while ((c = getopt (argc, argv, "f:n:h")) != -1)
     switch (c)
       {
       case 'f':
@@ -33,16 +60,19 @@ int main(int argc, char* argv[])
       case 'n':
         n_events = atoi(optarg);
         break;
+      case 'h':
+        usage("makeMiniNtuple");
+        return 1;
       case '?':
         if (optopt == 'f')
-          fprintf (stderr, "makeMiniNtuple \t Option -%c requires an argument.\n", optopt);
+          fprintf (stderr, "makeMiniNtuple\t Option -%c requires an argument.\n", optopt);
         else if (optopt == 'n')
-          fprintf (stderr, "makeMiniNtuple \t Option -%c requires an argument.\n", optopt);
+          fprintf (stderr, "makeMiniNtuple\t Option -%c requires an argument.\n", optopt);
         else if (isprint (optopt))
-          fprintf (stderr, "makeMiniNtuple \t Unknown option `-%c'.\n", optopt);
+          fprintf (stderr, "makeMiniNtuple\t Unknown option `-%c'.\n", optopt);
         else
           fprintf (stderr,
-                   "makeMiniNtuple \t Unknown option character `\\x%x'.\n",
+                   "makeMiniNtuple\t Unknown option character `\\x%x'.\n",
                    optopt);
         return 1;
       default:
@@ -51,21 +81,21 @@ int main(int argc, char* argv[])
 
   // Catch problems or cast
   for (int index = optind; index < argc; index++)
-    printf ("makeMiniNtuple \t Non-option argument %s\n", argv[index]);
+    printf ("makeMiniNtuple\t Non-option argument %s\n", argv[index]);
   if (input_file==NULL) {
-    printf("makeMiniNtuple \t An input file must be provided with option -f (a list, a DIR or single file)\n");
+    printf("makeMiniNtuple\t An input file must be provided with option -f (a list, a DIR or single file)\n");
     return 0;  
   }
   
 
   // Print information
-  printf("makeMiniNtuple \t =================================================================\n");
-  printf("makeMiniNtuple \t Running SusyAnalysis/makeMiniNtuple\n");
-  printf("makeMiniNtuple \t =================================================================\n");
-  printf("makeMiniNtuple \t   Flags:\n");
-  printf("makeMiniNtuple \t     Input file (-f)       : %s\n",input_file);
-  printf("makeMiniNtuple \t     Number of events (-n) : %i\n",n_events );
-  printf("makeMiniNtuple \t =================================================================\n");
+  printf("makeMiniNtuple\t =================================================================\n");
+  printf("makeMiniNtuple\t Running SusyAnalysis/makeMiniNtuple\n");
+  printf("makeMiniNtuple\t =================================================================\n");
+  printf("makeMiniNtuple\t   Flags:\n");
+  printf("makeMiniNtuple\t     Input file (-f)       : %s\n",input_file);
+  printf("makeMiniNtuple\t     Number of events (-n) : %i\n",n_events );
+  printf("makeMiniNtuple\t =================================================================\n");
   ///////////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////////
@@ -80,11 +110,12 @@ int main(int argc, char* argv[])
   if(inputIsFile) {
     ChainHelper::addFile(chain, input_file);
   } else if (inputIsList) {
+    // If a list of ROOT files
     ChainHelper::addFileList(chain, input_file);
   } else if (inputIsDir) {
     ChainHelper::addFileDir(chain, input_file);
   } else {
-    printf("makeMiniNtuple \t Cannot understand input %s",input_file);
+    printf("makeMiniNtuple\t Cannot understand input %s",input_file);
     return 0;  
   }
 
@@ -97,7 +128,7 @@ int main(int argc, char* argv[])
   cutflow->setCountWeights(true);                     // print the weighted cutflows
   cutflow->setChain(chain);
 
-  printf("makeMiniNtuple \t Total events available : %lli\n",chain->GetEntries());
+  printf("makeMiniNtuple\t Total events available : %lli\n",chain->GetEntries());
 
   ///////////////////////////////////////////////////////////////////////
   // Superflow methods begin here
@@ -158,6 +189,24 @@ int main(int argc, char* argv[])
       *cutflow << SaveVar();
   }
 
+  *cutflow << NewVar("Event run number"); {
+    *cutflow << HFTname("runNumber");
+    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->nt->evt()->run; };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("Event number"); {
+    *cutflow << HFTname("eventNumber");
+    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->nt->evt()->eventNumber; };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("is Monte Carlo"); {
+    *cutflow << HFTname("isMC");
+    *cutflow << [](Superlink* sl, var_bool*) -> bool { return sl->nt->evt()->isMC ? true : false; };
+    *cutflow << SaveVar();
+  }
+
   // Lepton variables
   LeptonVector baseLeptons;
   *cutflow << [&](Superlink* sl, var_void*) { baseLeptons = *sl->baseLeptons; };
@@ -211,6 +260,106 @@ int main(int argc, char* argv[])
     };
     *cutflow << SaveVar();
   }
+  *cutflow << NewVar("lepton d0"); {
+    *cutflow << HFTname("l_d0");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          out.push_back(baseLeptons.at(i)->d0);
+      }
+      return out;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton errD0"); {
+    *cutflow << HFTname("l_errD0");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          out.push_back(baseLeptons.at(i)->errD0);
+      }
+      return out;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton d0sig"); {
+    *cutflow << HFTname("l_d0sig");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> d0sig;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          d0sig.push_back(baseLeptons.at(i)->d0Sig());
+      }
+      return d0sig;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton z0"); {
+    *cutflow << HFTname("l_z0");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          out.push_back(baseLeptons.at(i)->z0);
+      }
+      return out;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton errZ0"); {
+    *cutflow << HFTname("l_errZ0");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          out.push_back(baseLeptons.at(i)->errZ0);
+      }
+      return out;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton z0sinTheta"); {
+    *cutflow << HFTname("l_z0sinTheta");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> z0;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          z0.push_back(baseLeptons.at(i)->z0SinTheta());
+      }
+      return z0;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton charge"); {
+    *cutflow << HFTname("l_q");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          out.push_back(baseLeptons.at(i)->q);
+      }
+      return out;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton ptvarcone20"); {
+    *cutflow << HFTname("l_ptvarcone20");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          out.push_back(baseLeptons.at(i)->ptvarcone20);
+      }
+      return out;
+      };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("lepton ptvarcone30"); {
+    *cutflow << HFTname("l_ptvarcone30");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(unsigned int i = 0; i < baseLeptons.size(); i++) {
+          out.push_back(baseLeptons.at(i)->ptvarcone30);
+      }
+      return out;
+      };
+    *cutflow << SaveVar();
+  }
+
   // Jet variables
   // MET variables
 
@@ -225,8 +374,8 @@ int main(int argc, char* argv[])
   delete chain;
 
   // Print information
-  printf("makeMiniNtuple \t =================================================================\n");
-  printf("makeMiniNtuple \t All done!\n");
-  printf("makeMiniNtuple \t =================================================================\n");
+  printf("makeMiniNtuple\t =================================================================\n");
+  printf("makeMiniNtuple\t All done!\n");
+  printf("makeMiniNtuple\t =================================================================\n");
   return 0; 
 }

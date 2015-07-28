@@ -50,8 +50,12 @@ class PlotMaker {
     vector<string> getBinValuesList(                  ) { return m_binValuesList; };
 
     /// \brief Set-Get Functions for GeV Flag
-    void           setGeVFlag(bool arg) { m_converToGeV = arg;  };
-    bool           getGeVFlag(        ) { return m_converToGeV; };         
+    void           setGeVFlag(bool arg) { m_convertToGeV = arg;  };
+    bool           getGeVFlag(        ) { return m_convertToGeV; };         
+
+    /// \brief Set-Get Functions for Log Flag
+    void           setLogFlag(bool arg) { m_plotLog = arg;  };
+    bool           getLogFlag(        ) { return m_plotLog; };         
 
     /// \brief Main Function that plots and saves histograms
     void           generatePlot(TString channel,TString region,TString variable);
@@ -76,7 +80,8 @@ class PlotMaker {
     vector<string> m_sampleList;
     vector<string> m_systematicsList;
     vector<string> m_binValuesList;
-    bool           m_converToGeV;
+    bool           m_convertToGeV;
+    bool           m_plotLog;
 };
 
 #endif 

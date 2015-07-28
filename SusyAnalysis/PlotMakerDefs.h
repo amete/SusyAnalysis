@@ -55,15 +55,16 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
 
 
 /// \brief Define the variables
-TS2TSMap VariableNames = boost::assign::map_list_of ("mT2"   , "MT2"         )
-                                                    //("mll"   , "TMath::Sqrt(2*l_pt[0]*l_pt[1]*(TMath::CosH(l_eta[0]-l_eta[1])-TMath::Cos(l_phi[0]-l_phi[1])))" )
-                                                    ("mll"   ,  "TMath::Sqrt(2*l_pt[0]*TMath::Sqrt((1+TMath::SinH(l_eta[0])*TMath::SinH(l_eta[0])))*l_pt[1]*TMath::Sqrt((1+TMath::SinH(l_eta[1])*TMath::SinH(l_eta[1])))*(1-(TMath::Cos(l_phi[0])*TMath::Cos(l_phi[1])+TMath::Sin(l_phi[0])*TMath::Sin(l_phi[1])+TMath::SinH(l_eta[0])*TMath::SinH(l_eta[1]))))" )
-                                                    ("metRel", "L2METrel"    )
-                                                    ("ptl1"  , "l_pt[0]"     )
-                                                    ("ptl2"  , "l_pt[1]"     )
-                                                    ("met"   , "MET"         )
-                                                    ("ptll"  , "L2dileptonpt")
-                                                    ("dPhill", "L2dPhiLL"    )
-                                                    ("mjj"   , "L2mJJ"       );
+TS2TSMap VariableNames = boost::assign::map_list_of ("ptL0"  , "l_pt[0]"     )
+                                                    ("ptL1"  , "l_pt[1]"     )
+                                                    ("etaL0" , "l_eta[0]"    )
+                                                    ("etaL1" , "l_eta[1]"    )
+                                                    ("phiL0" , "l_phi[0]"    )
+                                                    ("phiL1" , "l_phi[1]"    )
+                                                    ("ptvarcone20L0" , "l_ptvarcone20[0]"    )
+                                                    ("ptvarcone20L1" , "l_ptvarcone20[1]"    )
+                                                    ("ptvarcone30L0" , "l_ptvarcone30[0]"    )
+                                                    ("ptvarcone30L1" , "l_ptvarcone30[1]"    )
+;
 
 #endif

@@ -80,11 +80,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   // Append Channel to the Cut
   if(channel.EqualTo("ee"))
-    cut.Append("&&isEE");
+    cut.Append("&&l_flav[0]==0&&l_flav[1]==0");
   else if(channel.EqualTo("em"))
-    cut.Append("&&isEMU");
+    cut.Append("&&((l_flav[0]==0&&l_flav[1]==1)||(l_flav[0]==1&&l_flav[1]==0))");
   else if(channel.EqualTo("mm"))
-    //cut.Append("&&isMUMU");
     cut.Append("&&l_flav[0]==1&&l_flav[1]==1");
   else if(!channel.EqualTo("all")) {
     cerr << "PlotMaker::ERROR   Unknown channel " << channel << endl;
@@ -115,6 +114,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   TGraphAsymmErrors *Data = new TGraphAsymmErrors();
   THStack *mcStack        = new THStack("mcStack","Standard Model");
   int      dataIndex      = -1; 
+
+  // Ad-hoc fix, normalize Zmumu to data - currently!!!
+  histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
 
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
@@ -211,7 +213,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // Set a few fancy labels and set axis ranges
   TString ylabel = "";
   ylabel.Form("Events /%i",binWidth);
-  if(m_converToGeV)
+  if(m_convertToGeV)
     ylabel.Append(" GeV");
   TString xlabel = "";
 
@@ -230,11 +232,35 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   else if( variable.EqualTo("met") ) {
     xlabel = "E_{T}^{miss} [GeV]";
   }
-  else if( variable.EqualTo("ptl1") ) {
+  else if( variable.EqualTo("ptL0") ) {
+    xlabel = "p_{T,l0} [GeV]";
+  }
+  else if( variable.EqualTo("ptL1") ) {
     xlabel = "p_{T,l1} [GeV]";
   }
-  else if( variable.EqualTo("ptl2") ) {
-    xlabel = "p_{T,l2} [GeV]";
+  else if( variable.EqualTo("ptvarcone20L0") ) {
+    xlabel = "p_{T,l0}^{varcone20} [GeV]";
+  }
+  else if( variable.EqualTo("ptvarcone20L1") ) {
+    xlabel = "p_{T,l1}^{varcone20} [GeV]";
+  }
+  else if( variable.EqualTo("ptvarcone30L0") ) {
+    xlabel = "p_{T,l0}^{varcone30} [GeV]";
+  }
+  else if( variable.EqualTo("ptvarcone30L1") ) {
+    xlabel = "p_{T,l1}^{varcone30} [GeV]";
+  }
+  else if( variable.EqualTo("etaL0") ) {
+    xlabel = "#eta_{l0}";
+  }
+  else if( variable.EqualTo("etaL1") ) {
+    xlabel = "#eta_{l1}";
+  }
+  else if( variable.EqualTo("phiL0") ) {
+    xlabel = "#phi_{l0}";
+  }
+  else if( variable.EqualTo("phiL1") ) {
+    xlabel = "#phi_{l1}";
   }
   else if( variable.EqualTo("ptll") ) {
     xlabel = "p_{T,ll} [GeV]";
@@ -246,10 +272,14 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelOffset(1.2); 
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
-  histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
+  if(m_plotLog)
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
+  else
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(histograms[dataIndex]->GetMinimum()*0.8,histograms[dataIndex]->GetMaximum()*1.20);
 
   gPad->RedrawAxis();
-  gPad->SetLogy(1);
+  if(m_plotLog)
+    gPad->SetLogy(1);
 
   // Decoration
   char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal", annoyingLabel2[100] = "#scale[0.6]{#int} L dt = 6.6 pb^{-1}  #sqrt{s} = 13 TeV";
@@ -297,7 +327,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   double x1=0; double y1=0; unsigned int newIndex = 0.;
   for(int kk=0; kk<ratio_raw->GetN(); ++kk){
     ratio_raw->GetPoint(kk, x1,y1);
-    if(x1 > 0. && y1 > 0.) {
+    if(y1 > 0.) {
       ratio->SetPoint(newIndex, x1, y1);
       ratio->SetPointError(newIndex, ratio_raw->GetErrorXlow(kk), ratio_raw->GetErrorXhigh(kk), ratio_raw->GetErrorYlow(kk), ratio_raw->GetErrorYhigh(kk));
       newIndex++;
@@ -418,10 +448,12 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
     }
 
     // Fill the temp histogram
-    if(m_converToGeV)
-      tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
+    if(m_convertToGeV)
+      //tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
+      tree->Draw( varToPlot + "/1000.>>temp" , "(" + cutToApply + ")" );
     else
-      tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
+      //tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
+      tree->Draw( varToPlot + ">>temp"       , "(" + cutToApply + ")" );
 
     // Clone and beautify
     histos[i] = (TH1D*) temp->Clone();

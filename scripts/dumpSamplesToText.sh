@@ -2,7 +2,7 @@
 main() {
   
   susyNtVersion="n0208";
-  outputDir="/gdata/atlas/amete/Summer2015AnalysisRun";
+  outputDir="/gdata/atlas/amete/Summer2015AnalysisRun/InputTXT";
   
   # Do not touch lines below
   susyNtDir="/gdata/atlas/ucintprod/SusyNt/${susyNtVersion}";
@@ -25,7 +25,7 @@ main() {
   fi
   
   # Make the output directory
-  mkdir -p ${outputDir}/${subfolder};
+  mkdir -p ${outputDir};
   
   # Dump the names 
   for i in $(ls ${susyNtDir}/${subfolder});
@@ -43,21 +43,33 @@ main() {
       datasetID=$( echo ${i} | cut -c25-30 );
     fi 
     echo ${i}" "${datasetID};
-    for j in $(ls ${susyNtDir}/${subfolder}/${i});
-    do
-      # Data
-      if [[ "${1}" == "DATA" ]]
+    # Data
+    if [[ "${1}" == "DATA" ]]
+    then
+      if [[ "${i}" == *physics_Main* ]]
       then
-        if [[ "${i}" == *physics_Main* ]]
-        then
-          echo ${susyNtDir}/${subfolder}/${i}/${j} >> ${outputDir}/${subfolder}/data15_${datasetID}.txt;
-        fi
-      # BG or SIG
-      elif [[ "${datasetID}" -ge "111111" && "${datasetID}" -le "999999" ]]
-      then
-        echo ${susyNtDir}/${subfolder}/${i}/${j} >> ${outputDir}/${subfolder}/mc15_${datasetID}.txt;
-      fi 
-    done
+        echo ${susyNtDir}/${subfolder}/${i}/ >> ${outputDir}/data15_${datasetID}.txt;
+      fi
+    # BG or SIG
+    elif [[ "${datasetID}" -ge "111111" && "${datasetID}" -le "999999" ]]
+    then
+      echo ${susyNtDir}/${subfolder}/${i}/ >> ${outputDir}/mc15_${datasetID}.txt;
+    fi 
+    #for j in $(ls ${susyNtDir}/${subfolder}/${i});
+    #do
+    #  # Data
+    #  if [[ "${1}" == "DATA" ]]
+    #  then
+    #    if [[ "${i}" == *physics_Main* ]]
+    #    then
+    #      echo ${susyNtDir}/${subfolder}/${i}/${j} >> ${outputDir}/data15_${datasetID}.txt;
+    #    fi
+    #  # BG or SIG
+    #  elif [[ "${datasetID}" -ge "111111" && "${datasetID}" -le "999999" ]]
+    #  then
+    #    echo ${susyNtDir}/${subfolder}/${i}/${j} >> ${outputDir}/mc15_${datasetID}.txt;
+    #  fi 
+    #done
   done 
   
   return 0;
