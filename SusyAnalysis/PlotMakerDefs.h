@@ -31,7 +31,7 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("SRpremT2"  , "isOS&&(L2nCentr
                                                  ("CRZXSRmT2a", "isOS&&(L2nCentralLightJets+L2nCentralBJets+L2nForwardJets)==0&&TMath::Abs(L2Mll/1000.-91.2)<10.&&L2METrel>40000.&&MT2>90000.")
                                                  ("CRZXSRmT2b", "isOS&&(L2nCentralLightJets+L2nCentralBJets+L2nForwardJets)==0&&TMath::Abs(L2Mll/1000.-91.2)<10.&&L2METrel>40000.&&MT2>110000.")
                                                  ("CRWW"      , "isOS&&(L2nCentralLightJets+L2nCentralBJets+L2nForwardJets)==0&&TMath::Abs(L2Mll/1000.-91.2)>10.&&L2METrel>40000.&&MT2>50000.&&MT2<90000.")
-                                                 ("CRzjets"   , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0");
+                                                 ("CRzjets"   , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&mll>60.");
 
 /// \brief Sample Colors
 ColorMap SampleColors = boost::assign::map_list_of ("Data"  , (int)kBlack    )

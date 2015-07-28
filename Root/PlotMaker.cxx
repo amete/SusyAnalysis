@@ -116,8 +116,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   int      dataIndex      = -1; 
 
   // Ad-hoc fix, normalize Zmumu to data - currently!!!
-  //histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
-  histograms[0]->Scale(0.963);
+  histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
 
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
@@ -455,7 +454,8 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
     if(m_convertToGeV)
       tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
     else
-      tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
+      //tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
+      tree->Draw( varToPlot + ">>temp"       , "(" + cutToApply + ")" );
 
     // Clone and beautify
     histos[i] = (TH1D*) temp->Clone();
