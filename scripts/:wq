@@ -82,7 +82,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/gdata/atlas/amete/Summer2015AnalysisRun/HFTs/mc15_13TeV.root");
+  //plots->setInputFile("/gdata/atlas/amete/Summer2015AnalysisRun/HFTs/mc15_13TeV.root");
+  plots->setInputFile("/scratch/dantrim/n0209/wwlike/mc15_13TeV.root");
   plots->setSampleList     (sampleList    );
   plots->setSystematicsList(systematicList);
   plots->setBinValuesList  (binValueList  );

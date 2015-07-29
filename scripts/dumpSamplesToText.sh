@@ -1,7 +1,7 @@
 #!/bin/bash
 main() {
   
-  susyNtVersion="n0208";
+  susyNtVersion="n0209";
   outputDir="/gdata/atlas/amete/Summer2015AnalysisRun/InputTXT";
   
   # Do not touch lines below

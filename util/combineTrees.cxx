@@ -37,21 +37,37 @@ vector<hft_process> defineTrees(bool do_data) {
     hft_process process;
    
     if(!do_data) { 
-        //process.in_file_string   = "powhegpythia_W_n0206pup.txt";
-        //process.output_tree_name = "W";
-        //out_process.push_back(process);
-        
-        //process.in_file_string   = "powhegpythia_Z_n0206pup.txt";
-        process.in_file_string   = "mc15_361107.txt";
-        process.output_tree_name = "Zmumu";
+        // data15_55ipb.txt  mc15_singleTop.txt  mc15_ttbar.txt  mc15_W.txt  mc15_WW.txt  mc15_WZ.txt  mc15_Z.txt  mc15_ZZ.txt
+        process.in_file_string   = "mc15_W.txt";
+        process.output_tree_name = "W";
         out_process.push_back(process);
         
-        //process.in_file_string   = "powheg_ttbar_n0206pup.txt";
-        //process.output_tree_name = "ttbar";
-        //out_process.push_back(process);
+        process.in_file_string   = "mc15_Z.txt";
+        process.output_tree_name = "Z";
+        out_process.push_back(process);
+        
+        process.in_file_string   = "mc15_WW.txt";
+        process.output_tree_name = "WW";
+        out_process.push_back(process);
+        
+        process.in_file_string   = "mc15_WZ.txt";
+        process.output_tree_name = "WZ";
+        out_process.push_back(process);
+        
+        process.in_file_string   = "mc15_ZZ.txt";
+        process.output_tree_name = "ZZ";
+        out_process.push_back(process);
+        
+        process.in_file_string   = "mc15_ttbar.txt";
+        process.output_tree_name = "ttbar";
+        out_process.push_back(process);
+
+        process.in_file_string   = "mc15_singleTop.txt";
+        process.output_tree_name = "singleTop";
+        out_process.push_back(process);
     }
     else if(do_data) {
-        process.in_file_string   = "data15_6ipb.txt";
+        process.in_file_string   = "data15_55ipb.txt";
         process.output_tree_name = "Data";
         out_process.push_back(process);
     }

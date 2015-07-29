@@ -104,7 +104,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     cerr << "PlotMaker::ERROR   Wrong Bin Value List Size " << m_binValuesList.size() << endl;
     return;
   }
-  int binWidth = ( atoi(m_binValuesList.at(2).c_str()) - atoi(m_binValuesList.at(1).c_str()) ) / atoi(m_binValuesList.at(0).c_str()); 
+  double binWidth = ( atof(m_binValuesList.at(2).c_str()) - atof(m_binValuesList.at(1).c_str()) ) / atof(m_binValuesList.at(0).c_str()); 
 
   // Get the central histograms 
   TH1D     *histograms[100];
@@ -116,7 +116,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   int      dataIndex      = -1; 
 
   // Ad-hoc fix, normalize Zmumu to data - currently!!!
-  histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
+  //histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
+  //histograms[0]->Scale(1.e-3);
 
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
@@ -137,7 +138,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   }
 
   // Build the legend
-  TLegend* legend        = new TLegend(0.7,0.6,0.9,0.9);
+  TLegend* legend        = new TLegend(0.7,0.6,0.9,0.92);
   legend->SetBorderSize(0);
   legend->SetFillColor(0);
 
@@ -211,29 +212,41 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   legend               ->Draw();
 
   // Set a few fancy labels and set axis ranges
-  TString ylabel = "";
-  ylabel.Form("Events /%i",binWidth);
-  if(m_convertToGeV)
-    ylabel.Append(" GeV");
+  TString ylabel = "Events";
+  ylabel.Form("Events /%.1f",binWidth);
   TString xlabel = "";
 
   if( variable.EqualTo("ptL0") ) {
     xlabel = "p_{T,l0} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("ptL1") ) {
     xlabel = "p_{T,l1} [GeV]";
+    ylabel.Append(" GeV");
+  }
+  else if( variable.EqualTo("ptJ0") ) {
+    xlabel = "p_{T,j0} [GeV]";
+    ylabel.Append(" GeV");
+  }
+  else if( variable.EqualTo("ptJ1") ) {
+    xlabel = "p_{T,j1} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("ptvarcone20L0") ) {
     xlabel = "p_{T,l0}^{varcone20} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("ptvarcone20L1") ) {
     xlabel = "p_{T,l1}^{varcone20} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("ptvarcone30L0") ) {
     xlabel = "p_{T,l0}^{varcone30} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("ptvarcone30L1") ) {
     xlabel = "p_{T,l1}^{varcone30} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("etaL0") ) {
     xlabel = "#eta_{l0}";
@@ -241,20 +254,35 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   else if( variable.EqualTo("etaL1") ) {
     xlabel = "#eta_{l1}";
   }
+  else if( variable.EqualTo("etaJ0") ) {
+    xlabel = "#eta_{j0}";
+  }
+  else if( variable.EqualTo("etaJ1") ) {
+    xlabel = "#eta_{j1}";
+  }
   else if( variable.EqualTo("phiL0") ) {
     xlabel = "#phi_{l0}";
   }
   else if( variable.EqualTo("phiL1") ) {
     xlabel = "#phi_{l1}";
   }
+  else if( variable.EqualTo("phiJ0") ) {
+    xlabel = "#phi_{j0}";
+  }
+  else if( variable.EqualTo("phiJ1") ) {
+    xlabel = "#phi_{j1}";
+  }
   else if( variable.EqualTo("mT2") ) {
     xlabel = "m_{T2} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("mll") ) {
     xlabel = "m_{ll} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("ptll") ) {
     xlabel = "p_{T,ll} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("drll") ) {
     xlabel = "#DeltaR_{ll}";
@@ -264,9 +292,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   }
   else if( variable.EqualTo("metRel") ) {
     xlabel = "E_{T}^{miss,rel} [GeV]";
+    ylabel.Append(" GeV");
   }
   else if( variable.EqualTo("met") ) {
     xlabel = "E_{T}^{miss} [GeV]";
+    ylabel.Append(" GeV");
   }
   else {
     xlabel = variable;
@@ -285,9 +315,15 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     gPad->SetLogy(1);
 
   // Decoration
-  char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal", annoyingLabel2[100] = "#scale[0.6]{#int} L dt = 6.6 pb^{-1}  #sqrt{s} = 13 TeV";
+  char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal"; 
+  //char annoyingLabel2[100] = "#scale[0.6]{#int} L dt = 55.4 pb^{-1}  #sqrt{s} = 13 TeV";
+  char annoyingLabel2[100] = "#sqrt{s} = 13 TeV, 55.4 pb^{-1}";
+  char* annoyingLabel3 = (char*) region.Data();
+  char* annoyingLabel4 = (char*) channel.Data();
   myText(0.20,0.88,kBlack,annoyingLabel1);
   myText(0.20,0.80,kBlack,annoyingLabel2);
+  myText(0.20,0.72,kBlack,annoyingLabel3);
+  myText(0.40,0.72,kBlack,annoyingLabel4);
 
   // Bottom Pad
   botPad->cd();
@@ -350,7 +386,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio_original->Draw();
   ratioBand     ->Draw("same && E2");
   line          ->Draw();
-  ratio         ->Draw("same && P");
+  ratio         ->Draw("same && P && 0");
   gPad          ->SetGridy(1);
 
   TString plotName = channel + "_" + region + "_" + variable + ".eps" ;
@@ -454,8 +490,7 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
     if(m_convertToGeV)
       tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
     else
-      //tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
-      tree->Draw( varToPlot + ">>temp"       , "(" + cutToApply + ")" );
+      tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
 
     // Clone and beautify
     histos[i] = (TH1D*) temp->Clone();
