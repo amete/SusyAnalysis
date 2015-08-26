@@ -24,7 +24,9 @@ typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
 /// \brief Region Cut Definitions
-TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"   , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&mll>60.")
+TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"     , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&mll>60.")
+                                                 ("CRTTbarLike", "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&nCentralBJets>=1&&mll>20." )
+                                                 ("CRWWLike"   , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0" )
 ;
 
 /// \brief Sample Colors

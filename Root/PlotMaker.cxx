@@ -323,7 +323,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   myText(0.20,0.88,kBlack,annoyingLabel1);
   myText(0.20,0.80,kBlack,annoyingLabel2);
   myText(0.20,0.72,kBlack,annoyingLabel3);
-  myText(0.40,0.72,kBlack,annoyingLabel4);
+  myText(0.45,0.72,kBlack,annoyingLabel4);
 
   // Bottom Pad
   botPad->cd();

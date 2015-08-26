@@ -1,7 +1,9 @@
 #!/bin/bash
 mkdir -p /scratch/amete/Figures;
 cd /scratch/amete/Figures;
-plotFigures --channels ee,em,mm --variables met --binValues 20,0,400 --plotLog;
+#plotFigures --regions CRWWLike --channels em --variables met,mll,ptll --binValues 20,0,400 --plotLog;
+plotFigures --regions CRWWLike --channels em --variables ptvarcone20L0,ptvarcone20L1,ptvarcone30L0,ptvarcone30L1 --binValues 10,0,10 --plotLog;
+#plotFigures --regions CRWWLike --channels em --variables drll,nCentralLJets,nCentralBJets,nForwardJets --binValues 10,0,10 --plotLog;
 #plotFigures --channels ee,em,mm --variables ptL0,ptL1,mll,ptll,ptJ0,ptJ1,met --binValues 40,0,400 --plotLog;
 #plotFigures --channels ee,em,mm --variables drll,ptvarcone20L0,ptvarcone20L1,ptvarcone30L0,ptvarcone30L1,nBaseLeptons,nBaseJets,nCentralLJets,nCentralBJets,nForwardJets --binValues 10,0,10 --plotLog;
 #plotFigures --channels ee,em,mm --variables etaL0,etaL1 --binValues 30,-3,3 --plotLog;
