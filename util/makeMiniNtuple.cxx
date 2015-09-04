@@ -121,9 +121,9 @@ int main(int argc, char* argv[])
 
   Superflow* cutflow = new Superflow(); // initialize the cutflow
   cutflow->setAnaName("SuperflowAna");                // arbitrary
-  cutflow->setAnaType(AnalysisType::Ana_2Lep);        // analysis type, passed to SusyNt ?
-  //cutflow->setLumi(LUMI_A_A4);                        // set the MC normalized to lumi periods A1-A4
-  cutflow->setLumi(55.400);                         // set the MC normalized to X pb-1
+  //cutflow->setAnaType(AnalysisType::Ana_2Lep);        // analysis type, passed to SusyNt ?
+  cutflow->setAnaType(AnalysisType::Ana_Stop2L);        // analysis type, passed to SusyNt ?
+  cutflow->setLumi(78.287);                           // set the MC normalized to X pb-1
   cutflow->setSampleName(input_file);                 // sample name, check to make sure it's set OK
   cutflow->setRunMode(run_mode);                      // make configurable via run_mode
   cutflow->setCountWeights(true);                     // print the weighted cutflows
@@ -157,25 +157,29 @@ int main(int argc, char* argv[])
       return (cutflags & ECut_TTC);
   };
 
-  *cutflow << CutName("bad muon veto") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_BadMuon);
-  };
-  
-  *cutflow << CutName("jet cleaning") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_BadJet);
-  };
-  
   *cutflow << CutName("pass good vertex") << [&](Superlink* /*sl*/) -> bool {
       return (cutflags & ECut_GoodVtx);
+  };
+  
+  *cutflow << CutName("bad muon veto") << [&](Superlink* /*sl*/) -> bool {
+      return (cutflags & ECut_BadMuon);
   };
   
   *cutflow << CutName("pass cosmic veto") << [&](Superlink* /*sl*/) -> bool {
       return (cutflags & ECut_Cosmic);
   };
 
+  *cutflow << CutName("jet cleaning") << [&](Superlink* /*sl*/) -> bool {
+      return (cutflags & ECut_BadJet);
+  };
+  
   //  Analysis Cuts
   *cutflow << CutName("exactly two baseline leptons") << [](Superlink* sl) -> bool {
       return (sl->baseLeptons->size() == 2);
+  };
+
+  *cutflow << CutName("exactly two signal leptons") << [](Superlink* sl) -> bool {
+      return (sl->leptons->size() == 2);
   };
 
   //  Output Ntuple Setup

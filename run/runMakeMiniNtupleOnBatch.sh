@@ -8,7 +8,7 @@
 
 # Setup the release
 cd "/export/home/amete/Summer2015Analysis/";
-source scripts/setup_release.sh;
+source "susynt-read/bash/setup_release.sh";
 
 # Go to run fir
 mkdir -p ${RUNDIR}/Ntuples
