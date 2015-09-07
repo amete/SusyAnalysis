@@ -18,6 +18,7 @@
 #include "Superflow/Superlink.h"
 #include "SusyNtuple/ChainHelper.h"
 #include "SusyNtuple/string_utils.h"
+#include "SusyAnalysis/MT2_ROOT.h"
 
 using namespace sflow;
 
@@ -213,8 +214,11 @@ int main(int argc, char* argv[])
   }
 
   // Lepton variables
-  LeptonVector baseLeptons;
-  *cutflow << [&](Superlink* sl, var_void*) { baseLeptons = *sl->baseLeptons; };
+  LeptonVector baseLeptons, signalLeptons;
+  *cutflow << [&](Superlink* sl, var_void*) { 
+    baseLeptons   = *sl->baseLeptons; 
+    signalLeptons = *sl->leptons; 
+  };
 
   *cutflow << NewVar("number of baseline leptons"); {
     *cutflow << HFTname("nBaseLeptons");
@@ -222,11 +226,17 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
+  *cutflow << NewVar("number of signal leptons"); {
+    *cutflow << HFTname("nSignalLeptons");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return signalLeptons.size(); };
+    *cutflow << SaveVar();
+  }
+
   *cutflow << NewVar("lepton flavor (0: e, 1: m)"); {
     *cutflow << HFTname("l_flav");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
         out.push_back(lepton->isEle() ? 0 : 1);
       }
       return out;
@@ -238,7 +248,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_pt");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
         out.push_back(lepton->Pt());
       }
       return out;
@@ -250,7 +260,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_eta");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
         out.push_back(lepton->Eta());
       }
       return out;
@@ -262,7 +272,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_phi");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
         out.push_back(lepton->Phi());
       }
       return out;
@@ -274,7 +284,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_d0");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->d0);
       }
       return out;
@@ -286,7 +296,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_errD0");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->errD0);
       }
       return out;
@@ -298,7 +308,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_d0sig");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->d0Sig());
       }
       return out;
@@ -310,7 +320,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_z0");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->z0);
       }
       return out;
@@ -322,7 +332,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_errZ0");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->errZ0);
       }
       return out;
@@ -334,7 +344,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_z0sinTheta");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->z0SinTheta());
       }
       return out;
@@ -346,7 +356,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_q");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->q);
       }
       return out;
@@ -358,7 +368,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_ptvarcone20");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->ptvarcone20);
       }
       return out;
@@ -370,7 +380,7 @@ int main(int argc, char* argv[])
     *cutflow << HFTname("l_ptvarcone30");
     *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
       vector<double> out;
-      for(auto& lepton : baseLeptons) {
+      for(auto& lepton : signalLeptons) {
           out.push_back(lepton->ptvarcone30);
       }
       return out;
@@ -383,8 +393,8 @@ int main(int argc, char* argv[])
   TLorentzVector lepton1 ; 
   TLorentzVector dileptonP4 ;
   *cutflow << [&](Superlink* /*sl*/, var_void*) {
-    lepton0 = *baseLeptons.at(0); 
-    lepton1 = *baseLeptons.at(1); 
+    lepton0 = *signalLeptons.at(0); 
+    lepton1 = *signalLeptons.at(1); 
     dileptonP4 = lepton0 + lepton1;
   };
 
@@ -413,14 +423,14 @@ int main(int argc, char* argv[])
   }
 
   // Jet variables
-  JetVector baseJets, centralLightJets, centralBJets, forwardJets;
+  JetVector baseJets; //, centralLightJets, centralBJets, forwardJets;
   *cutflow << [&](Superlink* sl, var_void*) { 
     baseJets = *sl->baseJets; 
-    for(auto& jet : baseJets) {
-      if(sl->tools->m_jetSelector.isCentralLightJet(jet))  { centralLightJets.push_back(jet); } 
-      else if(sl->tools->m_jetSelector.isCentralBJet(jet)) { centralBJets.push_back(jet);     } 
-      else if(sl->tools->m_jetSelector.isForwardJet(jet))  { forwardJets.push_back(jet);      } 
-    }
+    //for(auto& jet : baseJets) {
+    //  if(sl->tools->m_jetSelector.isCentralLightJet(jet))  { centralLightJets.push_back(jet); } 
+    //  else if(sl->tools->m_jetSelector.isCentralBJet(jet)) { centralBJets.push_back(jet);     } 
+    //  else if(sl->tools->m_jetSelector.isForwardJet(jet))  { forwardJets.push_back(jet);      } 
+    //}
   };
 
   *cutflow << NewVar("number of baseline jets"); {
@@ -429,23 +439,23 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
-  *cutflow << NewVar("number of central light jets"); {
-    *cutflow << HFTname("nCentralLJets");
-    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCLJets(*sl->baseJets)/*(*baseJets)*/; };
-    *cutflow << SaveVar();
-  }
+  //*cutflow << NewVar("number of central light jets"); {
+  //  *cutflow << HFTname("nCentralLJets");
+  //  *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCLJets(*sl->baseJets)/*(*baseJets)*/; };
+  //  *cutflow << SaveVar();
+  //}
 
-  *cutflow << NewVar("number of central b jets"); {
-    *cutflow << HFTname("nCentralBJets");
-    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCBJets(*sl->baseJets)/*(*baseJets)*/; };
-    *cutflow << SaveVar();
-  }
+  //*cutflow << NewVar("number of central b jets"); {
+  //  *cutflow << HFTname("nCentralBJets");
+  //  *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCBJets(*sl->baseJets)/*(*baseJets)*/; };
+  //  *cutflow << SaveVar();
+  //}
 
-  *cutflow << NewVar("number of forward jets"); {
-    *cutflow << HFTname("nForwardJets");
-    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfFJets(*sl->baseJets)/*(*baseJets)*/; };
-    *cutflow << SaveVar();
-  }
+  //*cutflow << NewVar("number of forward jets"); {
+  //  *cutflow << HFTname("nForwardJets");
+  //  *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfFJets(*sl->baseJets)/*(*baseJets)*/; };
+  //  *cutflow << SaveVar();
+  //}
 
   *cutflow << NewVar("jet pt"); {
     *cutflow << HFTname("j_pt");
@@ -500,25 +510,127 @@ int main(int argc, char* argv[])
   }
 
   // MET variables
+  TLorentzVector met;
   *cutflow << NewVar("transverse missing energy (Et)"); {
     *cutflow << HFTname("met");
-    *cutflow << [](Superlink* sl, var_float*) -> double { return sl->met->Et; };
+    *cutflow << [&](Superlink* sl, var_float*) -> double { 
+      met.SetPxPyPzE(sl->met->Et*cos(sl->met->phi),
+                     sl->met->Et*sin(sl->met->phi),
+                     0.,
+                     sl->met->Et);
+      return met.Pt();
+    };
     *cutflow << SaveVar();
   }
 
   *cutflow << NewVar("transverse missing energy (Phi)"); {
     *cutflow << HFTname("metPhi");
-    *cutflow << [](Superlink* sl, var_float*) -> double { return sl->met->phi; };
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { return met.Phi(); };
+    *cutflow << SaveVar();
+  }
+
+  // Other event variables
+
+  // meff 
+  double meff = 0.;
+  *cutflow << NewVar("scalar sum pt of all leptons, jets and met"); {
+    *cutflow << HFTname("meff");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+      // Leptons
+      for(auto& lepton : signalLeptons) {
+        meff += lepton->Pt();
+      }
+      // Jets
+      for(auto& jet : baseJets) {
+        meff += jet->Pt();
+      }
+      // MET
+      meff += met.Pt();
+      return meff;
+    };
+    *cutflow << SaveVar();
+  }
+
+  // R1   
+  double R1 = 0.;
+  *cutflow << NewVar("met/meff"); {
+    *cutflow << HFTname("R1");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+      if(fabs(meff-1.e-5)>0.) R1 = met.Pt()/meff; 
+      return R1; 
+    };
+    *cutflow << SaveVar();
+  }
+
+  // R2   
+  double R2 = 0.;
+  *cutflow << NewVar("met/(met + sum(lepton,pt))"); {
+    *cutflow << HFTname("R2");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+      double sumLepPt = 0.;
+      // Leptons
+      for(auto& lepton : signalLeptons) {
+        sumLepPt += lepton->Pt();
+      }
+      if ( fabs((met.Pt()+sumLepPt)-1.e-5)>0. ) R2 = met.Pt()/(met.Pt()+sumLepPt);
+      return R2; 
+    };
+    *cutflow << SaveVar();
+  }
+
+  // deltaX  
+  double deltaX = 0.;
+  *cutflow << NewVar("pz0 + pz1 / sqrt(s)"); {
+    *cutflow << HFTname("deltaX");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      deltaX = (lepton0.Pz() + lepton1.Pz())/sqrt(13000.);
+      return deltaX;
+    };
+    *cutflow << SaveVar();
+  }
+
+  // mT2  
+  double mT2 = 0.;
+  *cutflow << NewVar("stransvers mass of two leptons"); {
+    *cutflow << HFTname("mT2lep");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+      ComputeMT2 mycalc = ComputeMT2(lepton0,lepton1,met,0.,0.); // masses 0. 0.
+      mT2 = mycalc.Compute();
+      return mT2; 
+    };
+    *cutflow << SaveVar();
+  }
+ 
+  // cosTheta_b  
+  double cthllb = 0.;
+  *cutflow << NewVar("cosTheta_b"); {
+    *cutflow << HFTname("cthllb");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+      if(signalLeptons.at(0)->q*signalLeptons.at(1)->q > 0.) return -999.; // SS event
+      TLorentzVector lepPos, lepNeg; 
+      if(signalLeptons.at(0)->q > 0.) { 
+        lepPos = lepton0; lepNeg = lepton1; 
+      }      
+      else { 
+        lepPos = lepton1; lepNeg = lepton0; 
+      }      
+      TVector3 boost = dileptonP4.BoostVector();
+      lepPos.Boost(-boost);
+      lepNeg.Boost(-boost);
+      cthllb = tanh((lepPos.Eta()-lepNeg.Eta())/2);
+      return cthllb; 
+    };
     *cutflow << SaveVar();
   }
 
   // Clear 
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
-    baseLeptons.clear(); 
+    signalLeptons.clear(); 
     baseJets.clear();
-    centralLightJets.clear();
-    centralBJets.clear();
-    forwardJets.clear();
+    meff=0.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.;
+    //centralLightJets.clear();
+    //centralBJets.clear();
+    //forwardJets.clear();
   };
 
   ///////////////////////////////////////////////////////////////////////
