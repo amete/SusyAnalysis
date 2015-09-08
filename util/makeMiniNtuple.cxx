@@ -583,7 +583,7 @@ int main(int argc, char* argv[])
   *cutflow << NewVar("pz0 + pz1 / sqrt(s)"); {
     *cutflow << HFTname("deltaX");
     *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
-      deltaX = (lepton0.Pz() + lepton1.Pz())/sqrt(13000.);
+      deltaX = (lepton0.Pz() + lepton1.Pz())/13000.;
       return deltaX;
     };
     *cutflow << SaveVar();

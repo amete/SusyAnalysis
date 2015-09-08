@@ -51,5 +51,6 @@ void cutflow(TString filename = "/scratch/amete/Stop2LTest/CENTRAL_410000.root")
   std::cout << "\n\n" << std::endl;
   
   //tree->SetScanField(0);
-  //tree->Scan("eventNumber","(l_flav[0]!=l_flav[1])&&((l_q[0]*l_q[1])<0)&&mll>20.&&met>40.");
+  //tree->Scan("eventNumber:l_pt[0]:l_pt[1]:j_pt[0]:j_pt[1]:j_pt[2]:j_pt[3]:j_pt[4]:j_pt[5]:j_pt[6]:met:R1","eventNumber==7713609");
+  //tree->Scan("eventNumber:mll:met:R1:mT2lep:deltaX:(TMath::Abs(deltaX)<0.05)",channels[1]+signs[1]+selection[3]);
 }
