@@ -17,8 +17,10 @@ main() {
     subfolder="mc15_${susyNtVersion}";
   elif [[ "${1}" == "SIG" ]]
   then
-    echo "Signal is not implemented yet";
-    return 1
+    echo "Signal is only available in n0211!!!";
+    susyNtVersion="n0211";
+    susyNtDir="/gdata/atlas/ucintprod/SusyNt/${susyNtVersion}";
+    subfolder="mc15_${susyNtVersion}";
   else
     echo "Unknown input = [\"${1}\"]";
     return 1
@@ -42,7 +44,7 @@ main() {
     else
       datasetID=$( echo ${i} | cut -c25-30 );
     fi 
-    echo ${i}" "${datasetID};
+    #echo ${i}" "${datasetID};
     # Data
     if [[ "${1}" == "DATA" ]]
     then
@@ -51,25 +53,29 @@ main() {
         echo ${susyNtDir}/${subfolder}/${i}/ >> ${outputDir}/data15_${datasetID}.txt;
       fi
     # BG or SIG
-    elif [[ "${datasetID}" -ge "111111" && "${datasetID}" -le "999999" ]]
-    then
-      echo ${susyNtDir}/${subfolder}/${i}/ >> ${outputDir}/mc15_${datasetID}.txt;
+    else
+      if [[ "${datasetID}" -le "111111" || "${datasetID}" -ge "999999" ]]
+      then
+        echo "Unknown DSID w/ ${datasetID}, continuing..."
+        continue
+      fi
+      # Determine if signal or background
+      isSUSY=false
+      if [[ "${datasetID}" -ge "370000" && "${datasetID}" -le "404999" ]] 
+      then 
+        isSUSY=true
+      elif [[ "${datasetID}" -ge "406000" && "${datasetID}" -le "409999" ]]
+      then
+        isSUSY=true
+      fi
+      if [[ "${isSUSY}" == true && "${1}" == "SIG" ]]
+      then
+        echo ${susyNtDir}/${subfolder}/${i}/ >> ${outputDir}/sig15_${datasetID}.txt;
+      elif [[ "${isSUSY}" == false && "${1}" == "BG" ]] 
+      then
+        echo ${susyNtDir}/${subfolder}/${i}/ >> ${outputDir}/bg15_${datasetID}.txt;
+      fi 
     fi 
-    #for j in $(ls ${susyNtDir}/${subfolder}/${i});
-    #do
-    #  # Data
-    #  if [[ "${1}" == "DATA" ]]
-    #  then
-    #    if [[ "${i}" == *physics_Main* ]]
-    #    then
-    #      echo ${susyNtDir}/${subfolder}/${i}/${j} >> ${outputDir}/data15_${datasetID}.txt;
-    #    fi
-    #  # BG or SIG
-    #  elif [[ "${datasetID}" -ge "111111" && "${datasetID}" -le "999999" ]]
-    #  then
-    #    echo ${susyNtDir}/${subfolder}/${i}/${j} >> ${outputDir}/mc15_${datasetID}.txt;
-    #  fi 
-    #done
   done 
   
   return 0;

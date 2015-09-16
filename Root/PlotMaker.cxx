@@ -40,6 +40,7 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
+  float luminosity = 2000; // in pb-1
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Print information
@@ -114,19 +115,19 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   TGraphAsymmErrors *Data = new TGraphAsymmErrors();
   THStack *mcStack        = new THStack("mcStack","Standard Model");
   int      dataIndex      = -1; 
-
-  // Ad-hoc fix, normalize Zmumu to data - currently!!!
-  //histograms[0]->Scale(histograms[1]->Integral()/histograms[0]->Integral());
-  //histograms[0]->Scale(1.e-3);
+  std::vector<int> signalIndices;
 
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
     if(m_sampleList.at(i)!="Data") {
-      mcStack->Add(histograms[i]);
+      histograms[i]->Scale(luminosity);
+      if(m_sampleList.at(i).find("406")==std::string::npos) // Don't add signal to stack
+        mcStack->Add(histograms[i]);
+      else
+        signalIndices.push_back(i);
     }
     else {
       dataIndex = i;
-      histograms[i]->SetMarkerSize(0);
       histograms[i]->SetLineWidth(0);
       histograms[i]->SetLineColor(0);
       // Convert data errors to Poisson
@@ -143,12 +144,17 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   legend->SetFillColor(0);
 
   // Add Data
-  legend->AddEntry(Data,SampleNames["Data"],"p");
+  if(dataIndex!=-1) legend->AddEntry(Data,SampleNames["Data"],"p");
 
-  // Add SM Background
+  // Add SM Background and signal
   for(int i=m_sampleList.size()-1; i>-1 ; --i) {
     if(m_sampleList.at(i)!="Data")
-      legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
+    {
+      if(m_sampleList.at(i).find("406")==std::string::npos)
+        legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
+      else
+        legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"l");
+    }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +162,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   // Get Total MC Histo
   TH1D* stackHisto = (TH1D*) mcStack->GetStack()->Last();
+  double bkgError = 0., bkgTot = stackHisto->IntegralAndError(0,-1,bkgError);
+  TH1D* dummyHisto = (TH1D*) histograms[0]->Clone();
+  dummyHisto->Reset();
 
   TGraphAsymmErrors* nominalAsymErrors = TH1TOTGraph(stackHisto);
   nominalAsymErrors->SetMarkerSize(0);
@@ -198,6 +207,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // Draw the canvas
   TCanvas* canvas = new TCanvas("canvas","canvas",500,500);
   TPad*    topPad = new TPad("pTop","pTop",0,0.2,1,1);
+  //TPad*    topPad = new TPad("pTop","pTop",0,0,1,1);
   TPad*    botPad = new TPad("pBot","pBot",0,0.0,1,0.3);
   topPad->Draw();
   botPad->Draw();
@@ -205,15 +215,18 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // Top Pad
   topPad               ->cd();
   topPad               ->SetBottomMargin(0.15);
-  histograms[dataIndex]->Draw("p");
+  dummyHisto           ->Draw();
   mcStack              ->Draw("same && hists");
   nominalAsymErrors    ->Draw("same && E2");
-  Data                 ->Draw("same && p");
+  if(dataIndex!=-1)    Data->Draw("same && p");
+  for(auto &isig : signalIndices) {
+    histograms[isig]   ->Draw("same && hists");
+  }
   legend               ->Draw();
 
   // Set a few fancy labels and set axis ranges
   TString ylabel = "Events";
-  ylabel.Form("Events /%.1f",binWidth);
+  ylabel.Form("Events /%.2f",binWidth);
   TString xlabel = "";
 
   if( variable.EqualTo("ptL0") ) {
@@ -298,26 +311,44 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     xlabel = "E_{T}^{miss} [GeV]";
     ylabel.Append(" GeV");
   }
+  else if( variable.EqualTo("mT2lep") ) {
+    xlabel = "m_{T2}(ll) [GeV]";
+    ylabel.Append(" GeV");
+  }
+  else if( variable.EqualTo("meff") ) {
+    xlabel = "m_{eff} [GeV]";
+    ylabel.Append(" GeV");
+  }
+  else if( variable.EqualTo("abs_deltaX") ) {
+    xlabel = "|x_{1}-x_{2}|";
+  }
+  else if( variable.EqualTo("abs_cthllb") ) {
+    xlabel = "cos#theta_{b}";
+  }
   else {
     xlabel = variable;
   }
-  histograms[dataIndex]->GetXaxis()->SetTitle(xlabel); 
-  histograms[dataIndex]->GetXaxis()->SetLabelOffset(1.2); 
-  histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
-  histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
+  dummyHisto->GetXaxis()->SetTitle(xlabel); 
+  dummyHisto->GetXaxis()->SetTitleSize(0.05);
+  dummyHisto->GetXaxis()->SetLabelOffset(1.2); 
+  dummyHisto->GetXaxis()->SetLabelSize(0.03);
+  dummyHisto->GetYaxis()->SetTitle(ylabel); 
+  dummyHisto->GetYaxis()->SetTitleSize(0.05);
+  dummyHisto->GetYaxis()->SetTitleOffset(1.2);
+  dummyHisto->GetYaxis()->SetLabelSize(0.04);
   if(m_plotLog)
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
+    stackHisto->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(stackHisto->GetMaximum())/log(10))));
   else
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(histograms[dataIndex]->GetMinimum()*0.8,histograms[dataIndex]->GetMaximum()*1.20);
+    stackHisto->GetYaxis()->SetRangeUser(stackHisto->GetMinimum()*0.8,stackHisto->GetMaximum()*1.20);
 
   gPad->RedrawAxis();
   if(m_plotLog)
     gPad->SetLogy(1);
 
   // Decoration
-  char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal"; 
-  //char annoyingLabel2[100] = "#scale[0.6]{#int} L dt = 55.4 pb^{-1}  #sqrt{s} = 13 TeV";
-  char annoyingLabel2[100] = "#sqrt{s} = 13 TeV, 55.4 pb^{-1}";
+  char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal";
+  TString luminosityInfo; luminosityInfo.Form("#sqrt{s} = 13 TeV, %.2f fb^{-1}",luminosity*0.001); 
+  char* annoyingLabel2 = (char*) luminosityInfo.Data();
   char* annoyingLabel3 = (char*) region.Data();
   char* annoyingLabel4 = (char*) channel.Data();
   myText(0.20,0.88,kBlack,annoyingLabel1);
@@ -331,7 +362,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   // Dummy ratio histogram to set the scale and titles, etc.
   // I don't really like this part
-  TH1D* ratio_original = (TH1D*) histograms[dataIndex]->Clone();
+  TH1D* ratio_original = (TH1D*) dummyHisto->Clone(); //(TH1D*) stackHisto->Clone();
   ratio_original->Reset();
   ratio_original->SetMarkerSize(1.2);
   ratio_original->SetMarkerStyle(20);
@@ -378,7 +409,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio->SetLineWidth(2);
 
   // Make the line at 1 for the ratio plot
-  TLine *line = new TLine(histograms[dataIndex]->GetXaxis()->GetXmin(),1,histograms[dataIndex]->GetXaxis()->GetXmax(),1);
+  TLine *line = new TLine(dummyHisto->GetXaxis()->GetXmin(),1,dummyHisto->GetXaxis()->GetXmax(),1);
   line->SetLineColor(kRed);
   line->SetLineStyle(7);
 
@@ -393,6 +424,19 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 
+  // Print yields
+  for(unsigned int isample=0; isample<m_sampleList.size(); ++isample) {
+    TString line;
+    double totErr = 0., tot = histograms[isample]->IntegralAndError(0,-1,totErr);
+    line.Form("%9s \t %.2f +/- %.2f", m_sampleList.at(isample).c_str(),tot,totErr);
+    std::cout << line << std::endl;
+    if(isample==m_sampleList.size()-1) {
+      line.Form("Total BG \t %.2f +/- %.2f",bkgTot,bkgError);
+    std::cout << line << std::endl;
+    }
+  }
+  
+
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
   //delete[] sysHistograms;
@@ -401,7 +445,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   delete nominalAsymErrors;
   delete nominalAsymErrorsNoError;
   delete ratioBand;
-  delete ratio_original;
+  delete dummyHisto;
+  //delete ratio_original;
   delete ratio_raw;
   delete ratio;
   delete totalSysHisto;
@@ -496,9 +541,16 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
     histos[i] = (TH1D*) temp->Clone();
     histos[i]->SetName(histoName);
     histos[i]->SetTitle(histoName);
-    histos[i]->SetLineWidth(2);
-    histos[i]->SetLineColor(kBlack);
-    histos[i]->SetFillColor(SampleColors[m_sampleList.at(i)]);
+    if(m_sampleList.at(i).find("406")==std::string::npos) {
+      histos[i]->SetLineWidth(2);
+      histos[i]->SetLineColor(kBlack);
+      histos[i]->SetFillColor(SampleColors[m_sampleList.at(i)]);
+    } else {
+      histos[i]->SetLineWidth(2);
+      histos[i]->SetLineColor(SampleColors[m_sampleList.at(i)]);
+      histos[i]->SetFillColor(0);
+      histos[i]->SetMarkerSize(0);
+    }
 
     // Add the overflow to the last bin
     addOverFlowToLastBin(histos[i]);

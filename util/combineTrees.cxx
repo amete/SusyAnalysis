@@ -37,34 +37,41 @@ vector<hft_process> defineTrees(bool do_data) {
     hft_process process;
    
     if(!do_data) { 
-        // data15_55ipb.txt  mc15_singleTop.txt  mc15_ttbar.txt  mc15_W.txt  mc15_WW.txt  mc15_WZ.txt  mc15_Z.txt  mc15_ZZ.txt
-        process.in_file_string   = "mc15_W.txt";
+        // data15_55ipb.txt  bg15_singleTop.txt  bg15_ttbar.txt  bg15_W.txt  bg15_WW.txt  bg15_WZ.txt  bg15_Z.txt  bg15_ZZ.txt
+        process.in_file_string   = "bg15_W.txt";
         process.output_tree_name = "W";
         out_process.push_back(process);
         
-        process.in_file_string   = "mc15_Z.txt";
+        process.in_file_string   = "bg15_Z.txt";
         process.output_tree_name = "Z";
         out_process.push_back(process);
         
-        process.in_file_string   = "mc15_WW.txt";
+        process.in_file_string   = "bg15_WW.txt";
         process.output_tree_name = "WW";
         out_process.push_back(process);
         
-        process.in_file_string   = "mc15_WZ.txt";
+        process.in_file_string   = "bg15_WZ.txt";
         process.output_tree_name = "WZ";
         out_process.push_back(process);
         
-        process.in_file_string   = "mc15_ZZ.txt";
+        process.in_file_string   = "bg15_ZZ.txt";
         process.output_tree_name = "ZZ";
         out_process.push_back(process);
         
-        process.in_file_string   = "mc15_ttbar.txt";
+        process.in_file_string   = "bg15_ttbar.txt";
         process.output_tree_name = "ttbar";
         out_process.push_back(process);
 
-        process.in_file_string   = "mc15_singleTop.txt";
+        process.in_file_string   = "bg15_singleTop.txt";
         process.output_tree_name = "singleTop";
         out_process.push_back(process);
+
+        // Signal
+        for(unsigned int dsid = 406009; dsid<=406011; ++dsid ) {
+          process.in_file_string   = "sig15_" + to_string(dsid)+".txt";
+          process.output_tree_name = to_string(dsid);
+          out_process.push_back(process);
+        }
     }
     else if(do_data) {
         process.in_file_string   = "data15_55ipb.txt";
@@ -197,11 +204,11 @@ int main(int argc, char** argv)
             int sum_trees = 0;
             
             for (unsigned int i = 0; i < sample_list.size(); i++) {
-                string sample_treename = "";
-                if(do_data) { sample_treename = "id_physics_Main"; }
-                else {
-                    sample_treename = string("id_") + sample_list[i];
-                }
+                string sample_treename = "superNt";
+                //if(do_data) { sample_treename = "id_physics_Main"; }
+                //else {
+                //    sample_treename = string("id_") + sample_list[i];
+                //}
                 string sample_filename = "";
                 if(do_data) { sample_filename = syst_strings[s] + "_physics_Main_" + sample_list[i] + ".root"; }
                 else {

@@ -19,6 +19,7 @@
 #include "SusyNtuple/ChainHelper.h"
 #include "SusyNtuple/string_utils.h"
 #include "SusyAnalysis/MT2_ROOT.h"
+#include "SusyNtuple/KinematicTools.h"
 
 using namespace sflow;
 
@@ -124,7 +125,7 @@ int main(int argc, char* argv[])
   cutflow->setAnaName("SuperflowAna");                // arbitrary
   //cutflow->setAnaType(AnalysisType::Ana_2Lep);        // analysis type, passed to SusyNt ?
   cutflow->setAnaType(AnalysisType::Ana_Stop2L);        // analysis type, passed to SusyNt ?
-  cutflow->setLumi(78.287);                           // set the MC normalized to X pb-1
+  cutflow->setLumi(1.0);                           // set the MC normalized to X pb-1
   cutflow->setSampleName(input_file);                 // sample name, check to make sure it's set OK
   cutflow->setRunMode(run_mode);                      // make configurable via run_mode
   cutflow->setCountWeights(true);                     // print the weighted cutflows
@@ -423,14 +424,14 @@ int main(int argc, char* argv[])
   }
 
   // Jet variables
-  JetVector baseJets; //, centralLightJets, centralBJets, forwardJets;
+  JetVector baseJets, centralLightJets, centralBJets, forwardJets;
   *cutflow << [&](Superlink* sl, var_void*) { 
     baseJets = *sl->baseJets; 
-    //for(auto& jet : baseJets) {
-    //  if(sl->tools->m_jetSelector.isCentralLightJet(jet))  { centralLightJets.push_back(jet); } 
-    //  else if(sl->tools->m_jetSelector.isCentralBJet(jet)) { centralBJets.push_back(jet);     } 
-    //  else if(sl->tools->m_jetSelector.isForwardJet(jet))  { forwardJets.push_back(jet);      } 
-    //}
+    for(auto& jet : baseJets) {
+      if(sl->tools->m_jetSelector.isCentralLightJet(jet))  { centralLightJets.push_back(jet); } 
+      else if(sl->tools->m_jetSelector.isCentralBJet(jet)) { centralBJets.push_back(jet);     } 
+      else if(sl->tools->m_jetSelector.isForwardJet(jet))  { forwardJets.push_back(jet);      } 
+    }
   };
 
   *cutflow << NewVar("number of baseline jets"); {
@@ -439,23 +440,23 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
-  //*cutflow << NewVar("number of central light jets"); {
-  //  *cutflow << HFTname("nCentralLJets");
-  //  *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCLJets(*sl->baseJets)/*(*baseJets)*/; };
-  //  *cutflow << SaveVar();
-  //}
+  *cutflow << NewVar("number of central light jets"); {
+    *cutflow << HFTname("nCentralLJets");
+    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCLJets(*sl->baseJets)/*(*baseJets)*/; };
+    *cutflow << SaveVar();
+  }
 
-  //*cutflow << NewVar("number of central b jets"); {
-  //  *cutflow << HFTname("nCentralBJets");
-  //  *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCBJets(*sl->baseJets)/*(*baseJets)*/; };
-  //  *cutflow << SaveVar();
-  //}
+  *cutflow << NewVar("number of central b jets"); {
+    *cutflow << HFTname("nCentralBJets");
+    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCBJets(*sl->baseJets)/*(*baseJets)*/; };
+    *cutflow << SaveVar();
+  }
 
-  //*cutflow << NewVar("number of forward jets"); {
-  //  *cutflow << HFTname("nForwardJets");
-  //  *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfFJets(*sl->baseJets)/*(*baseJets)*/; };
-  //  *cutflow << SaveVar();
-  //}
+  *cutflow << NewVar("number of forward jets"); {
+    *cutflow << HFTname("nForwardJets");
+    *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfFJets(*sl->baseJets)/*(*baseJets)*/; };
+    *cutflow << SaveVar();
+  }
 
   *cutflow << NewVar("jet pt"); {
     *cutflow << HFTname("j_pt");
@@ -622,6 +623,45 @@ int main(int argc, char* argv[])
     };
     *cutflow << SaveVar();
   }
+
+  // Super-razor variables
+  double MDR, shatr, cosThetaRp1, DPB, dphi_l1_l2, gamma_r;
+  double dphi_vBeta_R_vBeta_T;
+  TVector3 vBeta_z, pT_CM, vBeta_T_CMtoR, vBeta_r;
+  *cutflow << NewVar("Super-razor variables -- shatr"); {
+    *cutflow << HFTname("shatr");
+    *cutflow << [&](Superlink* sl, var_float*) -> double {
+      MDR = shatr = cosThetaRp1 = DPB = dphi_l1_l2 = gamma_r = -999.0;
+      dphi_vBeta_R_vBeta_T = -999.0;
+      kin::superRazor(signalLeptons, sl->met, vBeta_z, pT_CM,
+                      vBeta_T_CMtoR, vBeta_r, shatr, DPB,
+                      dphi_l1_l2, gamma_r, dphi_vBeta_R_vBeta_T,
+                      MDR, cosThetaRp1);
+      return shatr;
+    };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("Super-razor variables -- MDR"); {
+    *cutflow << HFTname("MDR");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      return MDR;
+    };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("Super-razor variables -- CosThetaR+1"); {
+    *cutflow << HFTname("cosThetaRp1");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      return cosThetaRp1;
+    };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("Super-razor variables -- DPB"); {
+    *cutflow << HFTname("DPB");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      return DPB;
+    };
+    *cutflow << SaveVar();
+  } 
 
   // Clear 
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
