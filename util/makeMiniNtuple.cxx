@@ -428,9 +428,9 @@ int main(int argc, char* argv[])
   *cutflow << [&](Superlink* sl, var_void*) { 
     baseJets = *sl->baseJets; 
     for(auto& jet : baseJets) {
-      if(sl->tools->m_jetSelector.isCentralLightJet(jet))  { centralLightJets.push_back(jet); } 
-      else if(sl->tools->m_jetSelector.isCentralBJet(jet)) { centralBJets.push_back(jet);     } 
-      else if(sl->tools->m_jetSelector.isForwardJet(jet))  { forwardJets.push_back(jet);      } 
+      if(sl->tools->m_jetSelector->isCentralLight(jet))  { centralLightJets.push_back(jet); } 
+      else if(sl->tools->m_jetSelector->isCentralB(jet)) { centralBJets.push_back(jet);     } 
+      else if(sl->tools->m_jetSelector->isForward(jet))  { forwardJets.push_back(jet);      } 
     }
   };
 
@@ -499,9 +499,9 @@ int main(int argc, char* argv[])
     *cutflow << [&](Superlink* sl, var_float_array*) -> vector<double> {
       vector<double> out; int flav = 0;
       for(auto& jet : baseJets) {
-        if(sl->tools->m_jetSelector.isCentralLightJet(jet))  { flav = 1; } 
-        else if(sl->tools->m_jetSelector.isCentralBJet(jet)) { flav = 2; } 
-        else if(sl->tools->m_jetSelector.isForwardJet(jet))  { flav = 3; } 
+        if(sl->tools->m_jetSelector->isCentralLight(jet))  { flav = 1; } 
+        else if(sl->tools->m_jetSelector->isCentralB(jet)) { flav = 2; } 
+        else if(sl->tools->m_jetSelector->isForward(jet))  { flav = 3; } 
         out.push_back(flav);
         flav=0;
       }
