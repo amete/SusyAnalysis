@@ -40,7 +40,7 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  float luminosity = 2000; // in pb-1
+  float luminosity = 3209.05; // in pb-1
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Print information
@@ -63,9 +63,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Open the input ROOT file
-  if(m_inputROOTFile == NULL) {
+
+  //if(m_inputROOTFile == nullptr) {
     m_inputROOTFile = new TFile(m_inputFile);
-  }
+ // }
   if(!m_inputROOTFile->IsOpen()) {
     cerr << "PlotMaker::ERROR   Cannot read ROOT file " << m_inputFile << endl;
     return;
@@ -121,7 +122,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     // Add to stack if background
     if(m_sampleList.at(i)!="Data") {
       histograms[i]->Scale(luminosity);
-      if(m_sampleList.at(i).find("406")==std::string::npos) // Don't add signal to stack
+      if(m_sampleList.at(i).find("406")==std::string::npos &&
+         m_sampleList.at(i).find("392")==std::string::npos ) // Don't add signal to stack
         mcStack->Add(histograms[i]);
       else
         signalIndices.push_back(i);
@@ -150,7 +152,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   for(int i=m_sampleList.size()-1; i>-1 ; --i) {
     if(m_sampleList.at(i)!="Data")
     {
-      if(m_sampleList.at(i).find("406")==std::string::npos)
+      if(m_sampleList.at(i).find("406")==std::string::npos ||
+         m_sampleList.at(i).find("392")==std::string::npos)
         legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
       else
         legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"l");
@@ -337,9 +340,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   dummyHisto->GetYaxis()->SetTitleOffset(1.2);
   dummyHisto->GetYaxis()->SetLabelSize(0.04);
   if(m_plotLog)
-    stackHisto->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(stackHisto->GetMaximum())/log(10))));
+    dummyHisto->GetYaxis()->SetRangeUser(1.e-2,1000*pow(10,ceil(log(stackHisto->GetMaximum())/log(10))));
   else
-    stackHisto->GetYaxis()->SetRangeUser(stackHisto->GetMinimum()*0.8,stackHisto->GetMaximum()*1.20);
+    dummyHisto->GetYaxis()->SetRangeUser(stackHisto->GetMinimum()*0.8,stackHisto->GetMaximum()*1.20);
 
   gPad->RedrawAxis();
   if(m_plotLog)
@@ -541,7 +544,8 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
     histos[i] = (TH1D*) temp->Clone();
     histos[i]->SetName(histoName);
     histos[i]->SetTitle(histoName);
-    if(m_sampleList.at(i).find("406")==std::string::npos) {
+    if(m_sampleList.at(i).find("406")==std::string::npos &&
+       m_sampleList.at(i).find("392")==std::string::npos) {
       histos[i]->SetLineWidth(2);
       histos[i]->SetLineColor(kBlack);
       histos[i]->SetFillColor(SampleColors[m_sampleList.at(i)]);

@@ -31,31 +31,34 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"     , "nBaseLeptons==
                                                  ("SR2LA-V1"   , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8" )
                                                  ("SR2LA-V2"   , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8&&DPB>1.5" )
                                                  ("SR2L-Danny" , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&mT2lep>80.&&R2>0.65&&DPB>(1.0*TMath::Abs(cthllb)+2)" )
+                                                 ("SR2LEWK-pre", "nBaseLeptons==2&&l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&mll>20." )
 ;
 
 /// \brief Sample Colors
 ColorMap SampleColors = boost::assign::map_list_of ("Data"     , (int)kBlack     )
                                                    ("ttbar"    , (int)kAzure-9   )
-                                                   ("singleTop", (int)kRed+1     )
+                                                   ("singletop", (int)kRed+1     )
                                                    ("W"        , (int)kGray      )
                                                    ("Z"        , (int)kYellow-9  )
-                                                   ("WW"       , (int)kGreen-3   )
-                                                   ("WZ"       , (int)kOrange-2  )
-                                                   ("ZZ"       , (int)kMagenta+1 )
+                                                   ("VV"       , (int)kGreen-3   )
+                                                   //("WZ"       , (int)kOrange-2  )
+                                                   //("ZZ"       , (int)kMagenta+1 )
                                                    ("406009"   , (int)kBlue+2    )
+                                                   ("392510"   , (int)kBlue+2    )
 ;
 
 /// \brief Sample Names
 TS2TSMap SampleNames = boost::assign::map_list_of ("Data"     , "Data 2015"  )
                                                   ("ttbar"    , "t#bar{t}"   )
-                                                  ("singleTop", "Single Top" )
+                                                  ("singletop", "Single Top" )
                                                   ("W"        , "W"          )
                                                   ("Z"        , "Z"          )
-                                                  ("WW"       , "WW"         )
-                                                  ("WZ"       , "WZ"         )
-                                                  ("ZZ"       , "ZZ"         )
-                                                  ("406009"   , "250, 160 GeV" )
+                                                  ("VV"       , "VV"         )
+                                                  //("WZ"       , "WZ"         )
+                                                  //("ZZ"       , "ZZ"         )
+                                                  ("406009"   , "Stop 250, 160 GeV" )
                                                   //("406009"   , "(m_{#tilde{t}_1}, m_{#tilde{#chi}_{1}^{0}}) = 250, 160 GeV" )
+                                                  ("392510"   , "C1C1 500, 1 GeV" )
 ;
 
 
