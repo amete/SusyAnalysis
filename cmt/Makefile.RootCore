@@ -10,7 +10,7 @@
 PACKAGE              = SusyAnalysis
 
 # the libraries to link with this one:
-PACKAGE_PRELOAD      = 
+PACKAGE_PRELOAD      = RooStats
 
 # additional compilation flags to pass (not propagated to dependent packages):
 PACKAGE_CXXFLAGS     = 

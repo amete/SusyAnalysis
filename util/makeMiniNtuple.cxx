@@ -163,16 +163,19 @@ int main(int argc, char* argv[])
       return (cutflags & ECut_GoodVtx);
   };
   
-  *cutflow << CutName("bad muon veto") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_BadMuon);
+  *cutflow << CutName("bad muon veto") << [&](Superlink* sl) -> bool {
+      //return (cutflags & ECut_BadMuon);
+      return (sl->tools->passBadMuon(sl->preMuons));
   };
   
-  *cutflow << CutName("pass cosmic veto") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_Cosmic);
+  *cutflow << CutName("pass cosmic veto") << [&](Superlink* sl) -> bool {
+      //return (cutflags & ECut_Cosmic);
+      return (sl->tools->passCosmicMuon(sl->baseMuons));
   };
 
-  *cutflow << CutName("jet cleaning") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_BadJet);
+  *cutflow << CutName("jet cleaning") << [&](Superlink* sl) -> bool {
+      //return (cutflags & ECut_BadJet);
+      return (sl->tools->passJetCleaning(sl->baseJets));
   };
   
   //  Analysis Cuts
@@ -424,9 +427,10 @@ int main(int argc, char* argv[])
   }
 
   // Jet variables
-  JetVector baseJets, centralLightJets, centralBJets, forwardJets;
+  JetVector baseJets, signalJets, centralLightJets, centralBJets, forwardJets;
   *cutflow << [&](Superlink* sl, var_void*) { 
     baseJets = *sl->baseJets; 
+    signalJets = *sl->jets; 
     for(auto& jet : baseJets) {
       if(sl->tools->m_jetSelector->isCentralLight(jet))  { centralLightJets.push_back(jet); } 
       else if(sl->tools->m_jetSelector->isCentralB(jet)) { centralBJets.push_back(jet);     } 
@@ -542,7 +546,7 @@ int main(int argc, char* argv[])
         meff += lepton->Pt();
       }
       // Jets
-      for(auto& jet : baseJets) {
+      for(auto& jet : signalJets) {
         meff += jet->Pt();
       }
       // MET
