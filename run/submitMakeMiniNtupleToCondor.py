@@ -11,8 +11,8 @@ log_dir = "/data/uclhc/uci/user/amete/analysis_n0220_run/logs/"
 tarred_dir = "analysis_n0220/"
 filelist_dir = "/data/uclhc/uci/user/amete/analysis_n0220/inputs/"
 in_job_filelist_dir = "/analysis_n0220/inputs/"
-samples = ["bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_wjets_sherpa","bg15_zjets_sherpa","data15"]
-#samples = ["bg15_diboson_powheg","bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_wjets_powheg","bg15_wjets_sherpa","bg15_zjets_powheg","bg15_zjets_sherpa","data15"]
+#samples = ["bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_wjets_sherpa","bg15_zjets_sherpa","data15","sig15_c1c1_slsl"]
+samples = ["bg15_diboson_powheg","bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_wjets_powheg","bg15_wjets_sherpa","bg15_zjets_powheg","bg15_zjets_sherpa","data15","sig15_c1c1_slsl"]
 #samples = ["bg15_ttbar"]
 
 doBrick = False

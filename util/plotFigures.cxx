@@ -25,12 +25,11 @@ void help();
 int main(int argc, char** argv)
 {
   // Read user inputs
-  string channels     = "mm"                               ; vector<string> channelList   ;
-  string regions      = "CR2LOS"                           ; vector<string> regionList    ;
-  string variables    = "l_pt"                             ; vector<string> variableList  ;
-  string samples      = "392510,W,Z,VV,singletop,ttbar,Data"; vector<string> sampleList    ;
-  //string samples      = "406009,ZZ,WZ,WW,singleTop,ttbar,Z,W,Data"; vector<string> sampleList    ;
-  string binValues    = "40,0,400"                         ; vector<string> binValueList  ;
+  string channels     = "mm"                                ; vector<string> channelList   ;
+  string regions      = "CR2LOS"                            ; vector<string> regionList    ;
+  string variables    = "l_pt"                              ; vector<string> variableList  ;
+  string samples      = "392510,W,Z,singletop,ttbar,VV,Data"; vector<string> sampleList    ;
+  string binValues    = "40,0,400"                          ; vector<string> binValueList  ;
   //string systematics  = "JER,JES_DN,JES_UP,EER_DN,EER_UP,EES_LOW_DN,EES_LOW_UP,EES_MAT_DN,EES_MAT_UP,EES_PS_DN,EES_PS_UP,EES_Z_DN,EES_Z_UP,ID_DN,ID_UP,MS_DN,MS_UP,RESOST,SCALEST_DN,SCALEST_UP"; 
   string systematics  = ""; 
   vector<string> systematicList;
@@ -83,7 +82,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/HFTs_13TeV.root");
+  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/mc15_13TeV_powheg.root");
+  //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/mc15_13TeV_sherpa.root");
   plots->setSampleList     (sampleList    );
   plots->setSystematicsList(systematicList);
   plots->setBinValuesList  (binValueList  );

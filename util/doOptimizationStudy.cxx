@@ -23,12 +23,13 @@
 #include "TGraph.h"
 #include "TMath.h"
 
+#include "SusyAnalysis/AtlasStyle.h"
 #include "SusyAnalysis/AtlasLabels.h"
 #include "SusyAnalysis/AtlasUtils.h"
 #include "RooStats/NumberCountingUtils.h"
 
 #define DEBUG false
-#define NMODECPOINTS 1
+#define NMODECPOINTS 19
 #define NDLISLEPPOINTS 1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +85,7 @@ int main(int argc, char** argv)
   std::string regS  = "SRmT2g";
   std::string chanS = "All";
   std::string model = "ModeC";
-  std::string input = "/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/HFTs_13TeV.root";
+  std::string input = "/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/mc15_13TeV_powheg.root";
   bool multipleSR   = true;
 
   for(int i = 1; i < argc; i++) {
@@ -172,7 +173,7 @@ int main(int argc, char** argv)
       finalYields[SignalDSIDs[i]]        = yield;
     }
     // Make Plot
-    //makePlot(finalSignificances,finalYields,"Combined_SRsr","All",0,model);
+    makePlot(finalSignificances,finalYields,"Combined_SRsr","All",0,model);
   }
 
   return 0;
@@ -237,9 +238,9 @@ void doSingleRegionOptimizationStudy(
       background[process][nChannel-1] += background[process][channel];
       backgroundErr[process][nChannel-1] += pow(backgroundErr[process][channel],2);
     }
-    backgroundErr[process][3] = sqrt(backgroundErr[process][3]); // Take sqrt(pow**2)
-    std::cout << std::setw(10) << std::setprecision(3) << background[process][3]  << " +/- " 
-              << std::setw(10) << std::setprecision(3) << backgroundErr[process][3] << " |" << std::endl;
+    backgroundErr[process][nChannel-1] = sqrt(backgroundErr[process][nChannel-1]); // Take sqrt(pow**2)
+    std::cout << std::setw(10) << std::setprecision(3) << background[process][nChannel-1]  << " +/- " 
+              << std::setw(10) << std::setprecision(3) << backgroundErr[process][nChannel-1] << " |" << std::endl;
 
   }
 
@@ -250,6 +251,7 @@ void doSingleRegionOptimizationStudy(
       background[nProcess-1][channel]    += background[process][channel];
       backgroundErr[nProcess-1][channel] += pow(backgroundErr[process][channel],2);
     }
+    backgroundErr[nProcess-1][channel] = sqrt(backgroundErr[nProcess-1][channel]);
     std::cout << std::setw(10) << std::setprecision(3) << background[nProcess-1][channel]  << " +/- " 
               << std::setw(10) << std::setprecision(3) << backgroundErr[nProcess-1][channel] << " || ";
   }
@@ -278,21 +280,21 @@ void doSingleRegionOptimizationStudy(
     double signf = 0.;
 
     if(chan == "EE") {
-      signf = RooStats::NumberCountingUtils::BinomialExpZ(signal[0],background[5][0],realtiveBGError);
+      signf = RooStats::NumberCountingUtils::BinomialExpZ(signal[0],background[nProcess-1][0],realtiveBGError);
       yieldMap       [SignalDSIDs[i]] = signal[0];
     }
     else if(chan == "MM") {
-      signf = RooStats::NumberCountingUtils::BinomialExpZ(signal[1],background[5][1],realtiveBGError);
+      signf = RooStats::NumberCountingUtils::BinomialExpZ(signal[1],background[nProcess-1][1],realtiveBGError);
       yieldMap       [SignalDSIDs[i]] = signal[1];
     }
     else if(chan == "EM") {
-      signf = RooStats::NumberCountingUtils::BinomialExpZ(signal[2],background[5][2],realtiveBGError);
+      signf = RooStats::NumberCountingUtils::BinomialExpZ(signal[2],background[nProcess-1][2],realtiveBGError);
       yieldMap       [SignalDSIDs[i]] = signal[2];
     }
     else if(chan == "All") {
-      signf  = pow(RooStats::NumberCountingUtils::BinomialExpZ(signal[0],background[5][0],realtiveBGError),2);
-      signf += pow(RooStats::NumberCountingUtils::BinomialExpZ(signal[1],background[5][1],realtiveBGError),2);
-      if(model == "ModeC") signf += pow(RooStats::NumberCountingUtils::BinomialExpZ(signal[2],background[5][2],realtiveBGError),2); // Only for ModeC
+      signf  = pow(RooStats::NumberCountingUtils::BinomialExpZ(signal[0],background[nProcess-1][0],realtiveBGError),2);
+      signf += pow(RooStats::NumberCountingUtils::BinomialExpZ(signal[1],background[nProcess-1][1],realtiveBGError),2);
+      if(model == "ModeC") signf += pow(RooStats::NumberCountingUtils::BinomialExpZ(signal[2],background[nProcess-1][2],realtiveBGError),2); // Only for ModeC
       signf = sqrt(signf);
       yieldMap       [SignalDSIDs[i]] = signal[3];
     }
@@ -349,7 +351,7 @@ double getPrediction(TString source, TString region, TString channel, int mode)
   TString jetCut = "nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0";
 
   // Mll
-  TString mllCut = "mll>20.";
+  TString mllCut = "mll>60.";
   if(channel=="EE"||channel=="MM") mllCut+="&&TMath::Abs(mll-90.2)>10."; // Z-veto
 
   // mT2
@@ -441,8 +443,8 @@ TGraph* ContourGraph(TH2D* hist)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void getModeCDSIDs(TString dsids[])
 {
-  TString SignalDSIDs[NMODECPOINTS] = { /*"392500","392501","392502","392504","392505","392506","392507","392508","392509",*/ "392510"
-                                        /*"392511","392512","392514","392515","392516","392517","392518","392519","392520" */};
+  TString SignalDSIDs[NMODECPOINTS] = { "392500","392501","392502","392504","392505","392506","392507","392508","392509", "392510",
+                                        "392511","392512","392514","392515","392516","392517","392518","392519","392520" };
 
   std::copy(SignalDSIDs, SignalDSIDs+NMODECPOINTS,dsids);
 }
@@ -472,6 +474,9 @@ void   makePlot(
                  std::string model
                )
 {
+  // Set ATLAS Style
+  SetAtlasStyle();
+
   // Print information if in debug
   for(std::map<TString,double>::iterator iter=significanceMap.begin(); iter!=significanceMap.end() && DEBUG; ++iter){
     std::cout << (*iter).first << " has a significance of " << std::setw(10)  << std::setprecision(3) << (*iter).second << std::endl;
@@ -479,13 +484,13 @@ void   makePlot(
 
   // Read cross sections file
   std::string modelFile = "";
-  if(model == "ModeC") modelFile = "/export/home/amete/SimplifiedModelCrossSections/modeC_lightslep_MC1eqMN2.txt";
+  if(model == "ModeC") modelFile = "/data/uclhc/uci/user/amete/grids/c1c1_slep.txt";
   else if(model == "DLiSlep") modelFile = "/export/home/amete/SimplifiedModelCrossSections/DLiSlep_Masses_Right.txt"; // Currently use RL
 
   std::ifstream inputFile(modelFile.c_str());
 
   // Variables
-  int DSID; float mC1, mSl, mN1, xsec_prod, uncert;
+  int DSID; float mC1, /*mSl,*/ mN1/*, xsec_prod, uncert*/;
   std::string line;
 
   unsigned int nPoint = 0;
@@ -496,13 +501,12 @@ void   makePlot(
     while( inputFile.good() ){
       getline (inputFile,line);
       try{
-        sscanf(line.c_str(),"%i %f %f %f %f %f", &DSID,&mC1,&mSl,&mN1,&xsec_prod,&uncert);
+        sscanf(line.c_str(),"%i %f %f", &DSID,&mC1,&mN1);
       }
       catch(...){
         continue;
       }
       if( DSID > 100000 && DSID < 500000){
-        if( DSID == 175570 || DSID == 175573 || DSID == 177496 ) continue; //DLiSlep Hack
         x[nPoint] = mC1; 
         y[nPoint] = mN1;
         datasetId.Form("%i",DSID);
@@ -616,15 +620,15 @@ void   makePlot(
   // Draw everything
   frame     ->Draw();
   diagonal  ->Draw();
-  ////text      ->Draw();
-  //yield     ->Draw("colz && same");
-  gridpoints->Draw("same && text");
-  //numbers   ->Draw("same && text");
+  //text      ->Draw();
+  yield     ->Draw("colz && same");
+  //gridpoints->Draw("same && text");
+  numbers   ->Draw("same && text");
   gPad      ->RedrawAxis();
   gPad      ->SetRightMargin(0.20);
   if(plotmode == 0) {
     contGraph->Draw("same");
-    //yield     ->GetZaxis()->SetRangeUser(0,3.5);
+    yield     ->GetZaxis()->SetRangeUser(0,3.5);
   }
   else if(plotmode == 1){
     yield     ->GetZaxis()->SetRangeUser(0,1.e2);
@@ -636,7 +640,7 @@ void   makePlot(
   text1->SetNDC(kTRUE);
   text1->SetTextSize(0.04);
   text1->Draw();
-  TLatex *text2     = new TLatex(0.2,0.82,"#scale[0.6]{#int} L dt = 20.3 fb^{-1}  #sqrt{s} = 8 TeV");
+  TLatex *text2     = new TLatex(0.2,0.82,"#scale[0.6]{#int} L dt = 10 fb^{-1}  #sqrt{s} = 13 TeV");
   text2->SetNDC(kTRUE);
   text2->SetTextSize(0.035);
   text2->Draw();
@@ -658,7 +662,7 @@ void   makePlot(
   if(model == "ModeC") text6->Draw();
 
   if(plotmode == 0)
-    c->SaveAs("~/SignificancePlots_SuperRazor/FullLumi_n0155_30Percent_"+region+"_"+channel+"_"+model+".eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg/10invfb_n0220_30Percent_"+region+"_"+channel+"_"+model+".eps");
   else if(plotmode == 1)
-    c->SaveAs("~/SignificancePlots_SuperRazor/FullLumi_n0155_30Percent_"+region+"_"+channel+"_"+model+"_Yield.eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg/10invfb_n0220_30Percent_"+region+"_"+channel+"_"+model+"_Yield.eps");
 }
