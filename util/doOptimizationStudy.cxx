@@ -82,7 +82,7 @@ TFile* m_inputFile = nullptr;
 int main(int argc, char** argv)
 {
   // Inputs
-  std::string regS  = "SRmT2g";
+  std::string regS  = "SRmT2,180";
   std::string chanS = "All";
   std::string model = "ModeC";
   std::string input = "/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/mc15_13TeV_powheg.root";
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
   // Convert 
   TString region; region.Form("%s",regS.c_str());
   TString chan;   chan.Form("%s",chanS.c_str());
-
+      
   // Open file
   if(m_inputFile == nullptr) {
     m_inputFile = new TFile(input.c_str(),"READ");
@@ -129,10 +129,12 @@ int main(int argc, char** argv)
     doSingleRegionOptimizationStudy(region, chan, significanceMap, yieldMap, true, model);
   } else {
     // Signal Regions
-    //unsigned nSRs = 12;
-    //TString regions[12] = { "SRmT2a" ,"SRmT2b" ,"SRmT2c" ,"SRmT2d" ,"SRmT2e" ,"SRmT2f" ,"SRmT2g" ,"SRmT2h" ,"SRmT2i" ,"SRmT2j" ,"SRmT2k" ,"SRmT2l", "SRmT2m" };
-    unsigned nSRs = 5;
-    TString regions[5] = { "SRmT2a" ,"SRmT2d" ,"SRmT2g" ,"SRmT2j" ,"SRmT2m" };
+    bool orthogonal = false; // if false pwc otherwise stat. combination
+    unsigned nSRs = 3;
+    //TString regions[2] = { "SRmT2,90" ,"SRmT2,120" };
+    //TString regions[2] = { "SRmT2,90,120" ,"SRmT2,120" };
+    TString regions[3] = { "SRmT2,90" ,"SRmT2,120" ,"SRmT2,150" };
+    //TString regions[3] = { "SRmT2,90,120" ,"SRmT2,120,150" ,"SRmT2,150" };
 
     // >> Don't touch anything below!!!!
 
@@ -162,18 +164,25 @@ int main(int argc, char** argv)
       if(DEBUG) std::cout << "Finding best SR for " << SignalDSIDs[i] << std::endl;
       double sign = 0., yield = 0.; int bestSR = -1;
       for(unsigned int j=0; j<nSRs; ++j) {
-        if(significances.at(j)[SignalDSIDs[i]]>sign) {
-          bestSR = j;
-          sign   = significances.at(j)[SignalDSIDs[i]];
-          yield  = yields.at(j)[SignalDSIDs[i]];
+        if(!orthogonal) {
+          if(significances.at(j)[SignalDSIDs[i]]>sign) {
+            bestSR = j;
+            sign   = significances.at(j)[SignalDSIDs[i]];
+            yield  = yields.at(j)[SignalDSIDs[i]];
+          }
+        } else {
+          std::cout << "Current SR " << j << " has significance " << significances.at(j)[SignalDSIDs[i]] << std::endl;
+          sign   += pow(significances.at(j)[SignalDSIDs[i]],2);
         }
       }
-      if(DEBUG) std::cout << "Best SR is " << bestSR << " with Significance " << sign << std::endl;
-      finalSignificances[SignalDSIDs[i]] = sign;
+      finalSignificances[SignalDSIDs[i]] = !orthogonal ? sign : sqrt(sign);
       finalYields[SignalDSIDs[i]]        = yield;
+      if(DEBUG && !orthogonal) std::cout << "Best SR is " << bestSR << " with Significance " << finalSignificances[SignalDSIDs[i]] << std::endl;
+      if(/*DEBUG &&*/ orthogonal) std::cout << "Final Significance is " << finalSignificances[SignalDSIDs[i]] << std::endl;
     }
     // Make Plot
-    makePlot(finalSignificances,finalYields,"Combined_SRsr","All",0,model);
+    if(!orthogonal) makePlot(finalSignificances,finalYields,"PWC","All",0,model);
+    else            makePlot(finalSignificances,finalYields,"Combined","All",0,model);
   }
 
   return 0;
@@ -207,12 +216,17 @@ void doSingleRegionOptimizationStudy(
 
   double scaleFactor     = 10000.;
   double realtiveBGError = 0.30;
+  if(region.Contains("SRmT2,90"))       realtiveBGError = 0.15;
+  else if(region.Contains("SRmT2,120")) realtiveBGError = 0.25;
+  else if(region.Contains("SRmT2,150")) realtiveBGError = 0.50;
+  else if(region.Contains("SRmT2,180")) realtiveBGError = 0.75;
   int plotMode           = 0; // 0 : Significance - 1 : Yield
 
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
   std::cout << " Making the calculation for channel " << chan <<  std::endl;
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
   std::cout << " Printing Region " << region << " for a luminosity of " << scaleFactor << " ipb"      << std::endl; 
+  std::cout << " Total background uncertainty is " << realtiveBGError << std::endl; 
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
   std::cout << "==================================================================================================================================" << std::endl;
   std::cout << "|    Channel   |            ee            ||            mm             ||            em             ||           Total           |" << std::endl;
@@ -339,7 +353,7 @@ double getPrediction(TString source, TString region, TString channel, int mode)
   TString chCut = "";
   if(channel == "EE") chCut="l_flav[0]==0&&l_flav[1]==0";
   else if(channel == "MM") chCut="l_flav[0]==1&&l_flav[1]==1";
-  else if(channel == "EM") chCut="l_flav[0]!=l_flav[1]==0";
+  else if(channel == "EM") chCut="l_flav[0]!=l_flav[1]";
 
   // OS
   TString osCut = "(l_q[0]*l_q[1])<0";
@@ -356,19 +370,22 @@ double getPrediction(TString source, TString region, TString channel, int mode)
 
   // mT2
   TString mT2Cut = "";
-  if(region=="SRmT2a") mT2Cut = "mT2lep>90.";
-  if(region=="SRmT2b") mT2Cut = "mT2lep>100.";
-  if(region=="SRmT2c") mT2Cut = "mT2lep>110.";
-  if(region=="SRmT2d") mT2Cut = "mT2lep>120.";
-  if(region=="SRmT2e") mT2Cut = "mT2lep>130.";
-  if(region=="SRmT2f") mT2Cut = "mT2lep>140.";
-  if(region=="SRmT2g") mT2Cut = "mT2lep>150.";
-  if(region=="SRmT2h") mT2Cut = "mT2lep>160.";
-  if(region=="SRmT2i") mT2Cut = "mT2lep>170.";
-  if(region=="SRmT2j") mT2Cut = "mT2lep>180.";
-  if(region=="SRmT2k") mT2Cut = "mT2lep>190.";
-  if(region=="SRmT2l") mT2Cut = "mT2lep>200.";
-  if(region=="SRmT2m") mT2Cut = "mT2lep>210.";
+  if(region.Contains("SRmT2")) {
+    TObjArray* cutValues = region.Tokenize(","); 
+    int cutValuesSize = cutValues->GetEntries();
+    if(cutValuesSize == 2) { 
+      TObjString *lower = (TObjString*) (*cutValues)[1]; 
+      mT2Cut.Form("mT2lep>%s",lower->GetString().Data()); 
+    }
+    else if(cutValuesSize == 3) { 
+      TObjString *lower = (TObjString*) (*cutValues)[1]; 
+      TObjString *upper = (TObjString*) (*cutValues)[2]; 
+      mT2Cut.Form("mT2lep>%s&&mT2lep<%s",lower->GetString().Data(),upper->GetString().Data());
+    } 
+  } else {
+    std::cout << "Don't know region " << region << ", quitting ..." << std::endl;
+    return 0;
+  }
 
   // Full
   TString finalCut = "eventweight*(("     + chCut  + ")&&" 
@@ -537,7 +554,7 @@ void   makePlot(
 
   if(model == "ModeC") {
     lowMassX  = 100.;
-    highMassX = 600.;
+    highMassX = 700.;
     lowMassY  =   0.;
     highMassY = 500.;
   } else if(model == "DLiSlep") {
@@ -644,7 +661,7 @@ void   makePlot(
   text2->SetNDC(kTRUE);
   text2->SetTextSize(0.035);
   text2->Draw();
-  TLatex *text3     = new TLatex(0.2,0.76,"30% BG Uncertainty");
+  TLatex *text3     = new TLatex(0.2,0.76,"Variable BG Uncertainty");
   text3->SetNDC(kTRUE);
   text3->SetTextSize(0.025);
   text3->Draw();
@@ -662,7 +679,7 @@ void   makePlot(
   if(model == "ModeC") text6->Draw();
 
   if(plotmode == 0)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg/10invfb_n0220_30Percent_"+region+"_"+channel+"_"+model+".eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg/10invfb_n0220_VariableUnc_"+region+"_"+channel+"_"+model+".eps");
   else if(plotmode == 1)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg/10invfb_n0220_30Percent_"+region+"_"+channel+"_"+model+"_Yield.eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg/10invfb_n0220_VariableUnc_"+region+"_"+channel+"_"+model+"_Yield.eps");
 }

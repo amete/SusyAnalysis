@@ -32,6 +32,7 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"     , "nBaseLeptons==
                                                  ("SR2LA-V2"   , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8&&DPB>1.5" )
                                                  ("SR2L-Danny" , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&mT2lep>80.&&R2>0.65&&DPB>(1.0*TMath::Abs(cthllb)+2)" )
                                                  ("SR2LEWK-pre", "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&!(mll<60.||(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.))" )
+                                                 ("SR2LEWK-mT2-150", "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&!(mll<60.||(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.))&&mT2lep>150." )
 ;
 
 /// \brief Sample Colors

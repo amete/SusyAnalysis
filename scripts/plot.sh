@@ -1,4 +1,7 @@
 #!/bin/bash
+#mkdir -p /data/uclhc/uci/user/amete/analysis_n0220_run/figures/testcount;
+#cd /data/uclhc/uci/user/amete/analysis_n0220_run/figures/testcount;
+#plotFigures --regions SR2LEWK-mT2-150 --channels ee,mm,em --variables mT2lep --binValues 20,0,200 --plotLog;
 mkdir -p /data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg;
 cd /data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg;
 #mkdir -p /data/uclhc/uci/user/amete/analysis_n0220_run/figures/sherpa;
