@@ -21,7 +21,11 @@
 #include "SusyAnalysis/MT2_ROOT.h"
 #include "SusyNtuple/KinematicTools.h"
 
+// RestFrames stuff
+#include "RestFrames/RestFrames.hh"
+
 using namespace sflow;
+using namespace RestFrames;
 
 ///////////////////////////////////////////////////////////////////////
 // Usage
@@ -427,7 +431,7 @@ int main(int argc, char* argv[])
   }
 
   // Jet variables
-  JetVector baseJets, signalJets, centralLightJets, centralBJets, forwardJets;
+  JetVector baseJets, signalJets, centralLightJets, centralBJets, forwardJets, stop2lLightJets, stop2lBJets;
   *cutflow << [&](Superlink* sl, var_void*) { 
     baseJets = *sl->baseJets; 
     signalJets = *sl->jets; 
@@ -435,6 +439,10 @@ int main(int argc, char* argv[])
       if(sl->tools->m_jetSelector->isCentralLight(jet))  { centralLightJets.push_back(jet); } 
       else if(sl->tools->m_jetSelector->isCentralB(jet)) { centralBJets.push_back(jet);     } 
       else if(sl->tools->m_jetSelector->isForward(jet))  { forwardJets.push_back(jet);      } 
+    }
+    for(auto& jet : signalJets) {
+      if(!sl->tools->jetSelector().isB(jet)) { stop2lLightJets.push_back(jet); }
+      else                                   { stop2lBJets.push_back(jet);     }
     }
   };
 
@@ -459,6 +467,18 @@ int main(int argc, char* argv[])
   *cutflow << NewVar("number of forward jets"); {
     *cutflow << HFTname("nForwardJets");
     *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfFJets(*sl->baseJets)/*(*baseJets)*/; };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of central stop2l light jets"); {
+    *cutflow << HFTname("nStop2lLJets");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return (int) stop2lLightJets.size(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of central stop2l b jets"); {
+    *cutflow << HFTname("nStop2lBJets");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return (int) stop2lBJets.size(); };
     *cutflow << SaveVar();
   }
 
@@ -667,14 +687,143 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   } 
 
+  // Jigsaw variables
+  double MDR_jigsaw       = -999.; // "m_Delta^R
+  double DPB_vSS_jigsaw   = -999.; // "delta-phi-beta-R"
+  double RPT_jigsaw       = -999.; // "R_p_{T}"
+  double gamInvRp1_jigsaw = -999.;
+
+  *cutflow << [&](Superlink* /*sl*/, var_void*) -> void {
+    // declare the frames
+    LabRecoFrame lab("lab", "lab");
+    DecayRecoFrame ss("ss", "ss");
+    DecayRecoFrame s1("s1", "s1");
+    DecayRecoFrame s2("s2", "s2");
+    VisibleRecoFrame v1("v1", "v1");
+    VisibleRecoFrame v2("v2", "v2");
+    InvisibleRecoFrame i1("i1", "i1");
+    InvisibleRecoFrame i2("i2", "i2");
+
+    // connect the frames
+    lab.SetChildFrame(ss);
+    ss.AddChildFrame(s1);
+    ss.AddChildFrame(s2);
+    s1.AddChildFrame(v1);
+    s1.AddChildFrame(i1);
+    s2.AddChildFrame(v2);
+    s2.AddChildFrame(i2);
+
+    // check that the decay tree is connected properly
+    if(!lab.InitializeTree()) {
+      printf("makeMiniNtuple\t RestFrames::InitializeTree ERROR (\"%i\")    Unable to initialize tree from lab frame. Exitting. ",__LINE__);
+      exit(1); 
+    }
+
+    // define groups
+    InvisibleGroup inv("inv", "invsible group jigsaws");
+    inv.AddFrame(i1);
+    inv.AddFrame(i2);
+
+    CombinatoricGroup vis("vis", "visible object jigsaws");
+    vis.AddFrame(v1);
+    vis.SetNElementsForFrame(v1, 1, false);
+    vis.AddFrame(v2);
+    vis.SetNElementsForFrame(v2, 1, false);
+
+    SetMassInvJigsaw MinMassJigsaw("MinMass", "Invisible system mass jigsaw");
+    inv.AddJigsaw(MinMassJigsaw);
+
+    SetRapidityInvJigsaw RapidityJigsaw("RapidityJigsaw", "invisible system rapidity jigsaw");
+    inv.AddJigsaw(RapidityJigsaw);
+    RapidityJigsaw.AddVisibleFrames(lab.GetListVisibleFrames());
+
+    ContraBoostInvJigsaw ContraBoostJigsaw("ContraBoostJigsaw", "ContraBoost Invariant Jigsaw");
+    inv.AddJigsaw(ContraBoostJigsaw);
+    ContraBoostJigsaw.AddVisibleFrames((s1.GetListVisibleFrames()), 0);
+    ContraBoostJigsaw.AddVisibleFrames((s2.GetListVisibleFrames()), 1);
+    ContraBoostJigsaw.AddInvisibleFrame(i1, 0);
+    ContraBoostJigsaw.AddInvisibleFrame(i2, 1);
+
+    MinMassesCombJigsaw HemiJigsaw("hemi_jigsaw", "Minimize m_{v_{1,2}} jigsaw");
+    vis.AddJigsaw(HemiJigsaw);
+    HemiJigsaw.AddFrame(v1, 0);
+    HemiJigsaw.AddFrame(v2, 1);
+
+    // check that the jigsaws are in place
+    if(!lab.InitializeAnalysis()) {
+      printf("makeMiniNtuple\t RestFrames::InitializeAnalysis ERROR (\"%i\")    Unable to initialize analysis from lab frame. Exitting.",__LINE__);
+      exit(1);
+    }
+
+    // clear the event for sho
+    lab.ClearEvent();
+
+    // set the met
+    TVector3 met3vector(met.Px(), met.Py(), met.Pz());
+    inv.SetLabFrameThreeVector(met3vector);
+
+    // add leptons to the visible group
+    // leptons holds TLorentzVectors
+    vis.AddLabFrameFourVector(lepton0);
+    vis.AddLabFrameFourVector(lepton1);
+
+    // analayze that
+    if(!lab.AnalyzeEvent()) {
+      printf("makeMiniNtuple\t RestFrames::AnalyzeEvent ERROR. Exitting.");
+      exit(1);
+    }
+
+    /// system mass
+    double shat_jigsaw = ss.GetMass();
+
+    // RATIO OF CM pT
+    TVector3 vPTT = ss.GetFourVector(lab).Vect();
+    RPT_jigsaw = vPTT.Pt() / (vPTT.Pt() + shat_jigsaw / 4.);
+
+    // shapes
+    gamInvRp1_jigsaw = ss.GetVisibleShape();
+
+    // MDR_jigsaw
+    MDR_jigsaw = 2.0 * v1.GetEnergy(s1);
+
+    // BOOST ANGLES
+    DPB_vSS_jigsaw = ss.GetDeltaPhiBoostVisible();
+  };
+
+  *cutflow << NewVar("Jigsaw variables -- MDR"); {
+    *cutflow << HFTname("MDR_jigsaw");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      return MDR_jigsaw;
+    };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("Jigsaw variables -- RPT"); {
+    *cutflow << HFTname("RPT_jigsaw");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      return RPT_jigsaw;
+    };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("Jigsaw variables -- gamInvRp1"); {
+    *cutflow << HFTname("gamInvRp1_jigsaw");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      return gamInvRp1_jigsaw;
+    };
+    *cutflow << SaveVar();
+  }
+  *cutflow << NewVar("Jigsaw variables -- DPB_vSS"); {
+    *cutflow << HFTname("DPB_vSS_jigsaw");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double {
+      return DPB_vSS_jigsaw;
+    };
+    *cutflow << SaveVar();
+  }
+
   // Clear 
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
-    signalLeptons.clear(); 
-    baseJets.clear();
-    meff=0.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.;
-    //centralLightJets.clear();
-    //centralBJets.clear();
-    //forwardJets.clear();
+    baseLeptons.clear();signalLeptons.clear(); 
+    baseJets.clear(); signalJets.clear(); centralLightJets.clear(); centralBJets.clear(); forwardJets.clear(); stop2lLightJets.clear(); stop2lBJets.clear();
+    meff=2.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.,MDR_jigsaw=0.,RPT_jigsaw=0.,gamInvRp1_jigsaw=0.,DPB_vSS_jigsaw=0.;
   };
 
   ///////////////////////////////////////////////////////////////////////

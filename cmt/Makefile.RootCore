@@ -13,7 +13,7 @@ PACKAGE              = SusyAnalysis
 PACKAGE_PRELOAD      = RooStats
 
 # additional compilation flags to pass (not propagated to dependent packages):
-PACKAGE_CXXFLAGS     = 
+PACKAGE_CXXFLAGS     = -I$(ROOTCOREDIR)/../RestFrames/include
 
 # additional compilation flags to pass (propagated to dependent packages):
 PACKAGE_OBJFLAGS     = 
@@ -25,7 +25,7 @@ PACKAGE_LDFLAGS      =
 PACKAGE_BINFLAGS     = 
 
 # additional linker flags to pass (propagated to client libraries):
-PACKAGE_LIBFLAGS     = 
+PACKAGE_LIBFLAGS     = -lm -L$(ROOTCOREDIR)/../RestFrames/lib -lRestFrames
 
 # the list of packages we depend on:
 PACKAGE_DEP          = Superflow SusyNtuple

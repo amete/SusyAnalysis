@@ -15,6 +15,7 @@ main() {
   zjets_sherpa_files=($(   grep "361372\|361373\|361374\|361375\|361376\|361377\|361378\|361379\|36138\|36139\|36140\|36141\|36142\|36143\|36144\|36145\|361460\|361461\|361462\|361463\|361464\|361465\|361466\|361467" ${search_file}))
   zjets_powheg_files=($(   grep "361106\|361107\|361108" ${search_file}))
   c1c1_slsl_files=($(      grep "39250\|39251\|392520" ${search_file}))
+  stop_herwigpp_files=($(  grep "406009\|406010\|406011" ${search_file}))
 
   rm -f ${outputDir}/bg15_ttbar.txt
   for i in ${ttbar_files[@]}
@@ -78,6 +79,13 @@ main() {
     echo "${i}" >> ${outputDir}/sig15_c1c1_slsl.txt
   done
   $executable -i ${outputDir}/sig15_c1c1_slsl.txt -o ${outputDir}/sig15_c1c1_slsl
+
+  rm -f ${outputDir}/sig15_stop_herwigpp.txt
+  for i in ${stop_herwigpp_files[@]}
+  do
+    echo "${i}" >> ${outputDir}/sig15_stop_herwigpp.txt
+  done
+  $executable -i ${outputDir}/sig15_stop_herwigpp.txt -o ${outputDir}/sig15_stop_herwigpp
  
   return 0;
 }
