@@ -1,11 +1,11 @@
 #!/bin/bash
-#mkdir -p /data/uclhc/uci/user/amete/analysis_n0220_run/figures/testcount;
-#cd /data/uclhc/uci/user/amete/analysis_n0220_run/figures/testcount;
+#mkdir -p /data/uclhc/uci/user/amete/analysis_current_run/figures/testcount;
+#cd /data/uclhc/uci/user/amete/analysis_current_run/figures/testcount;
 #plotFigures --regions SR2LEWK-mT2-150 --channels ee,mm,em --variables mT2lep --binValues 20,0,200 --plotLog;
-mkdir -p /data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg;
-cd /data/uclhc/uci/user/amete/analysis_n0220_run/figures/powheg;
-#mkdir -p /data/uclhc/uci/user/amete/analysis_n0220_run/figures/sherpa;
-#cd /data/uclhc/uci/user/amete/analysis_n0220_run/figures/sherpa;
+mkdir -p /data/uclhc/uci/user/amete/analysis_current_run/figures/powheg;
+cd /data/uclhc/uci/user/amete/analysis_current_run/figures/powheg;
+#mkdir -p /data/uclhc/uci/user/amete/analysis_current_run/figures/sherpa;
+#cd /data/uclhc/uci/user/amete/analysis_current_run/figures/sherpa;
 plotFigures --regions SR2LEWK-pre --channels ee,mm,em --variables mT2lep --binValues 20,0,200 --plotLog;
 plotFigures --regions SR2LEWK-pre --channels ee,mm,em --variables ptL0,ptL1,mll,ptll,met --binValues 20,0,400 --plotLog;
 #plotFigures --regions SR2LEWK-pre --channels ee,mm,em --variables mll    --binValues 20,0,400 --plotLog;

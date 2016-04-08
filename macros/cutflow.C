@@ -1,7 +1,5 @@
 // \brief : Quick script to check cutflow for stop 2L
-//void cutflow(TString filename = "/scratch/amete/Stop2LTest/CENTRAL_410000.root")
-//void cutflow(TString filename = "../../../cutflow/CENTRAL_361068.root")
-void cutflow(TString filename = "../../../cutflow/CENTRAL_406009.root")
+void cutflow(TString filename = "../../../cutflow/n0222/CENTRAL_406009.root")
 {
   TCut channels[2]     = { "l_flav[0]==l_flav[1]", "(l_flav[0]!=l_flav[1])" }; // SF - DF
   TCut signs[2]        = { "(l_q[0]*l_q[1])<0"   , "(l_q[0]*l_q[1])>0" };      // OS - SS

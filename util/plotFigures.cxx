@@ -83,8 +83,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/mc15_13TeV_powheg.root");
-  //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0220_run/hfts/mc15_13TeV_sherpa.root");
+  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_current_run/hfts/mc15_13TeV_powheg.root");
+  //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_current_run/hfts/mc15_13TeV_sherpa.root");
   plots->setSampleList     (sampleList    );
   plots->setSystematicsList(systematicList);
   plots->setBinValuesList  (binValueList  );
