@@ -20,11 +20,11 @@ void list_files(vector<string>& list, string dir);
 map<string, string> get_listnames();
 
 // MC_TEXT_DIR : directory containing the filelists
-const string MC_TEXT_DIR     = "/data/uclhc/uci/user/amete/analysis_current/inputs/";
+const string MC_TEXT_DIR     = "/data/uclhc/uci/user/amete/analysis_n0222/inputs/";
 // RAW_SAMPLES_DIR : directory where the "raw" ntuples are located
-const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_current_run/outputs/";
+const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/outputs/";
 // NEW_SAMPLES_DIR : output location for the merged ntuple
-const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_current_run/hfts/";
+const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/hfts/";
 // OUT_FILENAME : name of output, merged ntuple
 const string OUT_FILENAME    = "mc15_13TeV.root";
 

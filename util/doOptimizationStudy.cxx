@@ -85,7 +85,7 @@ int main(int argc, char** argv)
   std::string regS  = "SRmT2,180";
   std::string chanS = "All";
   std::string model = "ModeC";
-  std::string input = "/data/uclhc/uci/user/amete/analysis_current_run/hfts/mc15_13TeV_powheg.root";
+  std::string input = "/data/uclhc/uci/user/amete/analysis_n0222_run/hfts/mc15_13TeV_powheg.root";
   bool multipleSR   = true;
 
   for(int i = 1; i < argc; i++) {
@@ -679,7 +679,7 @@ void   makePlot(
   if(model == "ModeC") text6->Draw();
 
   if(plotmode == 0)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_current_run/figures/powheg/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+".eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/figures/powheg/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+".eps");
   else if(plotmode == 1)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_current_run/figures/powheg/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+"_Yield.eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/figures/powheg/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+"_Yield.eps");
 }

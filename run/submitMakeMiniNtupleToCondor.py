@@ -6,14 +6,13 @@ import subprocess
 
 ana_name = "makeMiniNtuple"
 tar_location = "/data/uclhc/uci/user/amete/"
-out_dir = "/data/uclhc/uci/user/amete/analysis_current_run/outputs/"
-log_dir = "/data/uclhc/uci/user/amete/analysis_current_run/logs/"
-tarred_dir = "analysis_current/"
-filelist_dir = "/data/uclhc/uci/user/amete/analysis_current/inputs/"
-in_job_filelist_dir = "/analysis_current/inputs/"
-#samples = ["bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_wjets_sherpa","bg15_zjets_sherpa","data15","sig15_c1c1_slsl"]
-samples = ["bg15_diboson_powheg","bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_wjets_powheg","bg15_wjets_sherpa","bg15_zjets_powheg","bg15_zjets_sherpa","data15","sig15_c1c1_slsl"]
-#samples = ["bg15_ttbar"]
+out_dir = "/data/uclhc/uci/user/amete/analysis_n0222_run/outputs/"
+log_dir = "/data/uclhc/uci/user/amete/analysis_n0222_run/logs/"
+tarred_dir = "analysis_n0222/"
+filelist_dir = "/data/uclhc/uci/user/amete/analysis_n0222/inputs/"
+in_job_filelist_dir = "/analysis_n0222/inputs/"
+#samples = ["bg15_diboson_powheg","bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_ttbar_twolep","bg15_wjets_powheg","bg15_wjets_sherpa","bg15_zjets_powheg","bg15_zjets_sherpa","data15","sig15_c1c1_slsl","sig15_stop_herwigpp"]
+samples = ["sig15_stop_herwigpp"]
 
 doBrick = False
 doLocal = True 
@@ -125,8 +124,8 @@ def look_for_condor_executable() :
     f.write('work_dir=${PWD}\n')
     f.write('echo "untarring area.tgz"\n')
     f.write('tar -xzf area.tgz\n\n')
-    f.write('echo "done untarring\n"')
-    f.write('echo "current directory structure:\n"')
+    f.write('echo "done untarring"\n')
+    f.write('echo "current directory structure:"\n')
     f.write('ls -ltrh\n\n')
     f.write('export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase\n')
     f.write('source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh\n')
@@ -138,9 +137,9 @@ def look_for_condor_executable() :
     f.write('source susynt-read/bash/setup_root.sh\n')
     f.write('echo "Calling : source RootCore/local_setup.sh"\n')
     f.write('source RootCore/local_setup.sh\n')
-    #f.write('echo "Calling : cd SuperRest/"\n')
-    #f.write('cd SuperRest/\n')
-    #f.write('source setRestFrames.sh\n')
+    f.write('echo "Calling : cd SusyAnalysis/scripts"\n')
+    f.write('cd SusyAnalysis/scripts\n')
+    f.write('source setRestFrames.sh\n')
     f.write('echo "Calling : cd ${work_dir}"\n')
     f.write('cd ${work_dir}\n')
     f.write('echo "Calling : ${sflow_exec} -f ${input} ${sflow_options}"\n')
