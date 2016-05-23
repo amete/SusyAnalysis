@@ -38,15 +38,15 @@ vector<hft_process> defineTrees(bool do_data) {
    
     if(!do_data) { 
         // bg15_diboson_powheg      bg15_diboson_sherpa      bg15_singletop      bg15_ttbar      bg15_wjets_powheg      bg15_wjets_sherpa      bg15_zjets_powheg      bg15_zjets_sherpa      data15  
-        process.in_file_string   = "bg15_wjets_powheg.txt";
+        process.in_file_string   = "bg15_wjets_sherpa.txt";
         process.output_tree_name = "W";
         out_process.push_back(process);
         
-        process.in_file_string   = "bg15_zjets_powheg.txt";
+        process.in_file_string   = "bg15_zjets_sherpa.txt";
         process.output_tree_name = "Z";
         out_process.push_back(process);
         
-        process.in_file_string   = "bg15_diboson_powheg.txt";
+        process.in_file_string   = "bg15_diboson_sherpa.txt";
         process.output_tree_name = "VV";
         out_process.push_back(process);
         
@@ -59,13 +59,18 @@ vector<hft_process> defineTrees(bool do_data) {
         out_process.push_back(process);
 
         // Signal - to be updated!!!
-        //for(unsigned int dsid = 406009; dsid<=406011; ++dsid ) {
         for(unsigned int dsid = 392500; dsid<=392520; ++dsid ) {
-          if( dsid == 392503 || dsid == 392513 ) continue;
+          if( dsid == 392503 || dsid == 392513 || dsid == 392516) continue;
           process.in_file_string   = "sig15_" + to_string(dsid)+".txt";
           process.output_tree_name = to_string(dsid);
           out_process.push_back(process);
         }
+        for(unsigned int dsid = 406009; dsid<=406011; ++dsid ) {
+          process.in_file_string   = "sig15_" + to_string(dsid)+".txt";
+          process.output_tree_name = to_string(dsid);
+          out_process.push_back(process);
+        }
+
     }
     else if(do_data) {
         process.in_file_string   = "data15.txt";

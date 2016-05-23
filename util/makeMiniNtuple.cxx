@@ -823,7 +823,7 @@ int main(int argc, char* argv[])
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
     baseLeptons.clear();signalLeptons.clear(); 
     baseJets.clear(); signalJets.clear(); centralLightJets.clear(); centralBJets.clear(); forwardJets.clear(); stop2lLightJets.clear(); stop2lBJets.clear();
-    meff=2.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.,MDR_jigsaw=0.,RPT_jigsaw=0.,gamInvRp1_jigsaw=0.,DPB_vSS_jigsaw=0.;
+    meff=0.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.,MDR_jigsaw=0.,RPT_jigsaw=0.,gamInvRp1_jigsaw=0.,DPB_vSS_jigsaw=0.;
   };
 
   ///////////////////////////////////////////////////////////////////////

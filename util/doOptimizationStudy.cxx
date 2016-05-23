@@ -29,7 +29,7 @@
 #include "RooStats/NumberCountingUtils.h"
 
 #define DEBUG false
-#define NMODECPOINTS 19
+#define NMODECPOINTS 18
 #define NDLISLEPPOINTS 1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
   std::string regS  = "SRmT2,180";
   std::string chanS = "All";
   std::string model = "ModeC";
-  std::string input = "/data/uclhc/uci/user/amete/analysis_n0222_run/hfts/mc15_13TeV_powheg.root";
+  std::string input = "/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/hfts/mc15_13TeV_sherpa.root";
   bool multipleSR   = true;
 
   for(int i = 1; i < argc; i++) {
@@ -341,7 +341,7 @@ double getPrediction(TString source, TString region, TString channel, int mode)
   TTree* tree = (TTree*) m_inputFile->Get(source+"_CENTRAL");
   
   if(!tree){
-    std::cout << "Cannot find tree, quitting..." << std::endl;
+    std::cout << "Cannot find tree (" << source << "), quitting..." << std::endl;
     return 0;
   }
   
@@ -365,7 +365,7 @@ double getPrediction(TString source, TString region, TString channel, int mode)
   TString jetCut = "nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0";
 
   // Mll
-  TString mllCut = "mll>60.";
+  TString mllCut = "mll>20.";
   if(channel=="EE"||channel=="MM") mllCut+="&&TMath::Abs(mll-90.2)>10."; // Z-veto
 
   // mT2
@@ -461,7 +461,7 @@ TGraph* ContourGraph(TH2D* hist)
 void getModeCDSIDs(TString dsids[])
 {
   TString SignalDSIDs[NMODECPOINTS] = { "392500","392501","392502","392504","392505","392506","392507","392508","392509", "392510",
-                                        "392511","392512","392514","392515","392516","392517","392518","392519","392520" };
+                                        "392511","392512","392514","392515","392517","392518","392519","392520" };
 
   std::copy(SignalDSIDs, SignalDSIDs+NMODECPOINTS,dsids);
 }
@@ -679,7 +679,7 @@ void   makePlot(
   if(model == "ModeC") text6->Draw();
 
   if(plotmode == 0)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/figures/powheg/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+".eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/sherpa/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+".eps");
   else if(plotmode == 1)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/figures/powheg/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+"_Yield.eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/sherpa/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+"_Yield.eps");
 }

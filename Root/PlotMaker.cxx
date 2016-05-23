@@ -14,6 +14,7 @@
 #include "SusyAnalysis/AtlasUtils.h"
 #include "SusyAnalysis/PlotMaker.h"
 #include "SusyAnalysis/PlotMakerDefs.h"
+#include "RooStats/NumberCountingUtils.h"
 
 #include "TTree.h"
 #include "THStack.h"
@@ -40,7 +41,9 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  float luminosity = 3209.05; // in pb-1
+  //float luminosity = 3209.05; // in pb-1
+  float luminosity = 5000.0; // in pb-1
+  int   drawRatio  = 2; // 0 : no - 1 : data/mc - 2 : zbi
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Print information
@@ -87,6 +90,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     cut.Append("&&((l_flav[0]==0&&l_flav[1]==1)||(l_flav[0]==1&&l_flav[1]==0))");
   else if(channel.EqualTo("mm"))
     cut.Append("&&l_flav[0]==1&&l_flav[1]==1");
+  else if(channel.EqualTo("sf"))
+    cut.Append("&&((l_flav[0]==1&&l_flav[1]==1)||(l_flav[0]==0&&l_flav[1]==0))");
   else if(!channel.EqualTo("all")) {
     cerr << "PlotMaker::ERROR   Unknown channel " << channel << endl;
     return;
@@ -210,14 +215,17 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // Draw the canvas
   TCanvas* canvas = new TCanvas("canvas","canvas",500,500);
   TPad*    topPad = new TPad("pTop","pTop",0,0.2,1,1);
-  //TPad*    topPad = new TPad("pTop","pTop",0,0,1,1);
   TPad*    botPad = new TPad("pBot","pBot",0,0.0,1,0.3);
-  topPad->Draw();
-  botPad->Draw();
+  if(drawRatio) {
+    topPad->Draw();
+    botPad->Draw();
+  }
 
   // Top Pad
-  topPad               ->cd();
-  topPad               ->SetBottomMargin(0.15);
+  if(drawRatio) {
+    topPad               ->cd();
+    topPad               ->SetBottomMargin(0.15);
+  }
   dummyHisto           ->Draw();
   mcStack              ->Draw("same && hists");
   nominalAsymErrors    ->Draw("same && E2");
@@ -326,15 +334,33 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     xlabel = "|x_{1}-x_{2}|";
   }
   else if( variable.EqualTo("abs_cthllb") ) {
-    xlabel = "cos#theta_{b}";
+    xlabel = "|cos#theta_{b}|";
+  }
+  else if( variable.EqualTo("MDR_jigsaw") ) {
+    xlabel = "m_{#Delta}^{R} [GeV]";
+    ylabel.Append(" GeV");
+  }
+  else if( variable.EqualTo("RPT_jigsaw") ) {
+    xlabel = "RPT";
+  }
+  else if( variable.EqualTo("gamInvRp1_jigsaw") ) {
+    xlabel = "1/#gamma_{P}^{PP}";
+  }
+  else if( variable.EqualTo("DPB_vSS_jigsaw") ) {
+    xlabel = "#Delta#phi_{#beta}^{R}";
   }
   else {
     xlabel = variable;
   }
   dummyHisto->GetXaxis()->SetTitle(xlabel); 
   dummyHisto->GetXaxis()->SetTitleSize(0.05);
-  dummyHisto->GetXaxis()->SetLabelOffset(1.2); 
-  dummyHisto->GetXaxis()->SetLabelSize(0.03);
+  if(drawRatio) { 
+    dummyHisto->GetXaxis()->SetLabelOffset(1.2); 
+    dummyHisto->GetXaxis()->SetLabelSize(0.03);
+  }
+  else {
+    dummyHisto->GetXaxis()->SetLabelSize(0.04);
+  }
   dummyHisto->GetYaxis()->SetTitle(ylabel); 
   dummyHisto->GetYaxis()->SetTitleSize(0.05);
   dummyHisto->GetYaxis()->SetTitleOffset(1.2);
@@ -357,73 +383,128 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   myText(0.20,0.88,kBlack,annoyingLabel1);
   myText(0.20,0.80,kBlack,annoyingLabel2);
   myText(0.20,0.72,kBlack,annoyingLabel3);
-  myText(0.45,0.72,kBlack,annoyingLabel4);
+  myText(0.50,0.72,kBlack,annoyingLabel4);
 
   // Bottom Pad
-  botPad->cd();
-  botPad->SetBottomMargin(0.3);
+  if(drawRatio) {
+    botPad->cd();
+    botPad->SetBottomMargin(0.3);
 
-  // Dummy ratio histogram to set the scale and titles, etc.
-  // I don't really like this part
-  TH1D* ratio_original = (TH1D*) dummyHisto->Clone(); //(TH1D*) stackHisto->Clone();
-  ratio_original->Reset();
-  ratio_original->SetMarkerSize(1.2);
-  ratio_original->SetMarkerStyle(20);
-  ratio_original->SetLineColor(kBlack);
-  ratio_original->SetLineWidth(2);
-  ratio_original->GetXaxis()->SetTitle(xlabel);
-  ratio_original->GetYaxis()->SetTitle("Data/SM");
-  ratio_original->GetXaxis()->SetLabelSize(0.1);
-  ratio_original->GetXaxis()->SetLabelOffset(0.02);
-  ratio_original->GetXaxis()->SetTitleSize(0.12);
-  ratio_original->GetXaxis()->SetTitleOffset(1.);
-  ratio_original->GetYaxis()->SetRangeUser(0,2);
-  ratio_original->GetYaxis()->SetLabelSize(0.1);
-  ratio_original->GetYaxis()->SetTitleSize(0.12);
-  ratio_original->GetYaxis()->SetTitleOffset(0.5);
-  ratio_original->GetYaxis()->SetNdivisions(5);
+    // Dummy ratio histogram to set the scale and titles, etc.
+    // I don't really like this part
+    TH1D* ratio_original = (TH1D*) dummyHisto->Clone(); //(TH1D*) stackHisto->Clone();
+    ratio_original->Reset();
+    ratio_original->SetMarkerSize(1.2);
+    ratio_original->SetMarkerStyle(20);
+    ratio_original->SetLineColor(kBlack);
+    ratio_original->SetLineWidth(2);
+    ratio_original->GetXaxis()->SetTitle(xlabel);
+    if(drawRatio == 1) ratio_original->GetYaxis()->SetTitle("Data/SM");
+    else if(drawRatio == 2) ratio_original->GetYaxis()->SetTitle("Z_{Bi} (High mass)");
+    ratio_original->GetXaxis()->SetLabelSize(0.1);
+    ratio_original->GetXaxis()->SetLabelOffset(0.02);
+    ratio_original->GetXaxis()->SetTitleSize(0.12);
+    ratio_original->GetXaxis()->SetTitleOffset(1.);
+    if(drawRatio == 1) ratio_original->GetYaxis()->SetRangeUser(0,2);
+    else if(drawRatio == 2) ratio_original->GetYaxis()->SetRangeUser(0,6);
+    ratio_original->GetYaxis()->SetLabelSize(0.1);
+    ratio_original->GetYaxis()->SetTitleSize(0.12);
+    ratio_original->GetYaxis()->SetTitleOffset(0.5);
+    ratio_original->GetYaxis()->SetNdivisions(5);
 
-  // Build the ratio's error band
-  TGraphAsymmErrors* ratioBand   = new TGraphAsymmErrors( *nominalAsymErrors ); 
-  buildRatioErrorBand(nominalAsymErrors,ratioBand);
+    // Data/MC
+    if(drawRatio == 1) {
+      // Build the ratio's error band
+      TGraphAsymmErrors* ratioBand   = new TGraphAsymmErrors( *nominalAsymErrors ); 
+      buildRatioErrorBand(nominalAsymErrors,ratioBand);
+    
+      // Get the ratio
+      // For Data/MC only use the statistical error for data
+      // because we explicitly draw the MC error band
+      TGraphAsymmErrors* nominalAsymErrorsNoError = new TGraphAsymmErrors( *nominalAsymErrors );
+      for(int i=1; i<=nominalAsymErrorsNoError->GetN(); ++i) {
+        nominalAsymErrorsNoError->SetPointError(i-1,0,0,0,0);
+      }
+      TGraphAsymmErrors* ratio_raw = myTGraphErrorsDivide(Data,nominalAsymErrorsNoError);
+      TGraphAsymmErrors* ratio     = new TGraphAsymmErrors();
+    
+      double x1=0; double y1=0; unsigned int newIndex = 0.;
+      for(int kk=0; kk<ratio_raw->GetN(); ++kk){
+        ratio_raw->GetPoint(kk, x1,y1);
+        if(y1 > 0.) {
+          ratio->SetPoint(newIndex, x1, y1);
+          ratio->SetPointError(newIndex, ratio_raw->GetErrorXlow(kk), ratio_raw->GetErrorXhigh(kk), ratio_raw->GetErrorYlow(kk), ratio_raw->GetErrorYhigh(kk));
+          newIndex++;
+        }
+      }
+      ratio->SetMarkerSize(1.2);
+      ratio->SetMarkerStyle(20);
+      ratio->SetLineColor(kBlack);
+      ratio->SetLineWidth(2);
+    
+      // Make the line at 1 for the ratio plot
+      TLine *line = new TLine(dummyHisto->GetXaxis()->GetXmin(),1,dummyHisto->GetXaxis()->GetXmax(),1);
+      line->SetLineColor(kRed);
+      line->SetLineStyle(7);
+    
+      // Draw
+      ratio_original->Draw();
+      ratioBand     ->Draw("same && E2");
+      line          ->Draw();
+      ratio         ->Draw("same && P && 0");
+      gPad          ->SetGridy(1);
+    } // drawRatio == 1
+    else if (drawRatio == 2) {
+      TGraphAsymmErrors* ratio     = new TGraphAsymmErrors();
 
-  // Get the ratio
-  // For Data/MC only use the statistical error for data
-  // because we explicitly draw the MC error band
-  TGraphAsymmErrors* nominalAsymErrorsNoError = new TGraphAsymmErrors( *nominalAsymErrors );
-  for(int i=1; i<=nominalAsymErrorsNoError->GetN(); ++i) {
-    nominalAsymErrorsNoError->SetPointError(i-1,0,0,0,0);
-  }
-  TGraphAsymmErrors* ratio_raw = myTGraphErrorsDivide(Data,nominalAsymErrorsNoError);
-  TGraphAsymmErrors* ratio     = new TGraphAsymmErrors();
+      for(int kk=1; kk<stackHisto->GetXaxis()->GetNbins()+1; ++kk){
+        float bgAboveThreshold    = stackHisto->Integral(kk,-1);
+        float xlowEdgeAtThreshold = stackHisto->GetXaxis()->GetBinLowEdge(kk);
+        float xcenterAtThreshold  = stackHisto->GetXaxis()->GetBinCenter(kk);
 
-  double x1=0; double y1=0; unsigned int newIndex = 0.;
-  for(int kk=0; kk<ratio_raw->GetN(); ++kk){
-    ratio_raw->GetPoint(kk, x1,y1);
-    if(y1 > 0.) {
-      ratio->SetPoint(newIndex, x1, y1);
-      ratio->SetPointError(newIndex, ratio_raw->GetErrorXlow(kk), ratio_raw->GetErrorXhigh(kk), ratio_raw->GetErrorYlow(kk), ratio_raw->GetErrorYhigh(kk));
-      newIndex++;
+        // Currently only one signal
+        float sigAboveThrehold    = 0.;
+        for(unsigned int isample=0; isample<m_sampleList.size(); ++isample) {
+          if( m_sampleList.at(isample).find("392510")!=std::string::npos ) {
+            sigAboveThrehold = histograms[isample]->Integral(kk,-1);
+            break;
+          }
+        }
+
+        // Calculate and print
+        float bgunc = 0.3;
+        //if(xlowEdgeAtThreshold > 149.)       { bgunc = 0.50; }
+        //else if(xlowEdgeAtThreshold > 119.)  { bgunc = 0.25; }
+        //else                                 { bgunc = 0.15; }
+        float signfAboveThreshold = RooStats::NumberCountingUtils::BinomialExpZ( sigAboveThrehold, bgAboveThreshold, bgunc);
+        TString printline;
+        printline.Form("x [%*.2f,inf] : BG = %.2f (%% %.2f) \t SIG = %.2f \t ZBi %.2f", 3, xlowEdgeAtThreshold, bgAboveThreshold, bgunc, sigAboveThrehold, signfAboveThreshold);
+        std::cout << printline << std::endl;
+
+        // Make the line at 1 for the ratio plot
+        TLine *line1 = new TLine(dummyHisto->GetXaxis()->GetXmin(),1.64,dummyHisto->GetXaxis()->GetXmax(),1.64);
+        line1->SetLineColor(kRed);
+        line1->SetLineStyle(7);
+        TLine *line2 = new TLine(dummyHisto->GetXaxis()->GetXmin(),3.00,dummyHisto->GetXaxis()->GetXmax(),3.00);
+        line2->SetLineColor(kGreen+3);
+        line2->SetLineStyle(7);
+        TLine *line3 = new TLine(dummyHisto->GetXaxis()->GetXmin(),5.00,dummyHisto->GetXaxis()->GetXmax(),5.00);
+        line3->SetLineColor(kOrange+3);
+        line3->SetLineStyle(7);
+    
+        // Set and draw
+        ratio->SetPoint(kk-1, xcenterAtThreshold, signfAboveThreshold);
+        ratio_original->Draw();
+        ratio         ->Draw("same && P && 0");
+        line1         ->Draw();
+        line2         ->Draw();
+        line3         ->Draw();
+        gPad          ->SetGridy(1);
+      } // drawRatio == 2
     }
-  }
-  ratio->SetMarkerSize(1.2);
-  ratio->SetMarkerStyle(20);
-  ratio->SetLineColor(kBlack);
-  ratio->SetLineWidth(2);
+  } // end of drawRatio
 
-  // Make the line at 1 for the ratio plot
-  TLine *line = new TLine(dummyHisto->GetXaxis()->GetXmin(),1,dummyHisto->GetXaxis()->GetXmax(),1);
-  line->SetLineColor(kRed);
-  line->SetLineStyle(7);
-
-  // Draw
-  ratio_original->Draw();
-  ratioBand     ->Draw("same && E2");
-  line          ->Draw();
-  ratio         ->Draw("same && P && 0");
-  gPad          ->SetGridy(1);
-
-  TString plotName = channel + "_" + region + "_" + variable + ".eps" ;
+  TString plotName = channel + "_" + region + "_" + variable + "_5ifb.eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 
@@ -431,11 +512,20 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   for(unsigned int isample=0; isample<m_sampleList.size(); ++isample) {
     TString line;
     double totErr = 0., tot = histograms[isample]->IntegralAndError(0,-1,totErr);
-    line.Form("%9s \t %.2f +/- %.2f", m_sampleList.at(isample).c_str(),tot,totErr);
-    std::cout << line << std::endl;
+    if( m_sampleList.at(isample).find("406")!=std::string::npos ||
+        m_sampleList.at(isample).find("392")!=std::string::npos ) {
+      double signf   = RooStats::NumberCountingUtils::BinomialExpZ( tot, bkgTot, 0.3 );
+      double signf_a = RooStats::NumberCountingUtils::BinomialExpZ( tot*(10/3.21), bkgTot*(10/3.21), 0.3 );
+      double signf_b = RooStats::NumberCountingUtils::BinomialExpZ( tot*(10/3.21), bkgTot*(10/3.21), 0.5 );
+      line.Form("%9s \t %.2f +/- %.2f \t Zbi (actual) = %.2f - Zbi (*10/3.21) = %.2f - Zbi (*10/3.21 and 50%%) = %.2f", m_sampleList.at(isample).c_str(),tot,totErr,signf,signf_a,signf_b);
+      std::cout << line << std::endl;
+    } else {
+      line.Form("%9s \t %.2f +/- %.2f", m_sampleList.at(isample).c_str(),tot,totErr);
+      std::cout << line << std::endl;
+    }
     if(isample==m_sampleList.size()-1) {
       line.Form("Total BG \t %.2f +/- %.2f",bkgTot,bkgError);
-    std::cout << line << std::endl;
+      std::cout << line << std::endl;
     }
   }
   
@@ -446,12 +536,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   delete Data;
   delete mcStack;
   delete nominalAsymErrors;
-  delete nominalAsymErrorsNoError;
-  delete ratioBand;
+  //delete nominalAsymErrorsNoError;
+  //delete ratioBand;
   delete dummyHisto;
-  //delete ratio_original;
-  delete ratio_raw;
-  delete ratio;
+  //delete ratio_raw;
+  //delete ratio;
   delete totalSysHisto;
   delete legend;
   delete canvas;
