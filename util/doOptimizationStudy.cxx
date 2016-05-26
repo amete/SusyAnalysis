@@ -29,7 +29,7 @@
 #include "RooStats/NumberCountingUtils.h"
 
 #define DEBUG false
-#define NMODECPOINTS 18
+#define NMODECPOINTS 19
 #define NDLISLEPPOINTS 1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,12 +214,12 @@ void doSingleRegionOptimizationStudy(
   if(model == "ModeC") getModeCDSIDs(SignalDSIDs);
   else if (model == "DLiSlep") getDLiSlepDSIDs(SignalDSIDs);
 
-  double scaleFactor     = 10000.;
+  double scaleFactor     = 5000.;
   double realtiveBGError = 0.30;
-  if(region.Contains("SRmT2,90"))       realtiveBGError = 0.15;
-  else if(region.Contains("SRmT2,120")) realtiveBGError = 0.25;
-  else if(region.Contains("SRmT2,150")) realtiveBGError = 0.50;
-  else if(region.Contains("SRmT2,180")) realtiveBGError = 0.75;
+  //if(region.Contains("SRmT2,90"))       realtiveBGError = 0.15;
+  //else if(region.Contains("SRmT2,120")) realtiveBGError = 0.25;
+  //else if(region.Contains("SRmT2,150")) realtiveBGError = 0.50;
+  //else if(region.Contains("SRmT2,180")) realtiveBGError = 0.75;
   int plotMode           = 0; // 0 : Significance - 1 : Yield
 
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
@@ -461,7 +461,7 @@ TGraph* ContourGraph(TH2D* hist)
 void getModeCDSIDs(TString dsids[])
 {
   TString SignalDSIDs[NMODECPOINTS] = { "392500","392501","392502","392504","392505","392506","392507","392508","392509", "392510",
-                                        "392511","392512","392514","392515","392517","392518","392519","392520" };
+                                        "392511","392512","392514","392515","392516","392517","392518","392519","392520" };
 
   std::copy(SignalDSIDs, SignalDSIDs+NMODECPOINTS,dsids);
 }
@@ -657,11 +657,11 @@ void   makePlot(
   text1->SetNDC(kTRUE);
   text1->SetTextSize(0.04);
   text1->Draw();
-  TLatex *text2     = new TLatex(0.2,0.82,"#scale[0.6]{#int} L dt = 10 fb^{-1}  #sqrt{s} = 13 TeV");
+  TLatex *text2     = new TLatex(0.2,0.82,"#scale[0.6]{#int} L dt = 5 fb^{-1}  #sqrt{s} = 13 TeV");
   text2->SetNDC(kTRUE);
   text2->SetTextSize(0.035);
   text2->Draw();
-  TLatex *text3     = new TLatex(0.2,0.76,"Variable BG Uncertainty");
+  TLatex *text3     = new TLatex(0.2,0.76,"30% BG Uncertainty");
   text3->SetNDC(kTRUE);
   text3->SetTextSize(0.025);
   text3->Draw();
@@ -679,7 +679,7 @@ void   makePlot(
   if(model == "ModeC") text6->Draw();
 
   if(plotmode == 0)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/sherpa/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+".eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/sherpa/5invfb_n0222_30percentUnc_"+region+"_"+channel+"_"+model+".eps");
   else if(plotmode == 1)
-    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/sherpa/10invfb_n0222_VariableUnc_"+region+"_"+channel+"_"+model+"_Yield.eps");
+    c->SaveAs("/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/sherpa/5invfb_n0222_30percentUnc_"+region+"_"+channel+"_"+model+"_Yield.eps");
 }

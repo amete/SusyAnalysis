@@ -22,9 +22,9 @@ map<string, string> get_listnames();
 // MC_TEXT_DIR : directory containing the filelists
 const string MC_TEXT_DIR     = "/data/uclhc/uci/user/amete/analysis_n0222/inputs/";
 // RAW_SAMPLES_DIR : directory where the "raw" ntuples are located
-const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/outputs/";
+const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/outputs/";
 // NEW_SAMPLES_DIR : output location for the merged ntuple
-const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/hfts/";
+const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/hfts/";
 // OUT_FILENAME : name of output, merged ntuple
 const string OUT_FILENAME    = "mc15_13TeV.root";
 
@@ -60,7 +60,7 @@ vector<hft_process> defineTrees(bool do_data) {
 
         // Signal - to be updated!!!
         for(unsigned int dsid = 392500; dsid<=392520; ++dsid ) {
-          if( dsid == 392503 || dsid == 392513 || dsid == 392516) continue;
+          if( dsid == 392503 || dsid == 392513 ) continue;
           process.in_file_string   = "sig15_" + to_string(dsid)+".txt";
           process.output_tree_name = to_string(dsid);
           out_process.push_back(process);

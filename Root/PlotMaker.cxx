@@ -41,9 +41,9 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  //float luminosity = 3209.05; // in pb-1
-  float luminosity = 5000.0; // in pb-1
-  int   drawRatio  = 2; // 0 : no - 1 : data/mc - 2 : zbi
+  float luminosity = 3209.05; // in pb-1
+  //float luminosity = 5000.0; // in pb-1
+  int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Print information
@@ -400,7 +400,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     ratio_original->SetLineWidth(2);
     ratio_original->GetXaxis()->SetTitle(xlabel);
     if(drawRatio == 1) ratio_original->GetYaxis()->SetTitle("Data/SM");
-    else if(drawRatio == 2) ratio_original->GetYaxis()->SetTitle("Z_{Bi} (High mass)");
+    else if(drawRatio == 2) ratio_original->GetYaxis()->SetTitle("Z_{Bi} (High-#Delta M)");
     ratio_original->GetXaxis()->SetLabelSize(0.1);
     ratio_original->GetXaxis()->SetLabelOffset(0.02);
     ratio_original->GetXaxis()->SetTitleSize(0.12);
@@ -466,6 +466,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
         float sigAboveThrehold    = 0.;
         for(unsigned int isample=0; isample<m_sampleList.size(); ++isample) {
           if( m_sampleList.at(isample).find("392510")!=std::string::npos ) {
+          //if( m_sampleList.at(isample).find("392508")!=std::string::npos ) {
             sigAboveThrehold = histograms[isample]->Integral(kk,-1);
             break;
           }
@@ -504,7 +505,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     }
   } // end of drawRatio
 
-  TString plotName = channel + "_" + region + "_" + variable + "_5ifb.eps" ;
+  TString plotName = channel + "_" + region + "_" + variable + ".eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 
