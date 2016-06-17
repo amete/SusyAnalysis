@@ -19,12 +19,16 @@ using namespace std;
 void list_files(vector<string>& list, string dir);
 map<string, string> get_listnames();
 
+// Analysis : EWK2L or Stop2L
+const string ANALYSIS        = "EWK2L";
+// SusyNt version
+const string SUSYNTVER       = "n0224";
 // MC_TEXT_DIR : directory containing the filelists
-const string MC_TEXT_DIR     = "/data/uclhc/uci/user/amete/analysis_n0222/inputs/";
+const string MC_TEXT_DIR     = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"/inputs_"+ANALYSIS+"/";
 // RAW_SAMPLES_DIR : directory where the "raw" ntuples are located
-const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/outputs/";
+const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"_run/"+ANALYSIS+"/outputs/";
 // NEW_SAMPLES_DIR : output location for the merged ntuple
-const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/hfts/";
+const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"_run/"+ANALYSIS+"/hfts/";
 // OUT_FILENAME : name of output, merged ntuple
 const string OUT_FILENAME    = "mc15_13TeV.root";
 
@@ -38,38 +42,47 @@ vector<hft_process> defineTrees(bool do_data) {
    
     if(!do_data) { 
         // bg15_diboson_powheg      bg15_diboson_sherpa      bg15_singletop      bg15_ttbar      bg15_wjets_powheg      bg15_wjets_sherpa      bg15_zjets_powheg      bg15_zjets_sherpa      data15  
-        process.in_file_string   = "bg15_wjets_sherpa.txt";
+        process.in_file_string   = "mc15_wjets.txt";
         process.output_tree_name = "W";
         out_process.push_back(process);
         
-        process.in_file_string   = "bg15_zjets_sherpa.txt";
+        process.in_file_string   = "mc15_zjets.txt";
         process.output_tree_name = "Z";
         out_process.push_back(process);
         
-        process.in_file_string   = "bg15_diboson_sherpa.txt";
+        process.in_file_string   = "mc15_dibosons.txt";
         process.output_tree_name = "VV";
         out_process.push_back(process);
         
-        process.in_file_string   = "bg15_ttbar.txt";
+        process.in_file_string   = "mc15_tribosons.txt";
+        process.output_tree_name = "VVV";
+        out_process.push_back(process);
+        
+        process.in_file_string   = "mc15_ttbar.txt";
         process.output_tree_name = "ttbar";
         out_process.push_back(process);
 
-        process.in_file_string   = "bg15_singletop.txt";
+        process.in_file_string   = "mc15_singletop.txt";
         process.output_tree_name = "singletop";
+        out_process.push_back(process);
+
+        process.in_file_string   = "mc15_ttv.txt";
+        process.output_tree_name = "ttv";
         out_process.push_back(process);
 
         // Signal - to be updated!!!
         for(unsigned int dsid = 392500; dsid<=392520; ++dsid ) {
           if( dsid == 392503 || dsid == 392513 ) continue;
-          process.in_file_string   = "sig15_" + to_string(dsid)+".txt";
+          if( dsid == 392507 || dsid == 392517 || dsid == 392520 ) continue;
+          process.in_file_string   = "mc15_" + to_string(dsid)+".txt";
           process.output_tree_name = to_string(dsid);
           out_process.push_back(process);
         }
-        for(unsigned int dsid = 406009; dsid<=406011; ++dsid ) {
-          process.in_file_string   = "sig15_" + to_string(dsid)+".txt";
-          process.output_tree_name = to_string(dsid);
-          out_process.push_back(process);
-        }
+        //for(unsigned int dsid = 406009; dsid<=406011; ++dsid ) {
+        //  process.in_file_string   = "mc15_" + to_string(dsid)+".txt";
+        //  process.output_tree_name = to_string(dsid);
+        //  out_process.push_back(process);
+        //}
 
     }
     else if(do_data) {

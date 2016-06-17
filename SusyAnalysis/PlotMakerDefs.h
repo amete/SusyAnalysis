@@ -23,6 +23,13 @@ using namespace std;
 typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
+//(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
+//(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
+//(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
+//(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
+//(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
+//(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
+
 /// \brief Region Cut Definitions
 TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"         , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&mll>60.")
                                                  ("CRTTbarLike"    , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&nCentralBJets>=1&&mll>20." )
@@ -37,10 +44,13 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"         , "nBaseLepto
                                                  ////("SR2L-Serhan"    , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&mT2lep>100.&&R1>0.35&&R2>(R1+0.2)&&met>180." )
                                                  ////("SR2L-Serhan"    , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&mT2lep>100.&&R1>0.35&&R2>(R1+0.2)&&ptll<80." )
                                                  ////("SR2L-Serhan"    , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&mT2lep>100.&&R1>0.35&&R2>(R1+0.2)&&RPT_jigsaw>0.6" )
-                                                 ("CR2L-VVDF"      , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&l_flav[0]!=l_flav[1]&&mll>20.&&mT2lep>50.&&mT2lep<90." )
+                                                 ("CR2L-VVDF"      , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&l_flav[0]!=l_flav[1]&&mll>20.&&mT2lep>50.&&mT2lep<75." )
+                                                 ("VR2L-VVDF"      , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&l_flav[0]!=l_flav[1]&&mll>20.&&mT2lep>75.&&mT2lep<90." )
                                                  ("CR2L-VVSF"      , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.&&mll>20.&&mT2lep>90." )
                                                  ("CR2L-Top"       , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets>=1&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20.&&mT2lep>70." )
-                                                 ("SR2L-preMT2"    , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20." )
+                                                 ("SR2L-preMT2-J"  , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20." )
+                                                 ("SR2L-preMT2-LJ" , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20." )
+                                                 ("SR2L-preMT2"    , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>40." )
                                                  ("SR2LEWK-mT2-150", "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20.&&mT2lep>150." )
 ;
 
@@ -48,9 +58,11 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"         , "nBaseLepto
 ColorMap SampleColors = boost::assign::map_list_of ("Data"     , (int)kBlack     )
                                                    ("ttbar"    , (int)kAzure-9   )
                                                    ("singletop", (int)kOrange-3  )
+                                                   ("ttv"      , (int)kRed+1     )
                                                    ("W"        , (int)kGray      )
                                                    ("Z"        , (int)kYellow-9  )
                                                    ("VV"       , (int)kSpring+1  )
+                                                   ("VVV"      , (int)kSpring+3  )
                                                    ("392501"   , (int)kGreen+1   )
                                                    ("392505"   , (int)kGreen+1   )
                                                    ("392508"   , (int)kGreen+1   )
@@ -64,12 +76,14 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"     , (int)kBlack    
 TS2TSMap SampleNames = boost::assign::map_list_of ("Data"     , "Data 2015"        )
                                                   ("ttbar"    , "t#bar{t}"         )
                                                   ("singletop", "Single Top"       )
+                                                  ("ttv"      , "t#bar{t}+V"       )
                                                   ("W"        , "W"                )
                                                   ("Z"        , "Z"                )
                                                   ("VV"       , "VV"               )
-                                                  ("392501"   , "C1C1 200, 100 GeV"  )
-                                                  ("392505"   , "C1C1 300, 200 GeV"  )
-                                                  ("392508"   , "C1C1 400, 200 GeV"  )
+                                                  ("VVV"      , "VVV"              )
+                                                  ("392501"   , "C1C1 200, 100 GeV")
+                                                  ("392505"   , "C1C1 300, 200 GeV")
+                                                  ("392508"   , "C1C1 400, 200 GeV")
                                                   ("392510"   , "C1C1 500, 1 GeV"  )
                                                   ("406009"   , "t1t1 250, 160 GeV")
                                                   ("406010"   , "t1t1 300, 150 GeV")

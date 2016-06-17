@@ -1,9 +1,12 @@
 #!/bin/bash
 generator="sherpa"
-mkdir -p /data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/${generator};
-cd /data/uclhc/uci/user/amete/analysis_n0222_run/medium_electrons/figures/${generator};
-#plotFigures --regions SR2L-preMT2 --channels sf,em --variables mT2lep --binValues 20,0,200  --plotLog;
-plotFigures --regions CR2L-VVDF,CR2L-Top --channels em --variables mT2lep --binValues 10,50,450  --plotLog;
+mkdir -p /data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/figures/${generator};
+cd /data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/figures/${generator};
+plotFigures --regions SR2L-preMT2                --channels sf,em --variables mT2lep --binValues 20,0,200  --plotLog;
+plotFigures --regions SR2L-preMT2                --channels sf,em --variables nCentralLJets,nCentralBJets,nForwardJets --binValues 20,0,20  --plotLog;
+plotFigures --regions SR2L-preMT2                --channels sf,em --variables mll,met,ptL0,ptL1 --binValues 50,0,500  --plotLog;
+#plotFigures --regions VR2L-VVDF,CR2L-VVDF,CR2L-Top --channels em --variables mT2lep --binValues 20,0,200  --plotLog;
+#plotFigures --regions CR2L-VVSF                    --channels sf --variables mT2lep --binValues 20,0,200  --plotLog;
 #plotFigures --regions SR2L-preMT2 --channels sf,em --variables drll   --binValues 20,0,10      --plotLog;
 #plotFigures --regions SR2L-preMT2 --channels sf,em --variables dphill --binValues 35,-3.5,3.5  --plotLog;
 ##plotFigures --regions SR2L-Serhan-lowDM --channels ee,mm,em --variables MDR_jigsaw         --binValues 20,0,200  --plotLog;

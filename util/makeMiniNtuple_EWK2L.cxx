@@ -215,7 +215,7 @@ int main(int argc, char* argv[])
   };
 
   *cutflow << CutName("jet cleaning") << [&](Superlink* sl) -> bool {
-      std::cout << "CUTFLOW >> Event Number: " << sl->nt->evt()->eventNumber << std::endl;
+      //std::cout << "CUTFLOW >> Event Number: " << sl->nt->evt()->eventNumber << std::endl;
       return (sl->tools->passJetCleaning(sl->baseJets));
   };
 
