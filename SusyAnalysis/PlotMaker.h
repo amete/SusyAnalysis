@@ -67,7 +67,8 @@ class PlotMaker {
     void           getHistogramsSimple(TFile* inputRootFile, TString variable, TString cut, TH1D* histos[], TString variation);
 
     /// \brief Function to add overflow to last bin
-    void           convertErrorsToPoisson(TH1* inputHisto, TGraphAsymmErrors* outputGraph);
+    //void           convertErrorsToPoisson(TH1* inputHisto, TGraphAsymmErrors* outputGraph);
+    void           convertErrorsToPoisson(TH1* histo, TGraphAsymmErrors* graph, float blindThreshold, bool blindData);
 
     /// \brief Function to build the ratio's error band
     void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output);

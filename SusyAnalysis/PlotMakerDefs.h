@@ -23,6 +23,20 @@ using namespace std;
 typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
+TString trigger   = "(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)";
+TString ptCuts    = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
+TString isOS      = "(l_q[0]*l_q[1])<0";
+TString zVeto     = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)";
+TString zSelect   = "TMath::Abs(mll-90.2)<10.";
+TString cljVeto   = "((l_flav[0]==l_flav[1]&&nCentralLJets==0)||(l_flav[0]!=l_flav[1]&&nCentralLJets30==0))";
+TString cljVeto20 = "nCentralLJets==0";
+TString cljVeto30 = "nCentralLJets30==0";
+TString cljVeto40 = "nCentralLJets40==0";
+TString cljVeto50 = "nCentralLJets50==0";
+TString cbjVeto   = "nCentralBJets==0";
+TString cbjSelect = "nCentralBJets>0";
+TString fjVeto    = "nForwardJets==0";
+
 //(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
 //(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
 //(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)&&
@@ -44,14 +58,28 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"         , "nBaseLepto
                                                  ////("SR2L-Serhan"    , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&mT2lep>100.&&R1>0.35&&R2>(R1+0.2)&&met>180." )
                                                  ////("SR2L-Serhan"    , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&mT2lep>100.&&R1>0.35&&R2>(R1+0.2)&&ptll<80." )
                                                  ////("SR2L-Serhan"    , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&mT2lep>100.&&R1>0.35&&R2>(R1+0.2)&&RPT_jigsaw>0.6" )
-                                                 ("CR2L-VVDF"      , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&l_flav[0]!=l_flav[1]&&mll>20.&&mT2lep>50.&&mT2lep<75." )
-                                                 ("VR2L-VVDF"      , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&l_flav[0]!=l_flav[1]&&mll>20.&&mT2lep>75.&&mT2lep<90." )
-                                                 ("CR2L-VVSF"      , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.&&mll>20.&&mT2lep>90." )
-                                                 ("CR2L-Top"       , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets>=1&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20.&&mT2lep>70." )
-                                                 ("SR2L-preMT2-J"  , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20." )
-                                                 ("SR2L-preMT2-LJ" , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20." )
-                                                 ("SR2L-preMT2"    , "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>40." )
-                                                 ("SR2LEWK-mT2-150", "l_pt[0]>25.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralLJets==0&&nCentralBJets==0&&nForwardJets==0&&!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)&&mll>20.&&mT2lep>150." )
+                                                 ("CR2L-VVDF-LJ"   , trigger+"&&"+ptCuts+"&&"+isOS                            +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>50.&&mT2lep<75." )
+                                                 ("VR2L-VVDF-LJ"   , trigger+"&&"+ptCuts+"&&"+isOS                            +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>75.&&mT2lep<90." )
+                                                 ("CR2L-VVSF-LJ"   , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zSelect               +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]==l_flav[1]&&mT2lep>90." )
+                                                 ("CR2L-Top-LJ"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto                 +"&&"+cbjSelect+"&&"+fjVeto+"&&mT2lep>70.&&mT2lep<120." )
+                                                 ("SR2L-preMT2-J"  , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  )
+                                                 ("SR2L-preMT2-LJ" , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +               "&&"+cbjVeto+"&&"+fjVeto )
+                                                 ("SR2L-preMT2-20" , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto20+"&&"+cbjVeto+"&&"+fjVeto )
+                                                 ("SR2L-preMT2-30" , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto30+"&&"+cbjVeto+"&&"+fjVeto )
+                                                 ("SR2L-preMT2-40" , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto40+"&&"+cbjVeto+"&&"+fjVeto )
+                                                 ("SR2L-preMT2-50" , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto50+"&&"+cbjVeto+"&&"+fjVeto )
+                                                 ("SR2L-MT2120-LJ" , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +               "&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>120." )
+                                                 ("SR2L-MT2150-LJ" , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +               "&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>150." )
+                                                 // Official EWK2L selection
+                                                 ("CR2L-VVDF"      , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>50.&&mT2lep<75." )
+                                                 ("CR2L-VVSF"      , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zSelect+"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]==l_flav[1]&&mT2lep>90." )
+                                                 ("VR2L-VVDF"      , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>75.&&mT2lep<90." )
+                                                 ("VR2L-VVSF"      , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]==l_flav[1]&&mT2lep>75.&&mT2lep<90." )
+                                                 ("CR2L-Top"       , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto  +"&&"+cbjSelect+"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>70.&&mT2lep<120." )
+                                                 ("SR2L-preMT2"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto )
+                                                 ("SR2L-MT290"     , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>90." )
+                                                 ("SR2L-MT2120"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>120." )
+                                                 ("SR2L-MT2150"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>150." )
 ;
 
 /// \brief Sample Colors
@@ -127,10 +155,17 @@ TS2TSMap VariableNames = boost::assign::map_list_of ("ptL0"            , "l_pt[0
                                                     ("abs_cthllb"      , "TMath::Abs(cthllb)")
                                                     ("nBaseJets"       , "nBaseJets"         )
                                                     ("nCentralLJets"   , "nCentralLJets"     )
+                                                    ("nCentralLJets30" , "nCentralLJets30"   )
+                                                    ("nCentralLJets40" , "nCentralLJets40"   )
+                                                    ("nCentralLJets50" , "nCentralLJets50"   )
                                                     ("nCentralBJets"   , "nCentralBJets"     )
                                                     ("nForwardJets"    , "nForwardJets"      )
                                                     ("nStop2lLJets"    , "nStop2lLJets"      )
                                                     ("nStop2lBJets"    , "nStop2lBJets"      )
+                                                    ("softestCentralLJetPt", "softestCentralLJetPt")
+                                                    ("softestForwardJetPt" , "softestForwardJetPt" )
+                                                    ("hardestCentralLJetPt", "hardestCentralLJetPt")
+                                                    ("hardestForwardJetPt" , "hardestForwardJetPt" )
 ;
 
 #endif

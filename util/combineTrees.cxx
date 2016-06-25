@@ -26,9 +26,9 @@ const string SUSYNTVER       = "n0224";
 // MC_TEXT_DIR : directory containing the filelists
 const string MC_TEXT_DIR     = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"/inputs_"+ANALYSIS+"/";
 // RAW_SAMPLES_DIR : directory where the "raw" ntuples are located
-const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"_run/"+ANALYSIS+"/outputs/";
+const string RAW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"_run/"+ANALYSIS+"/outputs_4/";
 // NEW_SAMPLES_DIR : output location for the merged ntuple
-const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"_run/"+ANALYSIS+"/hfts/";
+const string NEW_SAMPLES_DIR = "/data/uclhc/uci/user/amete/analysis_"+SUSYNTVER+"_run/"+ANALYSIS+"/hfts_4/";
 // OUT_FILENAME : name of output, merged ntuple
 const string OUT_FILENAME    = "mc15_13TeV.root";
 

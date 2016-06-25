@@ -276,7 +276,23 @@ int main(int argc, char* argv[])
   *cutflow << NewVar("event weight"); {
       *cutflow << HFTname("eventweight");
       *cutflow << [](Superlink* sl, var_double*) -> double { 
+          return sl->weights->product() * sl->nt->evt()->wPileup;
+      };
+      *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("event weight no pileup"); {
+      *cutflow << HFTname("eventweight_nopileup");
+      *cutflow << [](Superlink* sl, var_double*) -> double { 
           return sl->weights->product();
+      };
+      *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("event weight pileup"); {
+      *cutflow << HFTname("eventweight_onlypileup");
+      *cutflow << [](Superlink* sl, var_double*) -> double { 
+          return sl->nt->evt()->wPileup;
       };
       *cutflow << SaveVar();
   }
@@ -509,20 +525,68 @@ int main(int argc, char* argv[])
   }
 
   // Jet variables
-  JetVector baseJets, signalJets, centralLightJets, centralBJets, forwardJets, stop2lLightJets, stop2lBJets;
+  JetVector baseJets, signalJets, centralLightJets, centralLightJets30, centralLightJets40, centralLightJets50, centralBJets, forwardJets, stop2lLightJets, stop2lBJets;
   *cutflow << [&](Superlink* sl, var_void*) { 
     baseJets = *sl->baseJets; 
     signalJets = *sl->jets; 
     for(auto& jet : baseJets) {
-      if(sl->tools->m_jetSelector->isCentralLight(jet))  { centralLightJets.push_back(jet); } 
+      if(sl->tools->m_jetSelector->isCentralLight(jet))  { centralLightJets.push_back(jet); 
+                                                           if(jet->Pt()>30.) { centralLightJets30.push_back(jet); } 
+                                                           if(jet->Pt()>40.) { centralLightJets40.push_back(jet); } 
+                                                           if(jet->Pt()>50.) { centralLightJets50.push_back(jet); } 
+                                                         } 
       else if(sl->tools->m_jetSelector->isCentralB(jet)) { centralBJets.push_back(jet);     } 
       else if(sl->tools->m_jetSelector->isForward(jet))  { forwardJets.push_back(jet);      } 
     }
+    std::sort(centralLightJets.begin()  , centralLightJets.end()  , comparePt);
+    std::sort(centralLightJets30.begin(), centralLightJets30.end(), comparePt);
+    std::sort(centralLightJets40.begin(), centralLightJets40.end(), comparePt);
+    std::sort(centralLightJets50.begin(), centralLightJets50.end(), comparePt);
+    std::sort(centralBJets.begin()      , centralBJets.end()      , comparePt);
+    std::sort(forwardJets.begin()       , forwardJets.end()       , comparePt);
     for(auto& jet : signalJets) {
       if(!sl->tools->jetSelector().isB(jet)) { stop2lLightJets.push_back(jet); }
       else                                   { stop2lBJets.push_back(jet);     }
     }
   };
+
+  // Lowest pT jets
+  *cutflow << NewVar("pt of softest centralLightJet"); {
+    *cutflow << HFTname("softestCentralLJetPt");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> float { 
+        float value = centralLightJets.size() > 0 ? (centralLightJets.at(centralLightJets.size()-1))->Pt() : 0. ; 
+        return value;
+    };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("pt of softest ForwardJet"); {
+    *cutflow << HFTname("softestForwardJetPt");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> float { 
+        float value = forwardJets.size() > 0 ? (forwardJets.at(forwardJets.size()-1))->Pt() : 0.;
+        return value;
+    };
+    *cutflow << SaveVar();
+  }
+
+  // Highest pT jets
+  *cutflow << NewVar("pt of hardest centralLightJet"); {
+    *cutflow << HFTname("hardestCentralLJetPt");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> float { 
+        float value = centralLightJets.size() > 0 ? (centralLightJets.at(0))->Pt() : 0. ; 
+        return value;
+    };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("pt of hardest ForwardJet"); {
+    *cutflow << HFTname("hardestForwardJetPt");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> float { 
+        float value = forwardJets.size() > 0 ? (forwardJets.at(0))->Pt() : 0.;
+        return value;
+    };
+    *cutflow << SaveVar();
+  }
 
   *cutflow << NewVar("number of baseline jets"); {
     *cutflow << HFTname("nBaseJets");
@@ -533,6 +597,24 @@ int main(int argc, char* argv[])
   *cutflow << NewVar("number of central light jets"); {
     *cutflow << HFTname("nCentralLJets");
     *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCLJets(*sl->baseJets)/*(*baseJets)*/; };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of central light jets pt 30"); {
+    *cutflow << HFTname("nCentralLJets30");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return centralLightJets30.size(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of central light jets pt 40"); {
+    *cutflow << HFTname("nCentralLJets40");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return centralLightJets40.size(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of central light jets pt 50"); {
+    *cutflow << HFTname("nCentralLJets50");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return centralLightJets50.size(); };
     *cutflow << SaveVar();
   }
 
@@ -900,7 +982,7 @@ int main(int argc, char* argv[])
   // Clear 
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
     baseLeptons.clear();signalLeptons.clear(); 
-    baseJets.clear(); signalJets.clear(); centralLightJets.clear(); centralBJets.clear(); forwardJets.clear(); stop2lLightJets.clear(); stop2lBJets.clear();
+    baseJets.clear(); signalJets.clear(); centralLightJets.clear(); centralLightJets30.clear(); centralLightJets40.clear(); centralLightJets50.clear(); centralBJets.clear(); forwardJets.clear(); stop2lLightJets.clear(); stop2lBJets.clear();
     meff=0.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.,MDR_jigsaw=0.,RPT_jigsaw=0.,gamInvRp1_jigsaw=0.,DPB_vSS_jigsaw=0.;
   };
 

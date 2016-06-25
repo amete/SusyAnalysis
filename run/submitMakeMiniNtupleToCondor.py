@@ -4,16 +4,19 @@ import sys
 import glob
 import subprocess
 
-ana_name = "makeMiniNtuple"
+ana_type   = "EWK2L"
+susyNtType = "n0224"
+
+ana_name     = "makeMiniNtuple_%s"%(ana_type)
 tar_location = "/data/uclhc/uci/user/amete/"
-out_dir = "/data/uclhc/uci/user/amete/analysis_n0222_run/outputs/"
-log_dir = "/data/uclhc/uci/user/amete/analysis_n0222_run/logs/"
-tarred_dir = "analysis_n0222/"
-filelist_dir = "/data/uclhc/uci/user/amete/analysis_n0222/inputs/"
-in_job_filelist_dir = "/analysis_n0222/inputs/"
+out_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/outputs_4/"%(susyNtType,ana_type)
+log_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/logs_4/"%(susyNtType,ana_type)
+tarred_dir   = "analysis_%s/"%(susyNtType)
+filelist_dir = "/data/uclhc/uci/user/amete/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
+in_job_filelist_dir = "/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
 #samples = ["bg15_diboson_powheg","bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_ttbar_twolep","bg15_wjets_powheg","bg15_wjets_sherpa","bg15_zjets_powheg","bg15_zjets_sherpa","data15","sig15_c1c1_slsl","sig15_stop_herwigpp"]
 #samples = ["sig15_stop_herwigpp"]
-samples = ["sig15_c1c1_slsl"]
+samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15","mc15_c1c1_slepslep"]
 
 doBrick = False
 doLocal = True 
@@ -23,13 +26,19 @@ doUC    = True
 def main() :
     print "SubmitCondorSF"
 
-#    look_for_tarball()
+    submitMissing=False
+    if submitMissing:
+        missing_dsids     = []
+        missing_dsid_file = open('%s/missing.txt'%(out_dir))
+        for dsid in missing_dsid_file:
+            missing_dsids.append(dsid.split('\n')[0])
+        missing_dsid_file.close()
     look_for_condor_script(brick_ = doBrick, local_ = doLocal, sdsc_ = doSDSC, uc_ = doUC)
     look_for_condor_executable()
 
     for s in samples :
         if s.startswith('#') : continue
-        print "Submtting sample : %s"%s
+        print "Submitting sample : %s"%s
         suff = ""
         if not s.endswith("/") : suff = "/"
         sample_lists = glob.glob(filelist_dir + s + suff + "*.txt")
@@ -40,6 +49,14 @@ def main() :
         for dataset in sample_lists :
             fullname = str(os.path.abspath(dataset))
             print "    > %s"%dataset
+
+            if submitMissing:
+                submitDS = False
+                for dsid in missing_dsids:
+                    if dsid in dataset:
+                        submitDS = True
+                if not submitDS:
+                    continue
 
             dataset = "." + dataset[dataset.find(in_job_filelist_dir):]
             print "    >> %s"%dataset

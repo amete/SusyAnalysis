@@ -42,8 +42,11 @@ PlotMaker::~PlotMaker()
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
   float luminosity = 3209.05; // in pb-1
-  //float luminosity = 5000.0; // in pb-1
+  //float luminosity = 10000.0; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
+  bool  countAbove = true;
+  bool  blindData  = false;
+  float blindThreshold = 90.;
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Print information
@@ -138,7 +141,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       histograms[i]->SetLineWidth(0);
       histograms[i]->SetLineColor(0);
       // Convert data errors to Poisson
-      convertErrorsToPoisson(histograms[i],Data);
+      convertErrorsToPoisson(histograms[i],Data,blindThreshold,blindData);
       Data->SetMarkerSize(1.2);
       Data->SetMarkerStyle(20);
       Data->SetLineWidth(2);
@@ -458,16 +461,16 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       TGraphAsymmErrors* ratio     = new TGraphAsymmErrors();
 
       for(int kk=1; kk<stackHisto->GetXaxis()->GetNbins()+1; ++kk){
-        float bgAboveThreshold    = stackHisto->Integral(kk,-1);
-        float xlowEdgeAtThreshold = stackHisto->GetXaxis()->GetBinLowEdge(kk);
-        float xcenterAtThreshold  = stackHisto->GetXaxis()->GetBinCenter(kk);
+        float bgFromThreshold      = countAbove ? stackHisto->Integral(kk,-1) : stackHisto->Integral(0,kk);
+        float xlowEdgeAtThreshold  = stackHisto->GetXaxis()->GetBinLowEdge(kk);
+        float xhighEdgeAtThreshold = xlowEdgeAtThreshold + stackHisto->GetXaxis()->GetBinWidth(kk);
+        float xcenterAtThreshold   = stackHisto->GetXaxis()->GetBinCenter(kk);
 
         // Currently only one signal
-        float sigAboveThrehold    = 0.;
+        float sigFromThrehold    = 0.;
         for(unsigned int isample=0; isample<m_sampleList.size(); ++isample) {
-          if( m_sampleList.at(isample).find("392510")!=std::string::npos ) {
-          //if( m_sampleList.at(isample).find("392508")!=std::string::npos ) {
-            sigAboveThrehold = histograms[isample]->Integral(kk,-1);
+          if( m_sampleList.at(isample).find("392510"/*"392508"*/)!=std::string::npos ) {
+            sigFromThrehold = countAbove ? histograms[isample]->Integral(kk,-1) : histograms[isample]->Integral(0,kk);
             break;
           }
         }
@@ -477,9 +480,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
         //if(xlowEdgeAtThreshold > 149.)       { bgunc = 0.50; }
         //else if(xlowEdgeAtThreshold > 119.)  { bgunc = 0.25; }
         //else                                 { bgunc = 0.15; }
-        float signfAboveThreshold = RooStats::NumberCountingUtils::BinomialExpZ( sigAboveThrehold, bgAboveThreshold, bgunc);
+        float signfFromThreshold = RooStats::NumberCountingUtils::BinomialExpZ( sigFromThrehold, bgFromThreshold, bgunc);
         TString printline;
-        printline.Form("x [%*.2f,inf] : BG = %.2f (%% %.2f) \t SIG = %.2f \t ZBi %.2f", 3, xlowEdgeAtThreshold, bgAboveThreshold, bgunc, sigAboveThrehold, signfAboveThreshold);
+        if (countAbove) printline.Form("x [%*.2f,inf] : BG = %.2f (%% %.2f) \t SIG = %.2f \t ZBi %.2f", 3, xlowEdgeAtThreshold, bgFromThreshold, bgunc, sigFromThrehold, signfFromThreshold);
+        else            printline.Form("x [0,%*.2f] : BG = %.2f (%% %.2f) \t SIG = %.2f \t ZBi %.2f", 3, xhighEdgeAtThreshold, bgFromThreshold, bgunc, sigFromThrehold, signfFromThreshold);
         std::cout << printline << std::endl;
 
         // Make the line at 1 for the ratio plot
@@ -494,7 +498,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
         line3->SetLineStyle(7);
     
         // Set and draw
-        ratio->SetPoint(kk-1, xcenterAtThreshold, signfAboveThreshold);
+        ratio->SetPoint(kk-1, xcenterAtThreshold, signfFromThreshold);
         ratio_original->Draw();
         ratio         ->Draw("same && P && 0");
         line1         ->Draw();
@@ -570,7 +574,7 @@ void PlotMaker::addOverFlowToLastBin(TH1* histo) {
 }
 
 /// \brief Function to add overflow to last bin
-void PlotMaker::convertErrorsToPoisson(TH1* histo, TGraphAsymmErrors* graph) 
+void PlotMaker::convertErrorsToPoisson(TH1* histo, TGraphAsymmErrors* graph, float blindThreshold = 90., bool blindData = false) 
 {
   // Needed variables
   double value = 0;
@@ -581,7 +585,7 @@ void PlotMaker::convertErrorsToPoisson(TH1* histo, TGraphAsymmErrors* graph)
   // loop over bins and overwrite values
   for(int i=1; i<=histo->GetNbinsX(); i++){
     value = histo->GetBinContent(i);
-    if(value!=0) {
+    if(value!=0 && ((blindData && (histo->GetBinLowEdge(i)+histo->GetBinWidth(i))<=blindThreshold)||!blindData)) {
       error_poisson_up     = 0.5*TMath::ChisquareQuantile(1-beta,2*(value+1)) - value; 
       error_poisson_down   = value - 0.5*TMath::ChisquareQuantile(alpha,2*value);
       graph->SetPoint(i-1, histo->GetBinCenter(i), value);
