@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
   unsigned int n_events  = -1;
   unsigned int n_skip_events  = 0;
   char *input_file = NULL;
-  SuperflowRunMode run_mode = SuperflowRunMode::nominal;
+  SuperflowRunMode run_mode = SuperflowRunMode::all_syst; //SuperflowRunMode::nominal;
   int c;
 
   opterr = 0;
@@ -991,6 +991,201 @@ int main(int argc, char* argv[])
     baseJets.clear(); signalJets.clear(); centralLightJets.clear(); centralLightJets30.clear(); centralLightJets40.clear(); centralLightJets50.clear(); centralBJets.clear(); forwardJets.clear(); stop2lLightJets.clear(); stop2lBJets.clear();
     meff=0.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.,MDR_jigsaw=0.,RPT_jigsaw=0.,gamInvRp1_jigsaw=0.,DPB_vSS_jigsaw=0.;
   };
+
+  ///////////////////////////////////////////////////////////////////////
+  // Systematics
+  ///////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////
+  // weight systematics
+  ////////////////////////////////////
+
+  // electron eff
+  *cutflow << NewSystematic("shift in electron ID efficiency"); {
+      *cutflow << WeightSystematic(SupersysWeight::EL_EFF_ID_UP, SupersysWeight::EL_EFF_ID_DN);
+      *cutflow << TreeName("EL_EFF_ID");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift in electron ISO efficiency"); {
+      *cutflow << WeightSystematic(SupersysWeight::EL_EFF_ISO_UP, SupersysWeight::EL_EFF_ISO_DN);
+      *cutflow << TreeName("EL_EFF_Iso");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift in electron RECO efficiency"); {
+      *cutflow << WeightSystematic(SupersysWeight::EL_EFF_RECO_UP, SupersysWeight::EL_EFF_RECO_DN);
+      *cutflow << TreeName("EL_EFF_Reco");
+      *cutflow << SaveSystematic();
+  }
+
+  // muon eff
+  *cutflow << NewSystematic("muon eff stat uncertainty"); {
+      *cutflow << WeightSystematic(SupersysWeight::MUON_EFF_STAT_UP, SupersysWeight::MUON_EFF_STAT_DN);
+      *cutflow << TreeName("MUON_EFF_STAT");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon eff stat uncertainty (low pt)"); {
+      *cutflow << WeightSystematic(SupersysWeight::MUON_EFF_STAT_LOWPT_UP, SupersysWeight::MUON_EFF_STAT_LOWPT_DN);
+      *cutflow << TreeName("MUON_EFF_STAT_LOWPT");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon eff syst uncertainty"); {
+      *cutflow << WeightSystematic(SupersysWeight::MUON_EFF_SYS_UP, SupersysWeight::MUON_EFF_SYS_DN);
+      *cutflow << TreeName("MUON_EFF_SYS");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon eff syst uncertainty (low pt"); {
+      *cutflow << WeightSystematic(SupersysWeight::MUON_EFF_SYS_LOWPT_UP, SupersysWeight::MUON_EFF_SYS_LOWPT_DN);
+      *cutflow << TreeName("MUON_EFF_SYS_LOWPT");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon eff iso stat uncertainty"); {
+      *cutflow << WeightSystematic(SupersysWeight::MUON_EFF_ISO_STAT_UP, SupersysWeight::MUON_EFF_ISO_STAT_DN);
+      *cutflow << TreeName("MUON_ISO_STAT");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon eff iso syst uncertainty"); {
+      *cutflow << WeightSystematic(SupersysWeight::MUON_EFF_ISO_SYS_UP, SupersysWeight::MUON_EFF_ISO_SYS_DN);
+      *cutflow << TreeName("MUON_ISO_SYS");
+      *cutflow << SaveSystematic();
+  }
+
+  // flavor tagging eff
+  *cutflow << NewSystematic("shift in b-tag efficiency"); {
+      *cutflow << WeightSystematic(SupersysWeight::FT_EFF_B_UP, SupersysWeight::FT_EFF_B_DN);
+      *cutflow << TreeName("FT_EFF_B");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift in c-tag efficiency"); {
+      *cutflow << WeightSystematic(SupersysWeight::FT_EFF_C_UP, SupersysWeight::FT_EFF_C_DN);
+      *cutflow << TreeName("FT_EFF_C");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift in light tag (i.e. mis-tag) efficiency"); {
+      *cutflow << WeightSystematic(SupersysWeight::FT_EFF_LT_UP, SupersysWeight::FT_EFF_LT_DN);
+      *cutflow << TreeName("FT_EFF_Light");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift flavor tagging extrapolation ?"); {
+      *cutflow << WeightSystematic(SupersysWeight::FT_EFF_EXTRAP_UP, SupersysWeight::FT_EFF_EXTRAP_DN);
+      *cutflow << TreeName("FT_EFF_extrapolation");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift flavor tagging extrapolation - charm ?"); {
+      *cutflow << WeightSystematic(SupersysWeight::FT_EFF_EXTRAPC_UP, SupersysWeight::FT_EFF_EXTRAPC_DN);
+      *cutflow << TreeName("FT_EFF_extrapolation_charm");
+      *cutflow << SaveSystematic();
+  }
+
+  // jvt eff
+  *cutflow << NewSystematic("shift in JVT efficiency"); {
+      *cutflow << WeightSystematic(SupersysWeight::JVT_EFF_UP, SupersysWeight::JVT_EFF_DN);
+      *cutflow << TreeName("JET_JVTEff");
+      *cutflow << SaveSystematic();
+  }
+
+  // pileup
+  *cutflow << NewSystematic("shift in data mu (pile-up)"); {
+      *cutflow << WeightSystematic(SupersysWeight::PILEUP_UP, SupersysWeight::PILEUP_DN);
+      *cutflow << TreeName("PILEUP");
+      *cutflow << SaveSystematic();
+  }
+
+
+  ////////////////////////////////////
+  // shape systematics
+  ////////////////////////////////////
+
+  // egamma
+  *cutflow << NewSystematic("shift in e-gamma resolution (UP)"); {
+      *cutflow << EventSystematic(NtSys::EG_RESOLUTION_ALL_UP);
+      *cutflow << TreeName("EG_RESOLUTION_ALL_UP");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift in e-gamma resolution (DOWN)"); {
+      *cutflow << EventSystematic(NtSys::EG_RESOLUTION_ALL_DN);
+      *cutflow << TreeName("EG_RESOLUTION_ALL_DN");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift in e-gamma scale (UP)"); {
+      *cutflow << EventSystematic(NtSys::EG_SCALE_ALL_UP);
+      *cutflow << TreeName("EG_SCALE_ALL_UP");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("shift in e-gamma scale (DOWN)"); {
+      *cutflow << EventSystematic(NtSys::EG_SCALE_ALL_DN);
+      *cutflow << TreeName("EG_SCALE_ALL_DN");
+      *cutflow << SaveSystematic();
+  }
+  // muon
+  *cutflow << NewSystematic("muon ID (UP)"); {
+      *cutflow << EventSystematic(NtSys::MUONS_ID_UP);
+      *cutflow << TreeName("MUONS_ID_UP");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon ID (DOWN)"); {
+      *cutflow << EventSystematic(NtSys::MUONS_ID_DN);
+      *cutflow << TreeName("MUONS_ID_DN");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon MS (UP)"); {
+      *cutflow << EventSystematic(NtSys::MUONS_MS_UP);
+      *cutflow << TreeName("MUONS_MS_UP");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon MS (DOWN)"); {
+      *cutflow << EventSystematic(NtSys::MUONS_MS_DN);
+      *cutflow << TreeName("MUONS_MS_DN");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon scale shift (UP)"); {
+      *cutflow << EventSystematic(NtSys::MUONS_SCALE_UP);
+      *cutflow << TreeName("MUONS_SCALE_UP");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("muon scale shift (DN)"); {
+      *cutflow << EventSystematic(NtSys::MUONS_SCALE_DN);
+      *cutflow << TreeName("MUONS_SCALE_DN");
+      *cutflow << SaveSystematic();
+  }
+
+  // jet
+  *cutflow << NewSystematic("JER"); {
+      *cutflow << EventSystematic(NtSys::JER);
+      *cutflow << TreeName("JER");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("JES NP set 1 (up)"); {
+      *cutflow << EventSystematic(NtSys::JET_GroupedNP_1_UP);
+      *cutflow << TreeName("JET_GroupedNP_1_UP");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("JES NP set 1 (down)"); {
+      *cutflow << EventSystematic(NtSys::JET_GroupedNP_1_DN);
+      *cutflow << TreeName("JET_GroupedNP_1_DN");
+      *cutflow << SaveSystematic();
+  }
+
+  // met
+  *cutflow << NewSystematic("MET TST Soft-Term resolution (parallel)"); {
+      *cutflow << EventSystematic(NtSys::MET_SoftTrk_ResoPara);
+      *cutflow << TreeName("MET_SoftTrk_ResoPara");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("MET TST Soft-Term resolution (perpendicular)"); {
+      *cutflow << EventSystematic(NtSys::MET_SoftTrk_ResoPerp);
+      *cutflow << TreeName("MET_SoftTrk_ResoPerp");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("MET TST Soft-Term shift in scale (UP)"); {
+      *cutflow << EventSystematic(NtSys::MET_SoftTrk_ScaleUp);
+      *cutflow << TreeName("MET_SoftTrk_ScaleUp");
+      *cutflow << SaveSystematic();
+  }
+  *cutflow << NewSystematic("MET TST Soft-Term shift in scale (DOWN)"); {
+      *cutflow << EventSystematic(NtSys::MET_SoftTrk_ScaleDown);
+      *cutflow << TreeName("MET_SoftTrk_ScaleDown");
+      *cutflow << SaveSystematic();
+  }
 
   ///////////////////////////////////////////////////////////////////////
   // Superflow methods end here

@@ -9,13 +9,12 @@ susyNtType = "n0224"
 
 ana_name     = "makeMiniNtuple_%s"%(ana_type)
 tar_location = "/data/uclhc/uci/user/amete/"
-out_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/outputs_5/"%(susyNtType,ana_type)
-log_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/logs_5/"%(susyNtType,ana_type)
+out_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/outputs_6/"%(susyNtType,ana_type)
+log_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/logs_6/"%(susyNtType,ana_type)
 tarred_dir   = "analysis_%s/"%(susyNtType)
 filelist_dir = "/data/uclhc/uci/user/amete/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
 in_job_filelist_dir = "/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
-#samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15","mc15_c1c1_slepslep"]
-samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15"]
+samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_ttbar_dilep","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15","mc15_c1c1_slepslep"]
 
 doBrick = True
 doLocal = False 
