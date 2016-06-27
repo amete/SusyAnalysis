@@ -232,6 +232,12 @@ int main(int argc, char* argv[])
       return (sl->leptons->size() == 2);
   };
 
+  // MET Cleaning - temporary
+  #warning "MET CLEANING IS TURNED ON!!!"
+  *cutflow << CutName("met cleaning") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passMetCleaning(sl->met));
+  };
+
   //  Output Ntuple Setup
   //      > Ntuple variables
 

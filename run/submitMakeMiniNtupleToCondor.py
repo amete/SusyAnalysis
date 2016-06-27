@@ -9,19 +9,18 @@ susyNtType = "n0224"
 
 ana_name     = "makeMiniNtuple_%s"%(ana_type)
 tar_location = "/data/uclhc/uci/user/amete/"
-out_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/outputs_4/"%(susyNtType,ana_type)
-log_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/logs_4/"%(susyNtType,ana_type)
+out_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/outputs_5/"%(susyNtType,ana_type)
+log_dir      = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/logs_5/"%(susyNtType,ana_type)
 tarred_dir   = "analysis_%s/"%(susyNtType)
 filelist_dir = "/data/uclhc/uci/user/amete/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
 in_job_filelist_dir = "/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
-#samples = ["bg15_diboson_powheg","bg15_diboson_sherpa","bg15_singletop","bg15_ttbar","bg15_ttbar_twolep","bg15_wjets_powheg","bg15_wjets_sherpa","bg15_zjets_powheg","bg15_zjets_sherpa","data15","sig15_c1c1_slsl","sig15_stop_herwigpp"]
-#samples = ["sig15_stop_herwigpp"]
-samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15","mc15_c1c1_slepslep"]
+#samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15","mc15_c1c1_slepslep"]
+samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15"]
 
-doBrick = False
-doLocal = True 
-doSDSC  = True 
-doUC    = True 
+doBrick = True
+doLocal = False 
+doSDSC  = False 
+doUC    = False 
 
 def main() :
     print "SubmitCondorSF"
