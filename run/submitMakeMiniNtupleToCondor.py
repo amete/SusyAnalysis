@@ -17,7 +17,7 @@ in_job_filelist_dir = "/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
 samples = ["mc15_dibosons","mc15_tribosons","mc15_ttbar","mc15_ttbar_dilep","mc15_singletop","mc15_ttv","mc15_wjets","mc15_zjets","data15","mc15_c1c1_slepslep"]
 
 doBrick = True
-doLocal = False 
+doLocal = True 
 doSDSC  = False 
 doUC    = False 
 

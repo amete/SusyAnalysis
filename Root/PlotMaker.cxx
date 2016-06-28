@@ -45,7 +45,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   //float luminosity = 10000.0; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
   bool  countAbove = true;
-  bool  blindData  = false;
+  bool  blindData  = true;
   float blindThreshold = 90.;
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
     if(m_sampleList.at(i)!="Data") {
-      histograms[i]->Scale(luminosity);
+      if(m_sampleList.at(i)!="MM") histograms[i]->Scale(luminosity);
       if(m_sampleList.at(i).find("406")==std::string::npos &&
          m_sampleList.at(i).find("392")==std::string::npos ) // Don't add signal to stack
         mcStack->Add(histograms[i]);
@@ -202,7 +202,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
       if(sysHistograms[j]!=NULL)
         totalSysHisto->Add(sysHistograms[j]);
-      else if ( m_sampleList.at(j) != "Data" && m_sampleList.at(j) != "Fakes" ) {
+      else if ( m_sampleList.at(j) != "Data" && m_sampleList.at(j) != "MM"/*"Fakes"*/ ) {
         cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
                 m_systematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
       }

@@ -182,20 +182,20 @@ int main(int argc, char* argv[])
   int cutflags = 0;
   
   *cutflow << CutName("Pass GRL") << [&](Superlink* sl) -> bool {
-      cutflags = sl->nt->evt()->cutFlags[sl->nt_sys];
-      return (cutflags & ECut_GRL);
+      cutflags = sl->nt->evt()->cutFlags[NtSys::NOM];
+      return (sl->tools->passGRL(cutflags));
   };
 
-  *cutflow << CutName("LAr error") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_LarErr);
+  *cutflow << CutName("LAr error") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passLarErr(cutflags));
   };
   
-  *cutflow << CutName("Tile error") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_TileErr);
+  *cutflow << CutName("Tile error") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passTileErr(cutflags));
   };
   
-  *cutflow << CutName("TTC veto") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_TTC);
+  *cutflow << CutName("TTC veto") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passTTC(cutflags));
   };
 
  
@@ -215,12 +215,11 @@ int main(int argc, char* argv[])
   };
 
   *cutflow << CutName("jet cleaning") << [&](Superlink* sl) -> bool {
-      //std::cout << "CUTFLOW >> Event Number: " << sl->nt->evt()->eventNumber << std::endl;
       return (sl->tools->passJetCleaning(sl->baseJets));
   };
 
-  *cutflow << CutName("pass good vertex") << [&](Superlink* /*sl*/) -> bool {
-      return (cutflags & ECut_GoodVtx);
+  *cutflow << CutName("pass good vertex") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passGoodVtx(cutflags));
   };
    
   //  Analysis Cuts

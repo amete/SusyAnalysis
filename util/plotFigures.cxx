@@ -28,7 +28,8 @@ int main(int argc, char** argv)
   string channels     = "mm"                                ; vector<string> channelList   ;
   string regions      = "CR2LOS"                            ; vector<string> regionList    ;
   string variables    = "l_pt"                              ; vector<string> variableList  ;
-  string samples      = "392508,392510,W,singletop,ttbar,VV,Z,Data"; vector<string> sampleList    ;
+  //string samples      = "392508,392510,W,singletop,ttbar,VV,Z,Data"; vector<string> sampleList    ;
+  string samples      = "392508,392510,MM,singletop,ttbar,VV,Z,Data"; vector<string> sampleList    ;
   //string samples      = "392508,392510,W,singletop,ttbar,VV,Z"; vector<string> sampleList    ;
   //string samples      = "392508,392510,W,ttv,singletop,ttbar,VVV,VV,Z,Data"; vector<string> sampleList    ;
   string binValues    = "40,0,400"                          ; vector<string> binValueList  ;
