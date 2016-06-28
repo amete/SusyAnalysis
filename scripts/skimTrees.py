@@ -7,16 +7,36 @@ def main():
     filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0224/inputs_EWK2L/"
     data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_5/" 
     mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_5/" 
-    output_dir       = "./Skimmed/" 
-    selection        = "mT2lep>100."
-    #selection        = "((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.)&&nCentralLJets50==0&&nForwardJets==0)"
+    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_5_skimmed/" 
+    selection        = "((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.)&&nCentralLJets50==0&&nForwardJets==0)"
 
     ###########################
     ## available samples
-    # ttv
     backgrounds = []
-    bkg_ttv     = Background("ttv", filelist_dir + "mc15_ttv/")
-    backgrounds.append(bkg_ttv)
+    ### data
+    ##bkg_data    = Background("Data", filelist_dir + "data15/")
+    ##backgrounds.append(bkg_data)
+    ### ttbar
+    ##bkg_ttbar   = Background("ttbar", filelist_dir + "mc15_ttbar/")
+    ##backgrounds.append(bkg_ttbar)
+    ### ttv
+    ##bkg_ttv     = Background("ttv", filelist_dir + "mc15_ttv/")
+    ##backgrounds.append(bkg_ttv)
+    ### diboson
+    ##bkg_diboson = Background("VV", filelist_dir + "mc15_dibosons/")
+    ##backgrounds.append(bkg_diboson)
+    ### triboson
+    ##bkg_triboson = Background("VV", filelist_dir + "mc15_tribosons/")
+    ##backgrounds.append(bkg_diboson)
+    ### single top
+    ##bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/")
+    ##backgrounds.append(bkg_st)
+    ### wjets
+    ##bkg_wjets   = Background("W", filelist_dir + "mc15_wjets/")
+    ##backgrounds.append(bkg_wjets)
+    # zjets
+    bkg_zjets   = Background("Z", filelist_dir + "mc15_zjets/")
+    backgrounds.append(bkg_zjets)
  
     ###########################
     ## available systematics
@@ -62,14 +82,12 @@ def main():
                 dsid = ""
                 for ds in bkg.dsid_list :
                     if ds in sample : dsid = str(ds)
-                in_file = r.TFile(sample)
-                in_tree = in_file.Get(treename)
-                sk_tree = in_tree.CopyTree(selection)
-
-                print "%s %s %s (original : %*i - skimmed : %*i)"%(bkg.name, dsid, sys_, 7, in_tree.GetEntries(), 7, sk_tree.GetEntries())
-
+                in_file  = r.TFile(sample)
+                in_tree  = in_file.Get(treename)
                 out_file = r.TFile("%s/%s"%(output_dir,sample.split("/")[-1]),"RECREATE")
                 out_file.cd()
+                sk_tree = in_tree.CopyTree(selection)
+                print "%s %s %s (original : %*i - skimmed : %*i)"%(bkg.name, dsid, sys_, 7, in_tree.GetEntries(), 7, sk_tree.GetEntries())
                 sk_tree.Write()
                 out_file.Close()
                 in_file.Close()
