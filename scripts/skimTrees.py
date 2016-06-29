@@ -5,37 +5,40 @@ from combineHFTs import Background
 def main():
     files=[]
     filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0224/inputs_EWK2L/"
-    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_5/" 
-    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_5/" 
-    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_5_skimmed/" 
-    selection        = "((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.)&&nCentralLJets50==0&&nForwardJets==0)"
+    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6/" 
+    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6/" 
+    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6_skimmed/" 
+    selection        = "((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.))&&mll>20.&&nCentralLJets50==0&&nForwardJets==0"
 
     ###########################
     ## available samples
     backgrounds = []
-    ### data
-    ##bkg_data    = Background("Data", filelist_dir + "data15/")
-    ##backgrounds.append(bkg_data)
-    ### ttbar
-    ##bkg_ttbar   = Background("ttbar", filelist_dir + "mc15_ttbar/")
-    ##backgrounds.append(bkg_ttbar)
-    ### ttv
-    ##bkg_ttv     = Background("ttv", filelist_dir + "mc15_ttv/")
-    ##backgrounds.append(bkg_ttv)
-    ### diboson
-    ##bkg_diboson = Background("VV", filelist_dir + "mc15_dibosons/")
-    ##backgrounds.append(bkg_diboson)
-    ### triboson
-    ##bkg_triboson = Background("VV", filelist_dir + "mc15_tribosons/")
-    ##backgrounds.append(bkg_diboson)
-    ### single top
-    ##bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/")
-    ##backgrounds.append(bkg_st)
-    ### wjets
-    ##bkg_wjets   = Background("W", filelist_dir + "mc15_wjets/")
-    ##backgrounds.append(bkg_wjets)
+    # data
+    bkg_data    = Background("Data"     , filelist_dir + "data15/"          )
+    backgrounds.append(bkg_data)
+    # ttbar
+    bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
+    backgrounds.append(bkg_ttbar_dl)
+    # ttbar
+    bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
+    backgrounds.append(bkg_ttbar)
+    # ttv
+    bkg_ttv     = Background("ttv"      , filelist_dir + "mc15_ttv/"        )
+    backgrounds.append(bkg_ttv)
+    # diboson
+    bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
+    backgrounds.append(bkg_diboson)
+    # triboson
+    bkg_triboson = Background("VV"      , filelist_dir + "mc15_tribosons/"  )
+    backgrounds.append(bkg_diboson)
+    # single top
+    bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/"  )
+    backgrounds.append(bkg_st)
+    # wjets
+    bkg_wjets   = Background("W"        , filelist_dir + "mc15_wjets/"      )
+    backgrounds.append(bkg_wjets)
     # zjets
-    bkg_zjets   = Background("Z", filelist_dir + "mc15_zjets/")
+    bkg_zjets   = Background("Z"        , filelist_dir + "mc15_zjets/"      )
     backgrounds.append(bkg_zjets)
  
     ###########################
@@ -43,6 +46,31 @@ def main():
     syst = []
     syst.append('CENTRAL')
 
+    # egamma
+    syst.append('EG_RESOLUTION_ALL_UP')
+    syst.append('EG_RESOLUTION_ALL_DN')
+    syst.append('EG_SCALE_ALL_UP')
+    syst.append('EG_SCALE_ALL_DN')
+    
+    # muons
+    syst.append('MUONS_ID_DN')
+    syst.append('MUONS_ID_UP')
+    syst.append('MUONS_MS_DN')
+    syst.append('MUONS_MS_UP')
+    syst.append('MUONS_SCALE_DN')
+    syst.append('MUONS_SCALE_UP')
+
+    # jet
+    syst.append('JER')
+    syst.append('JET_GroupedNP_1_DN')
+    syst.append('JET_GroupedNP_1_UP')
+    
+    # met
+    syst.append('MET_SoftTrk_ResoPara')
+    syst.append('MET_SoftTrk_ResoPerp')
+    syst.append('MET_SoftTrk_ScaleDown')
+    syst.append('MET_SoftTrk_ScaleUp')
+    
     ## load the backgrounds and locate the files
     for bkg in backgrounds :
         for sys_ in syst :

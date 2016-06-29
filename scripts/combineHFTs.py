@@ -98,8 +98,8 @@ syst.append('MET_SoftTrk_ScaleUp')
 ## backgrounds
 backgrounds = []
 filelist_dir      = "/data/uclhc/uci/user/amete/analysis_n0224/inputs_EWK2L/"
-mc_sample_dir     = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6/"
-data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6/"
+mc_sample_dir     = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6_skimmed/"
+data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6_skimmed/"
 
 # data
 bkg_data    = Background("Data", filelist_dir + "data15/")
