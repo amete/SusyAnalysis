@@ -131,7 +131,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     if(m_sampleList.at(i)!="Data") {
       if(m_sampleList.at(i)!="MM") histograms[i]->Scale(luminosity);
       if(m_sampleList.at(i).find("406")==std::string::npos &&
-         m_sampleList.at(i).find("392")==std::string::npos ) // Don't add signal to stack
+         m_sampleList.at(i).find("c1c1")==std::string::npos ) // Don't add signal to stack
         mcStack->Add(histograms[i]);
       else
         signalIndices.push_back(i);
@@ -161,7 +161,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     if(m_sampleList.at(i)!="Data")
     {
       if(m_sampleList.at(i).find("406")==std::string::npos ||
-         m_sampleList.at(i).find("392")==std::string::npos)
+         m_sampleList.at(i).find("c1c1")==std::string::npos)
         legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
       else
         legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"l");
@@ -518,7 +518,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     TString line;
     double totErr = 0., tot = histograms[isample]->IntegralAndError(0,-1,totErr);
     if( m_sampleList.at(isample).find("406")!=std::string::npos ||
-        m_sampleList.at(isample).find("392")!=std::string::npos ) {
+        m_sampleList.at(isample).find("c1c1")!=std::string::npos ) {
       double signf   = RooStats::NumberCountingUtils::BinomialExpZ( tot, bkgTot, 0.3 );
       double signf_a = RooStats::NumberCountingUtils::BinomialExpZ( tot*(10/3.21), bkgTot*(10/3.21), 0.3 );
       double signf_b = RooStats::NumberCountingUtils::BinomialExpZ( tot*(10/3.21), bkgTot*(10/3.21), 0.5 );
@@ -633,13 +633,14 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
       tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
     else
       tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
+      //tree->Draw( varToPlot + ">>temp"       , "eventweight_nopileup*(" + cutToApply + ")" );
 
     // Clone and beautify
     histos[i] = (TH1D*) temp->Clone();
     histos[i]->SetName(histoName);
     histos[i]->SetTitle(histoName);
     if(m_sampleList.at(i).find("406")==std::string::npos &&
-       m_sampleList.at(i).find("392")==std::string::npos) {
+       m_sampleList.at(i).find("c1c1")==std::string::npos) {
       histos[i]->SetLineWidth(2);
       histos[i]->SetLineColor(kBlack);
       histos[i]->SetFillColor(SampleColors[m_sampleList.at(i)]);
