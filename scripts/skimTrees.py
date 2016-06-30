@@ -13,33 +13,36 @@ def main():
     ###########################
     ## available samples
     backgrounds = []
-    # data
-    bkg_data    = Background("Data"     , filelist_dir + "data15/"          )
-    backgrounds.append(bkg_data)
-    # ttbar
-    bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
-    backgrounds.append(bkg_ttbar_dl)
-    # ttbar
-    bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
-    backgrounds.append(bkg_ttbar)
-    # ttv
-    bkg_ttv     = Background("ttv"      , filelist_dir + "mc15_ttv/"        )
-    backgrounds.append(bkg_ttv)
-    # diboson
-    bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
-    backgrounds.append(bkg_diboson)
-    # triboson
-    bkg_triboson = Background("VV"      , filelist_dir + "mc15_tribosons/"  )
-    backgrounds.append(bkg_diboson)
-    # single top
-    bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/"  )
-    backgrounds.append(bkg_st)
-    # wjets
-    bkg_wjets   = Background("W"        , filelist_dir + "mc15_wjets/"      )
-    backgrounds.append(bkg_wjets)
-    # zjets
-    bkg_zjets   = Background("Z"        , filelist_dir + "mc15_zjets/"      )
-    backgrounds.append(bkg_zjets)
+    ## data
+    #bkg_data    = Background("Data"     , filelist_dir + "data15/"          )
+    #backgrounds.append(bkg_data)
+    ### ttbar
+    ##bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
+    ##backgrounds.append(bkg_ttbar_dl)
+    ## ttbar
+    #bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
+    #backgrounds.append(bkg_ttbar)
+    ## ttv
+    #bkg_ttv     = Background("ttv"      , filelist_dir + "mc15_ttv/"        )
+    #backgrounds.append(bkg_ttv)
+    ## diboson
+    #bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
+    #backgrounds.append(bkg_diboson)
+    ## triboson
+    #bkg_triboson = Background("VV"      , filelist_dir + "mc15_tribosons/"  )
+    #backgrounds.append(bkg_diboson)
+    ## single top
+    #bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/"  )
+    #backgrounds.append(bkg_st)
+    ## wjets
+    #bkg_wjets   = Background("W"        , filelist_dir + "mc15_wjets/"      )
+    #backgrounds.append(bkg_wjets)
+    ## zjets
+    #bkg_zjets   = Background("Z"        , filelist_dir + "mc15_zjets/"      )
+    #backgrounds.append(bkg_zjets)
+    # signal
+    sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
+    backgrounds.append(sig_c1c1_slepslep)
  
     ###########################
     ## available systematics

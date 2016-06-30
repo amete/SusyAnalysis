@@ -131,13 +131,13 @@ backgrounds.append(bkg_zjets)
 
 ## will parse through ./LimitScripts/susyinfo/
 signals = []
-grid = "c1c1_slepslep"
+grid = "c1c1_slep"
 sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
 signals.append(sig_c1c1_slepslep)
 
 ###################################
 ## setup the output file name and location
-output_dir  = "./" 
+output_dir  = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_6_skimmed/" 
 output_name = "HFT_BG_13TeV.root"
 output_name_sig = "HFT_C1C1_13TeV.root"
 
@@ -170,7 +170,7 @@ if __name__=="__main__" :
                         print "############################## ERROR    Systematic (%s) tree not found for dataset %s (%s)"%(sys_, str(ds), bkg.name)
 
     ## get the output file
-    outfile = r.TFile(output_name, "RECREATE")
+    outfile = r.TFile(output_dir+output_name, "RECREATE")
     outfile.Close()
     outfile.Delete()
 
@@ -184,7 +184,7 @@ if __name__=="__main__" :
             merge_chain = r.TChain(bkg.name + "_" + sys_)
             #r.TTree.SetMaxtreeSize(137438953472LL)
 
-            outfile = r.TFile(output_name, "UPDATE")
+            outfile = r.TFile(output_dir+output_name, "UPDATE")
             outfile.cd()
 
             num_files = 0
@@ -230,7 +230,7 @@ if __name__=="__main__" :
                     if not found_sample :
                         print "############################## ERROR    Systematic (%s) tree not found for dataset %s (%s)"%(sys, str(ds), sig.name)
 
-    outfile_sig = r.TFile(output_name_sig, "RECREATE")
+    outfile_sig = r.TFile(output_dir+output_name_sig, "RECREATE")
     outfile_sig.Close()
     outfile_sig.Delete()
 
@@ -239,39 +239,39 @@ if __name__=="__main__" :
 
             treename = "superNt"
             print sig
-#            filename = "./LimitScripts/susyinfo/grid_" + grid + ".txt" 
-#            lines = open(filename).readlines()
-#            for line in lines :
-#                if not line : continue
-#                if line.startswith("#") : continue
-#                line = line.strip()
-#                line = line.split()
-#                for ds in sig.dsid_list :
-#                    if line[0] != ds : continue
-#                    print line
-#                    signame = grid + "_" + "%.1f"%float(line[1]) + "_" + "%.1f"%float(line[2])
-#                    chain_name = signame + "_" + sys_
-#
-#                    print " + ------------------------------- + "
-#                    print "    Combining                        "
-#                    print "       (Sig, Sys) : (%s, %s)         "%(signame, sys_)
-#                    print ""
-#
-#                    merge_chain = r.TChain(chain_name)
-#                    outfile = r.TFile(output_name_sig, "UPDATE")
-#                    outfile.cd()
-#
-#                    sum_entries = 0
-#                    sample = ""
-#                    for sample_ in sig.treefiles[sys_] :
-#                        if ds not in sample_ : continue
-#                        sample = sample_ 
-#                    in_file = r.TFile(sample)
-#                    in_tree = in_file.Get(treename)
-#
-#                    if in_tree.GetEntries() > 0 :
-#                        print "%s %s (%s) : "%(signame, ds, sys_), in_tree.GetEntries()
-#
-#                    merge_chain.AddFile(sample, 0, treename)
-#                    outfile.cd()
-#                    merge_chain.Merge(outfile, 0, "fast")
+            filename = "/data/uclhc/uci/user/amete/grids/" + grid + ".txt" 
+            lines = open(filename).readlines()
+            for line in lines :
+                if not line : continue
+                if line.startswith("#") : continue
+                line = line.strip()
+                line = line.split()
+                for ds in sig.dsid_list :
+                    if line[0] != ds : continue
+                    print line
+                    signame = grid + "_" + "%.1f"%float(line[1]) + "_" + "%.1f"%float(line[2])
+                    chain_name = signame + "_" + sys_
+
+                    print " + ------------------------------- + "
+                    print "    Combining                        "
+                    print "       (Sig, Sys) : (%s, %s)         "%(signame, sys_)
+                    print ""
+
+                    merge_chain = r.TChain(chain_name)
+                    outfile = r.TFile(output_dir+output_name_sig, "UPDATE")
+                    outfile.cd()
+
+                    sum_entries = 0
+                    sample = ""
+                    for sample_ in sig.treefiles[sys_] :
+                        if ds not in sample_ : continue
+                        sample = sample_ 
+                    in_file = r.TFile(sample)
+                    in_tree = in_file.Get(treename)
+
+                    if in_tree.GetEntries() > 0 :
+                        print "%s %s (%s) : "%(signame, ds, sys_), in_tree.GetEntries()
+
+                    merge_chain.AddFile(sample, 0, treename)
+                    outfile.cd()
+                    merge_chain.Merge(outfile, 0, "fast")

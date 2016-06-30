@@ -222,6 +222,12 @@ int main(int argc, char* argv[])
       return (sl->tools->passGoodVtx(cutflags));
   };
    
+  // MET Cleaning - temporary
+  #warning "MET CLEANING IS TURNED ON!!!"
+  *cutflow << CutName("met cleaning") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passMetCleaning(sl->met));
+  };
+
   //  Analysis Cuts
   *cutflow << CutName("exactly two baseline leptons") << [](Superlink* sl) -> bool {
       return (sl->baseLeptons->size() == 2);
@@ -231,10 +237,25 @@ int main(int argc, char* argv[])
       return (sl->leptons->size() == 2);
   };
 
-  // MET Cleaning - temporary
-  #warning "MET CLEANING IS TURNED ON!!!"
-  *cutflow << CutName("met cleaning") << [&](Superlink* sl) -> bool {
-      return (sl->tools->passMetCleaning(sl->met));
+  *cutflow << CutName("opposite sign") << [](Superlink* sl) -> bool {
+      return ((sl->leptons->at(0)->q * sl->leptons->at(1)->q) < 0);
+  };
+
+  *cutflow << CutName("lepton pTs > 20 GeV") << [](Superlink* sl) -> bool {
+      return ((sl->leptons->at(0)->Pt()>20) && (sl->leptons->at(1)->Pt()>20));
+  };
+
+  *cutflow << CutName("mll > 20 GeV") << [](Superlink* sl) -> bool {
+      return ((*sl->leptons->at(0) + *sl->leptons->at(1)).M() > 20.);
+  };
+
+  *cutflow << CutName("loose jet-veto") << [](Superlink* sl) -> bool {
+    bool veto = false;
+    for(auto& jet : *sl->baseJets) {
+      if(sl->tools->m_jetSelector->isCentralLight(jet))  { veto = jet->Pt()>50. ? true : false; if(veto) break; } 
+      else if(sl->tools->m_jetSelector->isForward(jet))  { veto = true; break; } 
+    }
+    return !veto;
   };
 
   //  Output Ntuple Setup
@@ -790,7 +811,7 @@ int main(int argc, char* argv[])
     };
     *cutflow << SaveVar();
   }
- 
+
   // cosTheta_b  
   double cthllb = 0.;
   *cutflow << NewVar("cosTheta_b"); {

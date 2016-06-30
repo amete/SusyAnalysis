@@ -29,7 +29,8 @@ int main(int argc, char** argv)
   string regions      = "CR2LOS"                            ; vector<string> regionList    ;
   string variables    = "l_pt"                              ; vector<string> variableList  ;
   //string samples      = "392508,392510,W,singletop,ttbar,VV,Z,Data"; vector<string> sampleList    ;
-  string samples      = "392508,392510,MM,singletop,ttbar,VV,Z,Data"; vector<string> sampleList    ;
+  //string samples      = "392508,392510,MM,singletop,ttbar,VV,Z,Data"; vector<string> sampleList    ;
+  string samples      = "c1c1_slep_400.0_200.0,c1c1_slep_500.0_1.0,MM,singletop,ttbar,VV,Z,Data"; vector<string> sampleList    ;
   //string samples      = "392508,392510,W,singletop,ttbar,VV,Z"; vector<string> sampleList    ;
   //string samples      = "392508,392510,W,ttv,singletop,ttbar,VVV,VV,Z,Data"; vector<string> sampleList    ;
   string binValues    = "40,0,400"                          ; vector<string> binValueList  ;
@@ -85,7 +86,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_4/mc15_13TeV.root"); // Rel 20.7
+  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_6_skimmed/HFT_COMBINED_13TeV.root"); // Rel 20.7
+  //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_4/mc15_13TeV.root"); // Rel 20.7
   //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0222_run/hfts/mc15_13TeV_sherpa.root"); // Rel 20.1
   plots->setSampleList     (sampleList    );
   plots->setSystematicsList(systematicList);
