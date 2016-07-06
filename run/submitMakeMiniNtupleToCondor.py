@@ -27,10 +27,10 @@ samples             = [ "mc15_dibosons"     ,
                         "data15"            ,
                         "data16" ]
 
-doBrick = False #True
+doBrick = True
 doLocal = True 
-doSDSC  = True  #False 
-doUC    = True  #False 
+doSDSC  = False 
+doUC    = False 
 
 def main() :
     print "SubmitCondorSF"

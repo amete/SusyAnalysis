@@ -10,7 +10,7 @@ def get_samples(analysis,rootcoredir):
 
 # Main function
 def main():
-    prodTag='n0224'
+    prodTag='n0225'
     analysis='EWK2L'
 
     # Stable below
@@ -36,6 +36,7 @@ def main():
     current_group=""
     group_counter=0
     for ii,group in enumerate(groups):
+        #if not (("zjets" in group) or ("wjets" in group)): continue
         foundSample=False
         if (current_group == "") or (group.strip() not in current_group):
             if group_counter > 0:
