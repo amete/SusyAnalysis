@@ -198,6 +198,9 @@ int main(int argc, char* argv[])
       return (sl->tools->passTTC(cutflags));
   };
 
+  *cutflow << CutName("SCT seu") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passSCTErr(cutflags));
+  };
  
   *cutflow << CutName("bad muon veto") << [&](Superlink* sl) -> bool {
       return (sl->tools->passBadMuon(sl->preMuons));
@@ -222,11 +225,11 @@ int main(int argc, char* argv[])
       return (sl->tools->passGoodVtx(cutflags));
   };
    
-  // MET Cleaning - temporary
-  #warning "MET CLEANING IS TURNED ON!!!"
-  *cutflow << CutName("met cleaning") << [&](Superlink* sl) -> bool {
-      return (sl->tools->passMetCleaning(sl->met));
-  };
+  //// MET Cleaning - temporary
+  //#warning "MET CLEANING IS TURNED ON!!!"
+  //*cutflow << CutName("met cleaning") << [&](Superlink* sl) -> bool {
+  //    return (sl->tools->passMetCleaning(sl->met));
+  //};
 
   //  Analysis Cuts
   *cutflow << CutName("exactly two baseline leptons") << [](Superlink* sl) -> bool {
@@ -262,12 +265,12 @@ int main(int argc, char* argv[])
   //      > Ntuple variables
 
   // Event variables
-  //bool pass_HLT_mu18_mu8noL1           = false; // 
-  //bool pass_HLT_2e12_lhloose_L12EM10VH = false; // ** 2015 dilepton triggers **
-  //bool pass_HLT_e17_lhloose_mu14       = false; //
-  //bool pass_HLT_mu20_mu8noL1           = false; // 
-  //bool pass_HLT_2e15_lhloose_L12EM13VH = false; // ** 2016 dilepton triggers **
-  ////bool pass_HLT_e17_lhloose_mu14       = false; // -> same in 2015
+  //bool pass_HLT_mu18_mu8noL1            = false; // 
+  //bool pass_HLT_2e12_lhloose_L12EM10VH  = false; // ** 2015 dilepton triggers **
+  //bool pass_HLT_e17_lhloose_mu14        = false; //
+  //bool pass_HLT_mu20_mu8noL1            = false; // 
+  //bool pass_HLT_2e15_lhvloose_L12EM13VH = false; // ** 2016 dilepton triggers **
+  ////bool pass_HLT_e17_lhloose_mu14      = false; // -> same in 2015
 
   *cutflow << NewVar("HLT_mu18_mu8noL1 trigger bit"); {
       *cutflow << HFTname("pass_HLT_mu18_mu8noL1");
@@ -293,9 +296,9 @@ int main(int argc, char* argv[])
       *cutflow << SaveVar();
   }  
 
-  *cutflow << NewVar("HLT_2e15_lhloose_L12EM13VH trigger bit"); {
-      *cutflow << HFTname("pass_HLT_2e15_lhloose_L12EM13VH");
-      *cutflow << [](Superlink* sl, var_bool*) -> bool { return sl->tools->triggerTool().passTrigger(sl->nt->evt()->trigBits, "HLT_2e15_lhloose_L12EM13VH"); };
+  *cutflow << NewVar("HLT_2e15_lhvloose_L12EM13VH trigger bit"); {
+      *cutflow << HFTname("pass_HLT_2e15_lhvloose_L12EM13VH");
+      *cutflow << [](Superlink* sl, var_bool*) -> bool { return sl->tools->triggerTool().passTrigger(sl->nt->evt()->trigBits, "HLT_2e15_lhvloose_L12EM13VH"); };
       *cutflow << SaveVar();
   }  
 
@@ -408,77 +411,29 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
-  //*cutflow << NewVar("lepton d0"); {
-  //  *cutflow << HFTname("l_d0");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->d0);
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
+  *cutflow << NewVar("lepton type"); {
+    *cutflow << HFTname("l_type");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(auto& lepton : signalLeptons) {
+        out.push_back(lepton->mcType);
+      }
+      return out;
+    };
+    *cutflow << SaveVar();
+  }
 
-  //*cutflow << NewVar("lepton errD0"); {
-  //  *cutflow << HFTname("l_errD0");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->errD0);
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
-
-  //*cutflow << NewVar("lepton d0sig"); {
-  //  *cutflow << HFTname("l_d0sig");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->d0Sig());
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
-
-  //*cutflow << NewVar("lepton z0"); {
-  //  *cutflow << HFTname("l_z0");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->z0);
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
-
-  //*cutflow << NewVar("lepton errZ0"); {
-  //  *cutflow << HFTname("l_errZ0");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->errZ0);
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
-
-  //*cutflow << NewVar("lepton z0sinTheta"); {
-  //  *cutflow << HFTname("l_z0sinTheta");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->z0SinTheta());
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
+  *cutflow << NewVar("lepton origin"); {
+    *cutflow << HFTname("l_origin");
+    *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
+      vector<double> out;
+      for(auto& lepton : signalLeptons) {
+        out.push_back(lepton->mcOrigin);
+      }
+      return out;
+    };
+    *cutflow << SaveVar();
+  }
 
   *cutflow << NewVar("lepton charge"); {
     *cutflow << HFTname("l_q");
@@ -491,30 +446,6 @@ int main(int argc, char* argv[])
       };
     *cutflow << SaveVar();
   }
-
-  //*cutflow << NewVar("lepton ptvarcone20"); {
-  //  *cutflow << HFTname("l_ptvarcone20");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->ptvarcone20);
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
-
-  //*cutflow << NewVar("lepton ptvarcone30"); {
-  //  *cutflow << HFTname("l_ptvarcone30");
-  //  *cutflow << [&](Superlink* /*sl*/, var_float_array*) -> vector<double> {
-  //    vector<double> out;
-  //    for(auto& lepton : signalLeptons) {
-  //        out.push_back(lepton->ptvarcone30);
-  //    }
-  //    return out;
-  //    };
-  //  *cutflow << SaveVar();
-  //}
 
   // Leptonic event variables
   TLorentzVector lepton0 ; 

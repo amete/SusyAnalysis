@@ -41,7 +41,8 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  float luminosity = 3209.05; // in pb-1
+  //float luminosity = 3209.05; // in pb-1
+  float luminosity = 5820.00; // in pb-1
   //float luminosity = 10000.0; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
   bool  countAbove = true;

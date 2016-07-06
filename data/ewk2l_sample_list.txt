@@ -1,4 +1,4 @@
-# Group , DSID , name , tags
+# Group , DSID , name , tags (tags are not really used for anything in this context)
 # Zjets
 zjets     , 363102 , Sherpa_NNPDF30NNLO_Ztautau_Pt70_140_CVetoBVeto               , e4742_s2726_r7725_r7676_p2613
 zjets     , 363103 , Sherpa_NNPDF30NNLO_Ztautau_Pt70_140_CFilterBVeto             , e4742_s2726_r7725_r7676_p2613
@@ -72,6 +72,30 @@ zjets     , 363408 , Sherpa_NNPDF30NNLO_Zee_Pt1000_2000_BFilter                 
 zjets     , 363409 , Sherpa_NNPDF30NNLO_Zee_Pt2000_E_CMS_CVetoBVeto               , e4716_s2726_r7725_r7676_p2613
 zjets     , 363410 , Sherpa_NNPDF30NNLO_Zee_Pt2000_E_CMS_CFilterBVeto             , e4716_s2726_r7725_r7676_p2613
 zjets     , 363411 , Sherpa_NNPDF30NNLO_Zee_Pt2000_E_CMS_BFilter                  , e4772_s2726_r7725_r7676_p2613
+zjets     , 361468 , Sherpa_CT10_Zee_Mll10to40_Pt0_70_BVeto                       , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361469 , Sherpa_CT10_Zee_Mll10to40_Pt0_70_BFilter                     , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361470 , Sherpa_CT10_Zee_Mll10to40_Pt70_140_BVeto                     , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361471 , Sherpa_CT10_Zee_Mll10to40_Pt70_140_BFilter                   , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361472 , Sherpa_CT10_Zee_Mll10to40_Pt140_400_BVeto                    , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361473 , Sherpa_CT10_Zee_Mll10to40_Pt140_400_BFilter                  , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361474 , Sherpa_CT10_Zee_Mll10to40_Pt400_E_CMS_BVeto                  , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361475 , Sherpa_CT10_Zee_Mll10to40_Pt400_E_CMS_BFilter                , p2666_n0225
+zjets     , 361476 , Sherpa_CT10_Zmumu_Mll10to40_Pt0_70_BVeto                     , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361477 , Sherpa_CT10_Zmumu_Mll10to40_Pt0_70_BFilter                   , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361478 , Sherpa_CT10_Zmumu_Mll10to40_Pt70_140_BVeto                   , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361479 , Sherpa_CT10_Zmumu_Mll10to40_Pt70_140_BFilter                 , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361480 , Sherpa_CT10_Zmumu_Mll10to40_Pt140_400_BVeto                  , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361481 , Sherpa_CT10_Zmumu_Mll10to40_Pt140_400_BFilter                , p2666_n0225
+zjets     , 361482 , Sherpa_CT10_Zmumu_Mll10to40_Pt400_E_CMS_BVeto                , p2666_n0225
+zjets     , 361483 , Sherpa_CT10_Zmumu_Mll10to40_Pt400_E_CMS_BFilter              , p2666_n0225
+zjets     , 361484 , Sherpa_CT10_Ztautau_Mll10to40_Pt0_70_BVeto                   , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361485 , Sherpa_CT10_Ztautau_Mll10to40_Pt0_70_BFilter                 , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361486 , Sherpa_CT10_Ztautau_Mll10to40_Pt70_140_BVeto                 , e4198_s2608_s2183_r7772_r7676_p2666
+zjets     , 361487 , Sherpa_CT10_Ztautau_Mll10to40_Pt70_140_BFilter               , p2666_n0225
+zjets     , 361488 , Sherpa_CT10_Ztautau_Mll10to40_Pt140_400_BVeto                , p2666_n0225
+zjets     , 361489 , Sherpa_CT10_Ztautau_Mll10to40_Pt140_400_BFilter              , p2666_n0225
+zjets     , 361490 , Sherpa_CT10_Ztautau_Mll10to40_Pt400_E_CMS_BVeto              , p2666_n0225
+zjets     , 361491 , Sherpa_CT10_Ztautau_Mll10to40_Pt400_E_CMS_BFilter            , p2666_n0225
 # Wjets                                                                          
 wjets     , 363336 , Sherpa_NNPDF30NNLO_Wtaunu_Pt70_140_BFilter                   , e4779_s2726_r7725_r7676_p2613
 wjets     , 363337 , Sherpa_NNPDF30NNLO_Wtaunu_Pt140_280_CVetoBVeto               , e4709_s2726_r7725_r7676_p2613
@@ -150,7 +174,6 @@ dibosons  , 361068 , Sherpa_CT10_llvv                                           
 dibosons  , 361071 , Sherpa_CT10_lllvjj_EW6                                       , e3836_s2608_s2183_r7772_r7676_p2613
 dibosons  , 361072 , Sherpa_CT10_lllljj_EW6                                       , e3836_s2608_s2183_r7772_r7676_p2613
 dibosons  , 361073 , Sherpa_CT10_ggllll                                           , e3836_s2608_s2183_r7772_r7676_p2613
-dibosons  , 361077 , Sherpa_CT10_ggllvv                                           , e4641_s2726_r7772_r7676_p2613
 dibosons  , 361077 , Sherpa_CT10_ggllvv                                           , e3836_s2608_s2183_r7772_r7676_p2613
 dibosons  , 361084 , Sherpa_CT10_WqqZll                                           , e3836_s2608_s2183_r7772_r7676_p2613
 dibosons  , 361086 , Sherpa_CT10_ZqqZll                                           , e3926_s2608_s2183_r7772_r7676_p2613

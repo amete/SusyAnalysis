@@ -23,7 +23,8 @@ using namespace std;
 typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
-TString trigger   = "(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)";
+//TString trigger   = "(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)";
+TString trigger   = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)";
 TString ptCuts    = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
 TString isOS      = "(l_q[0]*l_q[1])<0";
 TString zVeto     = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)";
@@ -80,6 +81,7 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"                 , (in
                                                    ("ttbar"                , (int)kAzure-9   )
                                                    ("singletop"            , (int)kOrange-3  )
                                                    ("ttv"                  , (int)kRed+1     )
+                                                   ("higgs"                , (int)kBlue+1    )
                                                    ("W"                    , (int)kGray      )
                                                    ("MM"                   , (int)kGray      )
                                                    ("Z"                    , (int)kYellow-9  )
@@ -101,6 +103,7 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"                  , "Da
                                                   ("ttv"                   , "t#bar{t}+V"       )
                                                   ("W"                     , "W"                )
                                                   ("MM"                    , "Fakes"            )
+                                                  ("higgs"                 , "Higgs"            )
                                                   ("Z"                     , "Z"                )
                                                   ("VV"                    , "VV"               )
                                                   ("VVV"                   , "VVV"              )
