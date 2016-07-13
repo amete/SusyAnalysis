@@ -97,7 +97,7 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"                 , (in
 ;
 
 /// \brief Sample Names
-TS2TSMap SampleNames = boost::assign::map_list_of ("Data"                  , "Data 2015"        )
+TS2TSMap SampleNames = boost::assign::map_list_of ("Data"                  , "Data"             )
                                                   ("ttbar"                 , "t#bar{t}"         )
                                                   ("singletop"             , "Single Top"       )
                                                   ("ttv"                   , "t#bar{t}+V"       )

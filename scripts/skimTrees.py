@@ -4,45 +4,48 @@ from combineHFTs import Background
 
 def main():
     files=[]
-    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0224/inputs_EWK2L/"
-    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6/" 
-    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6/" 
-    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/outputs_6_skimmed/" 
-    selection        = "((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.))&&mll>20.&&nCentralLJets50==0&&nForwardJets==0"
+    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0225/inputs_EWK2L/"
+    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs/" 
+    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs/" 
+    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed/" 
+    selection        = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)" #&&((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.))&&mll>20.&&nCentralLJets50==0&&nForwardJets==0"
 
     ###########################
     ## available samples
     backgrounds = []
     ## data
-    #bkg_data    = Background("Data"     , filelist_dir + "data15/"          )
+    #bkg_data    = Background("Data"     , filelist_dir + "dataDS1/"          )
     #backgrounds.append(bkg_data)
-    ### ttbar
-    ##bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
-    ##backgrounds.append(bkg_ttbar_dl)
+    ## ttbar
+    #bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
+    #backgrounds.append(bkg_ttbar_dl)
     ## ttbar
     #bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
     #backgrounds.append(bkg_ttbar)
     ## ttv
     #bkg_ttv     = Background("ttv"      , filelist_dir + "mc15_ttv/"        )
     #backgrounds.append(bkg_ttv)
-    ## diboson
-    #bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
-    #backgrounds.append(bkg_diboson)
+    # diboson
+    bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
+    backgrounds.append(bkg_diboson)
     ## triboson
-    #bkg_triboson = Background("VV"      , filelist_dir + "mc15_tribosons/"  )
-    #backgrounds.append(bkg_diboson)
+    #bkg_triboson = Background("VVV"     , filelist_dir + "mc15_tribosons/"  )
+    #backgrounds.append(bkg_triboson)
     ## single top
     #bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/"  )
     #backgrounds.append(bkg_st)
+    ## higgs 
+    #bkg_hg      = Background("higgs"    , filelist_dir + "mc15_higgs/"      )
+    #backgrounds.append(bkg_hg)
     ## wjets
     #bkg_wjets   = Background("W"        , filelist_dir + "mc15_wjets/"      )
     #backgrounds.append(bkg_wjets)
     ## zjets
     #bkg_zjets   = Background("Z"        , filelist_dir + "mc15_zjets/"      )
     #backgrounds.append(bkg_zjets)
-    # signal
-    sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
-    backgrounds.append(sig_c1c1_slepslep)
+    ## signal
+    #sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
+    #backgrounds.append(sig_c1c1_slepslep)
  
     ###########################
     ## available systematics
@@ -69,7 +72,7 @@ def main():
     syst.append('JET_GroupedNP_1_UP')
     
     # met
-    syst.append('MET_SoftTrk_ResoPara')
+    #syst.append('MET_SoftTrk_ResoPara')
     syst.append('MET_SoftTrk_ResoPerp')
     syst.append('MET_SoftTrk_ScaleDown')
     syst.append('MET_SoftTrk_ScaleUp')
@@ -114,12 +117,26 @@ def main():
                 for ds in bkg.dsid_list :
                     if ds in sample : dsid = str(ds)
                 in_file  = r.TFile(sample)
-                in_tree  = in_file.Get(treename)
+                in_tree  = in_file.Get(treename).Clone()
+                if(bkg.name == "VV"):
+                    ## SF
+                    in_tree_1 = in_file.Get(treename).Clone(treename+"SF")
+                    ## DF
+                    in_tree_2 = in_file.Get(treename).Clone(treename+"DF")
                 out_file = r.TFile("%s/%s"%(output_dir,sample.split("/")[-1]),"RECREATE")
                 out_file.cd()
                 sk_tree = in_tree.CopyTree(selection)
                 print "%s %s %s (original : %*i - skimmed : %*i)"%(bkg.name, dsid, sys_, 7, in_tree.GetEntries(), 7, sk_tree.GetEntries())
                 sk_tree.Write()
+                if(bkg.name == "VV"):
+                    ## SF
+                    sk_tree_1 = in_tree_1.CopyTree(selection+"&&l_flav[0]==l_flav[1]")
+                    print "\t (SF) %s %s %s (original : %*i - skimmed : %*i)"%(bkg.name, dsid, sys_, 7, in_tree.GetEntries(), 7, sk_tree_1.GetEntries())
+                    sk_tree_1.Write()
+                    ## DF
+                    sk_tree_2 = in_tree_2.CopyTree(selection+"&&l_flav[0]!=l_flav[1]")
+                    print "\t (DF) %s %s %s (original : %*i - skimmed : %*i)"%(bkg.name, dsid, sys_, 7, in_tree.GetEntries(), 7, sk_tree_2.GetEntries())
+                    sk_tree_2.Write()
                 out_file.Close()
                 in_file.Close()
 

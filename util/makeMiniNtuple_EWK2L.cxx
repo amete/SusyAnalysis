@@ -207,13 +207,6 @@ int main(int argc, char* argv[])
   };
   
   *cutflow << CutName("pass cosmic veto") << [&](Superlink* sl) -> bool {
-      //if(sl->nt->evt()->eventNumber == 2031134 || 
-      //   sl->nt->evt()->eventNumber == 2187215 ||
-      //   sl->nt->evt()->eventNumber == 6813818 ||
-      //   sl->nt->evt()->eventNumber == 7460893 /*||*/
-      //  ) {
-      //  printEventInformation(sl);
-      //}
       return (sl->tools->passCosmicMuon(sl->baseMuons));
   };
 
@@ -233,10 +226,35 @@ int main(int argc, char* argv[])
 
   //  Analysis Cuts
   *cutflow << CutName("exactly two baseline leptons") << [](Superlink* sl) -> bool {
+      //if(sl->nt->evt()->eventNumber == 150148 || 
+      //   sl->nt->evt()->eventNumber == 154664 //||
+      //   sl->nt->evt()->eventNumber == 150393 ||
+      //   sl->nt->evt()->eventNumber == 150396 //||
+      //  ) {
+      //  printEventInformation(sl);
+      //}
       return (sl->baseLeptons->size() == 2);
   };
 
+  ////
+  //// For Andreas
+  ////
+  //*cutflow << CutName("Met > 50 geV") << [](Superlink* sl) -> bool {
+  //    return (sl->met->Et > 50.0);
+  //};
+  //*cutflow << CutName("b-veto") << [](Superlink* sl) -> bool {
+  //  bool veto = false;
+  //  for(auto& jet : *sl->baseJets) {
+  //    if(sl->tools->m_jetSelector->isCentralB(jet))  { veto = true; break; } 
+  //  }
+  //  return !veto;
+  //};
+  ////
+
   *cutflow << CutName("exactly two signal leptons") << [](Superlink* sl) -> bool {
+      //std::cout << "SERHAN " << sl->nt->evt()->eventNumber; // << std::endl;
+      //printf(" event %*.4f pile-up %*.4f ",10,sl->nt->evt()->w,10,sl->nt->evt()->wPileup);
+      //sl->weights->product(); 
       return (sl->leptons->size() == 2);
   };
 
