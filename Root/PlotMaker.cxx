@@ -46,7 +46,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   //float luminosity = 10000.0; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
   bool  countAbove = true;
-  bool  blindData  = true;
+  bool  blindData  = false;
   float blindThreshold = 90.;
 
   ////////////////////////////////////////////////////////////////////////////////////////

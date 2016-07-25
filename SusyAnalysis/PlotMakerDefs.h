@@ -70,10 +70,10 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"         , "nBaseLepto
                                                  ("VR2L-VVDF"      , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>75.&&mT2lep<90." )
                                                  ("VR2L-VVSF"      , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]==l_flav[1]&&mT2lep>75.&&mT2lep<90." )
                                                  ("CR2L-Top"       , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto  +"&&"+cbjSelect+"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>70.&&mT2lep<120." )
-                                                 ("SR2L-preMT2"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto )
-                                                 ("SR2L-MT290"     , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>90." )
-                                                 ("SR2L-MT2120"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>120." )
-                                                 ("SR2L-MT2150"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto+"&&"+fjVeto+"&&mT2lep>150." )
+                                                 ("SR2L-preMT2"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto )
+                                                 ("SR2L-MT290"     , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>90." )
+                                                 ("SR2L-MT2120"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>120." )
+                                                 ("SR2L-MT2150"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>150." )
 ;
 
 /// \brief Sample Colors

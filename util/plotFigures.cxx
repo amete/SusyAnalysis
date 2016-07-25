@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/hfts_skimmed/HFT_COMBINED_13TeV.root"); // Rel 20.7
+  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/hfts_skimmed_2/HFT_COMBINED_NEWFAKES_13TeV.root"); // Rel 20.7
   //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_6_skimmed/HFT_COMBINED_13TeV.root"); // Rel 20.7
   //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_4/mc15_13TeV.root"); // Rel 20.7
   //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0222_run/hfts/mc15_13TeV_sherpa.root"); // Rel 20.1

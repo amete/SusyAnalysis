@@ -102,8 +102,8 @@ syst.append('MET_SoftTrk_ScaleUp')
 ## backgrounds
 backgrounds = []
 filelist_dir      = "/data/uclhc/uci/user/amete/analysis_n0225/inputs_EWK2L/"
-mc_sample_dir     = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed/"
-data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed/"
+mc_sample_dir     = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed_2/"
+data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed_2/"
 
 # data
 bkg_data    = Background("Data"     , filelist_dir + "dataDS1/")
@@ -147,7 +147,7 @@ signals.append(sig_c1c1_slepslep)
 
 ###################################
 ## setup the output file name and location
-output_dir  = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/hfts_skimmed/" 
+output_dir  = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/hfts_skimmed_2/" 
 output_name = "HFT_BG_13TeV.root"
 output_name_sig = "HFT_C1C1_13TeV.root"
 

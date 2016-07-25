@@ -5,10 +5,21 @@ from combineHFTs import Background
 def main():
     files=[]
     filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0225/inputs_EWK2L/"
-    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs/" 
-    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs/" 
-    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed/" 
-    selection        = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)" #&&((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.))&&mll>20.&&nCentralLJets50==0&&nForwardJets==0"
+    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_2/" 
+    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_2/" 
+    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed_2/" 
+    #selection        = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)" #&&((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.))&&mll>20.&&nCentralLJets50==0&&nForwardJets==0"
+    trigger          = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)";
+    ptCuts           = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
+    isOS             = "(l_q[0]*l_q[1])<0";
+    zVeto            = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)";
+    zSelect          = "TMath::Abs(mll-90.2)<10.";
+    cljVeto          = "((l_flav[0]==l_flav[1]&&nCentralLJets==0)||(l_flav[0]!=l_flav[1]&&nCentralLJets30==0))";
+    cbjVeto          = "nCentralBJets==0";
+    cbjSelect        = "nCentralBJets>0";
+    fjVeto           = "nForwardJets==0";
+    selection        = "(%s&&%s&&%s&&%s&&%s)"%(trigger,ptCuts,isOS,cljVeto,fjVeto)
+    selection       += "&&((%s&&%s&&mT2lep>50.)||(%s&&%s&&mT2lep>90.)||(%s&&%s&&mT2lep>70.))"%(zVeto,cbjVeto,zSelect,cbjVeto,zVeto,cbjSelect) 
 
     ###########################
     ## available samples
@@ -16,18 +27,18 @@ def main():
     ## data
     #bkg_data    = Background("Data"     , filelist_dir + "dataDS1/"          )
     #backgrounds.append(bkg_data)
-    ## ttbar
-    #bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
-    #backgrounds.append(bkg_ttbar_dl)
+    # ttbar
+    bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
+    backgrounds.append(bkg_ttbar_dl)
     ## ttbar
     #bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
     #backgrounds.append(bkg_ttbar)
     ## ttv
     #bkg_ttv     = Background("ttv"      , filelist_dir + "mc15_ttv/"        )
     #backgrounds.append(bkg_ttv)
-    # diboson
-    bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
-    backgrounds.append(bkg_diboson)
+    ## diboson
+    #bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
+    #backgrounds.append(bkg_diboson)
     ## triboson
     #bkg_triboson = Background("VVV"     , filelist_dir + "mc15_tribosons/"  )
     #backgrounds.append(bkg_triboson)
