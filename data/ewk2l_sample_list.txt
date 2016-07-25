@@ -175,8 +175,8 @@ dibosons  , 361071 , Sherpa_CT10_lllvjj_EW6                                     
 dibosons  , 361072 , Sherpa_CT10_lllljj_EW6                                       , e3836_s2608_s2183_r7772_r7676_p2613
 dibosons  , 361073 , Sherpa_CT10_ggllll                                           , e3836_s2608_s2183_r7772_r7676_p2613
 dibosons  , 361077 , Sherpa_CT10_ggllvv                                           , e3836_s2608_s2183_r7772_r7676_p2613
-dibosons  , 361084 , Sherpa_CT10_WqqZll                                           , e3836_s2608_s2183_r7772_r7676_p2613
-dibosons  , 361086 , Sherpa_CT10_ZqqZll                                           , e3926_s2608_s2183_r7772_r7676_p2613
+dibosons  , 361094 , Sherpa_CT10_WqqZll_SHv21_improved                            , e4607_s2726_r7725_r7676_p2666 
+dibosons  , 361066 , Sherpa_CT10_ZqqZll_SHv21_improved                            , e4607_s2726_r7725_r7676_p2666
 # Tribosons                                                                      
 tribosons , 361620 , Sherpa_CT10_WWW_3l3v                                         , not_in_p2419
 tribosons , 361621 , Sherpa_CT10_WWZ_4l2v                                         , not_in_p2419
@@ -203,9 +203,7 @@ ttbar     , 410000 , PowhegPythiaEvtGen_P2012_ttbar_hdamp172p5_nonallhad        
 singletop , 410011 , PowhegPythiaEvtGen_P2012_singletop_tchan_lept_top            , e3824_s2608_s2183_r7725_r7676_p2613
 singletop , 410012 , PowhegPythiaEvtGen_P2012_singletop_tchan_lept_antitop        , e3824_s2608_s2183_r7725_r7676_p2613
 singletop , 410015 , PowhegPythiaEvtGen_P2012_Wt_dilepton_top                     , e3753_s2608_s2183_r7725_r7676_p2613
-singletop , 410015 , PowhegPythiaEvtGen_P2012_Wt_dilepton_top                     , e3753_a766_a818_r7676_p2613
 singletop , 410016 , PowhegPythiaEvtGen_P2012_Wt_dilepton_antitop                 , e3753_s2608_s2183_r7725_r7676_p2613
-singletop , 410016 , PowhegPythiaEvtGen_P2012_Wt_dilepton_antitop                 , e3753_a766_a818_r7676_p2613
 singletop , 410025 , PowhegPythiaEvtGen_P2012_SingleTopSchan_noAllHad_top         , e3998_s2608_s2183_r7725_r7676_p2613
 singletop , 410026 , PowhegPythiaEvtGen_P2012_SingleTopSchan_noAllHad_antitop     , e3998_s2608_s2183_r7725_r7676_p2613
 ttv       , 410066 , MadGraphPythia8EvtGen_A14NNPDF23LO_ttW_Np0                   , e4111_s2608_s2183_r7725_r7676_p2613
@@ -218,7 +216,7 @@ ttv       , 410113 , MadGraphPythia8EvtGen_A14NNPDF23LO_ttmumu_Np0              
 ttv       , 410114 , MadGraphPythia8EvtGen_A14NNPDF23LO_ttmumu_Np1                , e4632_s2726_r7725_r7676_p2613
 ttv       , 410115 , MadGraphPythia8EvtGen_A14NNPDF23LO_tttautau_Np0              , e4632_s2726_r7725_r7676_p2613
 ttv       , 410116 , MadGraphPythia8EvtGen_A14NNPDF23LO_tttautau_Np1              , e4632_s2726_r7725_r7676_p2613
-ttv       , 410116 , MadGraphPythia8EvtGen_A14NNPDF23LO_tttautau_Np1              , e4265_s2608_s2183_r7725_r7676_p2613
+ttv       , 410156 , aMcAtNloPythia8EvtGen_MEN30NLO_A14N23LO_ttZnunu              , e5070_s2726_r7772_r7676_p2666_n0225_nt
 ttv       , 410050 , MadGraphPythiaEvtGen_P2012_tZ_4fl_tchan_noAllHad             , e4279_a766_a818_r7676_p2613
 # Signal
 c1c1_slepslep , 392500 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_150p0_50p0_2L8       , e4319_a766_a821_r7676_p2613
@@ -227,13 +225,17 @@ c1c1_slepslep , 392502 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_200p0_150p0_2L8    
 c1c1_slepslep , 392504 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_300p0_100p0_2L8      , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392505 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_300p0_200p0_2L8      , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392506 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_300p0_250p0_2L8      , e4319_a766_a821_r7676_p2613
+c1c1_slepslep , 392507 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_400p0_100p0_2L8      , e4319_a766_a821_r7676_p2666
 c1c1_slepslep , 392508 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_400p0_200p0_2L8      , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392509 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_400p0_300p0_2L8      , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392510 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_500p0_1p0_2L8        , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392511 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_500p0_100p0_2L8      , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392512 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_500p0_200p0_2L8      , e4319_a766_a821_r7676_p2613
+c1c1_slepslep , 392513 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_500p0_300p0_2L8      , e4319_a766_a821_r7676_p2666
 c1c1_slepslep , 392514 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_600p0_1p0_2L8        , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392515 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_600p0_100p0_2L8      , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392516 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_600p0_200p0_2L8      , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392518 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_700p0_1p0_2L8        , e4319_a766_a821_r7676_p2613
 c1c1_slepslep , 392519 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_700p0_100p0_2L8      , e4319_a766_a821_r7676_p2613
+c1c1_slepslep , 392520 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_700p0_200p0_2L8      , e4319_a766_a821_r7676_p2666
+c1c1_slepslep , 392521 , MGPy8EG_A14N23LO_C1C1_SlepSnu_x0p50_700p0_300p0_2L8      , e4319_a766_a821_r7676_p2666
