@@ -24,7 +24,8 @@ typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
 //TString trigger   = "(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)";
-TString trigger   = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)";
+//TString trigger   = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)";
+TString trigger   = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))";
 TString ptCuts    = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
 TString isOS      = "(l_q[0]*l_q[1])<0";
 TString zVeto     = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)";
@@ -71,6 +72,7 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"         , "nBaseLepto
                                                  ("VR2L-VVSF"      , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&l_flav[0]==l_flav[1]&&mT2lep>75.&&mT2lep<90." )
                                                  ("CR2L-Top"       , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto  +"&&"+cbjSelect+"&&"+fjVeto+"&&l_flav[0]!=l_flav[1]&&mT2lep>70.&&mT2lep<120." )
                                                  ("SR2L-preMT2"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto )
+                                                 ("SR2L-preMT250"  , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>50." )
                                                  ("SR2L-MT290"     , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>90." )
                                                  ("SR2L-MT2120"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>120." )
                                                  ("SR2L-MT2150"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>150." )
@@ -91,6 +93,8 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"                 , (in
                                                    ("c1c1_slep_300.0_200.0", (int)kGreen+1   )
                                                    ("c1c1_slep_400.0_200.0", (int)kGreen+1   )
                                                    ("c1c1_slep_500.0_1.0"  , (int)kMagenta+1 )
+                                                   ("SlepSlep_350.5_1.0"   , (int)kGreen+1   )
+                                                   ("SlepSlep_450.5_1.0"   , (int)kGreen+1   )
                                                    ("406009"               , (int)kRed+1     )
                                                    ("406010"               , (int)kGreen+1   )
                                                    ("406011"               , (int)kMagenta   )
@@ -111,6 +115,8 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"                  , "Da
                                                   ("c1c1_slep_300.0_200.0" , "C1C1 300, 200 GeV")
                                                   ("c1c1_slep_400.0_200.0" , "C1C1 400, 200 GeV")
                                                   ("c1c1_slep_500.0_1.0"   , "C1C1 500, 1 GeV"  )
+                                                  ("SlepSlep_350.5_1.0"    , "SlSl 350.5, 1 GeV"  )
+                                                  ("SlepSlep_450.5_1.0"    , "SlSl 450.5, 1 GeV"  )
                                                   ("406009"                , "t1t1 250, 160 GeV")
                                                   ("406010"                , "t1t1 300, 150 GeV")
                                                   ("406011"                , "t1t1 300, 180 GeV")

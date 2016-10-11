@@ -4,12 +4,11 @@ from combineHFTs import Background
 
 def main():
     files=[]
-    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0225/inputs_EWK2L/"
-    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_2/" 
-    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_2/" 
-    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/outputs_skimmed_2/" 
-    #selection        = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)" #&&((l_flav[0]!=l_flav[1])||(fabs(mll-90.2)>10)||(mT2lep>70.))&&mll>20.&&nCentralLJets50==0&&nForwardJets==0"
-    trigger          = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)";
+    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0226/inputs_EWK2L/"
+    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0226_run/EWK2L/outputs/" 
+    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0226_run/EWK2L/outputs/" 
+    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0226_run/EWK2L/outputs_skimmed/" 
+    trigger          = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))";
     ptCuts           = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
     isOS             = "(l_q[0]*l_q[1])<0";
     zVeto            = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)";
@@ -25,11 +24,11 @@ def main():
     ## available samples
     backgrounds = []
     ## data
-    #bkg_data    = Background("Data"     , filelist_dir + "dataDS1/"          )
+    #bkg_data    = Background("Data"     , filelist_dir + "dataDS2/"          )
     #backgrounds.append(bkg_data)
-    # ttbar
-    bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
-    backgrounds.append(bkg_ttbar_dl)
+    ## ttbar
+    #bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
+    #backgrounds.append(bkg_ttbar_dl)
     ## ttbar
     #bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
     #backgrounds.append(bkg_ttbar)
@@ -57,6 +56,8 @@ def main():
     ## signal
     #sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
     #backgrounds.append(sig_c1c1_slepslep)
+    sig_slepslep = Background("SlepSlep", filelist_dir + "mc15_SlepSlep/")
+    backgrounds.append(sig_slepslep)
  
     ###########################
     ## available systematics
@@ -83,7 +84,7 @@ def main():
     syst.append('JET_GroupedNP_1_UP')
     
     # met
-    #syst.append('MET_SoftTrk_ResoPara')
+    syst.append('MET_SoftTrk_ResoPara')
     syst.append('MET_SoftTrk_ResoPerp')
     syst.append('MET_SoftTrk_ScaleDown')
     syst.append('MET_SoftTrk_ScaleUp')

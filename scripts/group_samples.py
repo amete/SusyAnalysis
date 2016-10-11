@@ -10,7 +10,7 @@ def get_samples(analysis,rootcoredir):
 
 # Main function
 def main():
-    prodTag='n0225'
+    prodTag='n0226'
     analysis='EWK2L'
 
     # Stable below
@@ -51,6 +51,8 @@ def main():
         input_file.seek(0)
         for line in input_file:
             if dsids[ii].strip() in line:
+                if foundSample:
+                    print ' \t WARNING SAMPLE %s IN GROUP %s has duplicate - sort it out!!!'%(dsids[ii],groups[ii])
                 current_file.write(line)
                 foundSample=True
         if not foundSample:
@@ -59,13 +61,13 @@ def main():
     print ' \t Closing file for group %s' % (current_group)
     current_file.close()
 
-    # Now prepare
-    print  '\n\n'
-    converted_files = [f for f in os.listdir(outputdir) if "mc15" in f and os.path.isfile(os.path.join(outputdir, f))]
-    for converted_file in converted_files:
-        command_to_run = '%s -i %s/%s -o %s/%s'%(executable,outputdir,converted_file,outputdir,converted_file.split('.')[0])
-        print 'Running %s '%(command_to_run) 
-        os.system(command_to_run)
+    ### Now prepare
+    ##print  '\n\n'
+    ##converted_files = [f for f in os.listdir(outputdir) if "mc15" in f and os.path.isfile(os.path.join(outputdir, f))]
+    ##for converted_file in converted_files:
+    ##    command_to_run = '%s -i %s/%s -o %s/%s'%(executable,outputdir,converted_file,outputdir,converted_file.split('.')[0])
+    ##    print 'Running %s '%(command_to_run) 
+    ##    os.system(command_to_run)
 
 if __name__ == "__main__":
     main() 

@@ -288,7 +288,10 @@ int main(int argc, char* argv[])
   //bool pass_HLT_e17_lhloose_mu14        = false; //
   //bool pass_HLT_mu20_mu8noL1            = false; // 
   //bool pass_HLT_2e15_lhvloose_L12EM13VH = false; // ** 2016 dilepton triggers **
-  ////bool pass_HLT_e17_lhloose_mu14      = false; // -> same in 2015
+  //bool pass_HLT_e17_lhloose_mu14        = false; // -> same in 2015
+  //bool pass_HLT_2e17_lhvloose_nod0      = false;
+  //bool pass_HLT_mu22_mu8noL1            = false;
+  //bool pass_HLT_e17_lhloose_nod0_mu14   = false;
 
   *cutflow << NewVar("HLT_mu18_mu8noL1 trigger bit"); {
       *cutflow << HFTname("pass_HLT_mu18_mu8noL1");
@@ -318,7 +321,33 @@ int main(int argc, char* argv[])
       *cutflow << HFTname("pass_HLT_2e15_lhvloose_L12EM13VH");
       *cutflow << [](Superlink* sl, var_bool*) -> bool { return sl->tools->triggerTool().passTrigger(sl->nt->evt()->trigBits, "HLT_2e15_lhvloose_L12EM13VH"); };
       *cutflow << SaveVar();
-  }  
+  } 
+
+  *cutflow << NewVar("HLT_2e17_lhvloose_nod0 trigger bit"); {
+      *cutflow << HFTname("pass_HLT_2e17_lhvloose_nod0");
+      *cutflow << [](Superlink* sl, var_bool*) -> bool { return sl->tools->triggerTool().passTrigger(sl->nt->evt()->trigBits, "HLT_2e17_lhvloose_nod0"); };
+      *cutflow << SaveVar();
+  } 
+
+  *cutflow << NewVar("HLT_mu22_mu8noL1 trigger bit"); {
+      *cutflow << HFTname("pass_HLT_mu22_mu8noL1");
+      *cutflow << [](Superlink* sl, var_bool*) -> bool { return sl->tools->triggerTool().passTrigger(sl->nt->evt()->trigBits, "HLT_mu22_mu8noL1"); };
+      *cutflow << SaveVar();
+  } 
+
+  *cutflow << NewVar("HLT_e17_lhloose_nod0_mu14 trigger bit"); {
+      *cutflow << HFTname("pass_HLT_e17_lhloose_nod0_mu14");
+      *cutflow << [](Superlink* sl, var_bool*) -> bool { return sl->tools->triggerTool().passTrigger(sl->nt->evt()->trigBits, "HLT_e17_lhloose_nod0_mu14"); };
+      *cutflow << SaveVar();
+  } 
+
+  *cutflow << NewVar("treatAsYear"); { 
+      *cutflow << HFTname("treatAsYear");
+      *cutflow << [](Superlink* sl, var_double*) -> int { 
+          return sl->nt->evt()->treatAsYear;
+      };
+      *cutflow << SaveVar();
+  }
 
   *cutflow << NewVar("event weight"); {
       *cutflow << HFTname("eventweight");

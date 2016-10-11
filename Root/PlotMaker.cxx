@@ -41,9 +41,10 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  //float luminosity = 3209.05; // in pb-1
-  float luminosity = 5820.00; // in pb-1
-  //float luminosity = 10000.0; // in pb-1
+  //float luminosity = 15000.0; // in pb-1
+  ////float luminosity = 3209.05; // in pb-1
+  //float luminosity = 5820.00; // in pb-1
+  float luminosity = 13277.26; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
   bool  countAbove = true;
   bool  blindData  = false;
@@ -132,7 +133,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     if(m_sampleList.at(i)!="Data") {
       if(m_sampleList.at(i)!="MM") histograms[i]->Scale(luminosity);
       if(m_sampleList.at(i).find("406")==std::string::npos &&
-         m_sampleList.at(i).find("c1c1")==std::string::npos ) // Don't add signal to stack
+         m_sampleList.at(i).find("c1c1")==std::string::npos &&
+         m_sampleList.at(i).find("SlepSlep")==std::string::npos ) // Don't add signal to stack
         mcStack->Add(histograms[i]);
       else
         signalIndices.push_back(i);
@@ -470,7 +472,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
         // Currently only one signal
         float sigFromThrehold    = 0.;
         for(unsigned int isample=0; isample<m_sampleList.size(); ++isample) {
-          if( m_sampleList.at(isample).find("392510"/*"392508"*/)!=std::string::npos ) {
+          //if( m_sampleList.at(isample).find("392510"/*"392508"*/)!=std::string::npos ) {
+          if( /*m_sampleList.at(isample).find("SlepSlep_450.5_1.0")!=std::string::npos ||*/
+                m_sampleList.at(isample).find("c1c1_slep_500.0_1.0")!=std::string::npos ) {
             sigFromThrehold = countAbove ? histograms[isample]->Integral(kk,-1) : histograms[isample]->Integral(0,kk);
             break;
           }
@@ -510,7 +514,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     }
   } // end of drawRatio
 
-  TString plotName = channel + "_" + region + "_" + variable + ".eps" ;
+  TString plotName = channel + "_" + region + "_" + variable + "_highDM.eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 
@@ -519,12 +523,13 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     TString line;
     double totErr = 0., tot = histograms[isample]->IntegralAndError(0,-1,totErr);
     if( m_sampleList.at(isample).find("406")!=std::string::npos ||
-        m_sampleList.at(isample).find("c1c1")!=std::string::npos ) {
+        m_sampleList.at(isample).find("c1c1")!=std::string::npos ||
+        m_sampleList.at(isample).find("SlepSlep")!=std::string::npos) {
       double signf   = RooStats::NumberCountingUtils::BinomialExpZ( tot, bkgTot, 0.3 );
       double signf_a = RooStats::NumberCountingUtils::BinomialExpZ( tot*(10/3.21), bkgTot*(10/3.21), 0.3 );
       double signf_b = RooStats::NumberCountingUtils::BinomialExpZ( tot*(10/3.21), bkgTot*(10/3.21), 0.5 );
       line.Form("%9s \t %.2f +/- %.2f \t Zbi (actual) = %.2f - Zbi (*10/3.21) = %.2f - Zbi (*10/3.21 and 50%%) = %.2f", m_sampleList.at(isample).c_str(),tot,totErr,signf,signf_a,signf_b);
-      std::cout << line << std::endl;
+      //std::cout << line << std::endl;
     } else {
       line.Form("%9s \t %.2f +/- %.2f", m_sampleList.at(isample).c_str(),tot,totErr);
       std::cout << line << std::endl;
@@ -641,7 +646,8 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
     histos[i]->SetName(histoName);
     histos[i]->SetTitle(histoName);
     if(m_sampleList.at(i).find("406")==std::string::npos &&
-       m_sampleList.at(i).find("c1c1")==std::string::npos) {
+       m_sampleList.at(i).find("c1c1")==std::string::npos &&
+       m_sampleList.at(i).find("SlepSlep")==std::string::npos ) {
       histos[i]->SetLineWidth(2);
       histos[i]->SetLineColor(kBlack);
       histos[i]->SetFillColor(SampleColors[m_sampleList.at(i)]);

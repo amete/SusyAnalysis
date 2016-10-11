@@ -28,8 +28,9 @@ int main(int argc, char** argv)
   string channels     = "mm"                                ; vector<string> channelList   ;
   string regions      = "CR2LOS"                            ; vector<string> regionList    ;
   string variables    = "l_pt"                              ; vector<string> variableList  ;
-  string samples      = "c1c1_slep_400.0_200.0,c1c1_slep_500.0_1.0,MM,higgs,ttv,singletop,ttbar,VVV,VV,Z,Data"; vector<string> sampleList    ;
-  //string samples      = "MM,singletop,ttv,ttbar,VVV,VV,Z,Data"; vector<string> sampleList    ;
+  //string samples      = "c1c1_slep_400.0_200.0,c1c1_slep_500.0_1.0,W,higgs,ttv,singletop,ttbar,VVV,VV,Z,Data"; vector<string> sampleList    ;
+  string samples      = "SlepSlep_350.5_1.0,c1c1_slep_500.0_1.0,MM,higgs,ttv,singletop,ttbar,VVV,VV,Z,Data"; vector<string> sampleList    ;
+  //string samples      = "SlepSlep_450.5_1.0,c1c1_slep_500.0_1.0,W,higgs,ttv,singletop,ttbar,VVV,VV,Z"; vector<string> sampleList    ;
   string binValues    = "40,0,400"                          ; vector<string> binValueList  ;
   //string systematics  = "JER,JES_DN,JES_UP,EER_DN,EER_UP,EES_LOW_DN,EES_LOW_UP,EES_MAT_DN,EES_MAT_UP,EES_PS_DN,EES_PS_UP,EES_Z_DN,EES_Z_UP,ID_DN,ID_UP,MS_DN,MS_UP,RESOST,SCALEST_DN,SCALEST_UP"; 
   string systematics  = ""; 
@@ -83,7 +84,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/hfts_skimmed_2/HFT_COMBINED_NEWFAKES_13TeV.root"); // Rel 20.7
+  plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0226_run/EWK2L/hfts_skimmed/HFT_COMBINED_13TeV_wSlepSlep_wFakes.root"); // Rel 20.7
+  //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0225_run/EWK2L/hfts_skimmed_2/HFT_COMBINED_NEWFAKES_13TeV.root"); // Rel 20.7
   //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_6_skimmed/HFT_COMBINED_13TeV.root"); // Rel 20.7
   //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0224_run/EWK2L/hfts_4/mc15_13TeV.root"); // Rel 20.7
   //plots->setInputFile("/data/uclhc/uci/user/amete/analysis_n0222_run/hfts/mc15_13TeV_sherpa.root"); // Rel 20.1
