@@ -41,10 +41,8 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  //float luminosity = 15000.0; // in pb-1
-  ////float luminosity = 3209.05; // in pb-1
-  //float luminosity = 5820.00; // in pb-1
-  float luminosity = 13277.26; // in pb-1
+  //float luminosity = 13277.26; // in pb-1
+  float luminosity = 24799.9; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
   bool  countAbove = true;
   bool  blindData  = false;
@@ -354,6 +352,12 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   }
   else if( variable.EqualTo("DPB_vSS_jigsaw") ) {
     xlabel = "#Delta#phi_{#beta}^{R}";
+  }
+  else if( variable.EqualTo("dphi_ll_met") ) {
+    xlabel = "#Delta#phi(ll,MET)";
+  }
+  else if( variable.EqualTo("dphi_ljet_met") ) {
+    xlabel = "#Delta#phi(LLJet,MET)";
   }
   else {
     xlabel = variable;

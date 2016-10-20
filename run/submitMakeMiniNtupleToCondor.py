@@ -5,7 +5,7 @@ import glob
 import subprocess
 
 ana_type   = "EWK2L"
-susyNtType = "n0226"
+susyNtType = "n0228"
 
 ana_name            = "makeMiniNtuple_%s"%(ana_type)
 tar_location        = "/data/uclhc/uci/user/amete/"
@@ -14,24 +14,24 @@ log_dir             = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/logs/"%(sus
 tarred_dir          = "analysis_%s/"%(susyNtType)
 filelist_dir        = "/data/uclhc/uci/user/amete/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
 in_job_filelist_dir = "/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
-samples             = [ #"mc15_dibosons"      ,
-                        #"mc15_tribosons"     ,
-                        #"mc15_ttbar"         ,
+samples             = [ "mc15_dibosons"      ,
+                        "mc15_tribosons"      ,
+                        "mc15_ttbar"         ,
                         #"mc15_ttbar_dilep"   ,
-                        #"mc15_singletop"     ,
-                        #"mc15_ttv"           ,
-                        #"mc15_wjets"         ,
-                        #"mc15_zjets"         ,
-                        #"mc15_higgs"         ,
-                        #"mc15_c1c1_slepslep" ,
-                        "mc15_SlepSlep" ]# ,
-                        #"data15"             ,
-                        #"data16" ]
+                        "mc15_singletop"     ,
+                        "mc15_ttv"           ,
+                        "mc15_wjets"         ,
+                        "mc15_zjets"         ,
+                        "mc15_higgs"         ,
+                        "mc15_c1c1_slepslep" ,
+                        #"mc15_SlepSlep"      ,
+                        "data15"             ,
+                        "data16" ]
 
-doBrick = True
-doLocal = True 
+doBrick = False
+doLocal = True
 doSDSC  = False 
-doUC    = False 
+doUC    = True 
 
 def main() :
     print "SubmitCondorSF"
@@ -71,6 +71,11 @@ def main() :
             dataset = "." + dataset[dataset.find(in_job_filelist_dir):]
             print "    >> %s"%dataset
 
+            suffix = "-1"
+            if "mc15_13TeV" in dataset.split("/")[-1]:
+                if "_" in dataset.split("/")[-1].split(".")[3]:
+                    suffix = dataset.split("/")[-1].split(".")[3].split("_")[-1]
+
             if not (str(os.path.abspath(out_dir)) == str(os.environ['PWD'])) :
                 print "You must call this script from the output directory where the ntuples will be stored!"
                 print " >>> Expected submission directory : %s"%os.path.abspath(out_dir)
@@ -84,7 +89,8 @@ def main() :
             #run_cmd += ' %s '%(tar_location + "area.tgz")
             run_cmd += ' %s '%tarred_dir
             run_cmd += ' %s '%dataset
-            run_cmd += ' ' # any extra cmd line optino for Superflow executable
+            if "-1" not in suffix:
+                run_cmd += ' -s %s '%(suffix) # any extra cmd line optino for Superflow executable
             run_cmd += '"'
             run_cmd += ' condor_submit submitFile_TEMPLATE.condor '
             lname = dataset.split("/")[-1].replace(".txt", "")

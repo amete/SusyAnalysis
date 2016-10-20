@@ -87,16 +87,20 @@ int main(int argc, char* argv[])
   // Read user inputs - NOT super safe so be careful :)
   unsigned int n_events  = -1;
   unsigned int n_skip_events  = 0;
-  char *input_file = NULL;
-  SuperflowRunMode run_mode = SuperflowRunMode::all_syst; //SuperflowRunMode::nominal;
+  char *input_file  = nullptr;
+  char *name_suffix = nullptr;
+  SuperflowRunMode run_mode = SuperflowRunMode::nominal; // SuperflowRunMode::all_syst; //SuperflowRunMode::nominal;
   int c;
 
   opterr = 0;
-  while ((c = getopt (argc, argv, "f:n:h")) != -1)
+  while ((c = getopt (argc, argv, "f:s:n:h")) != -1)
     switch (c)
       {
       case 'f':
         input_file = optarg;
+        break;
+      case 's':
+        name_suffix = optarg;
         break;
       case 'n':
         n_events = atoi(optarg);
@@ -123,7 +127,7 @@ int main(int argc, char* argv[])
   // Catch problems or cast
   for (int index = optind; index < argc; index++)
     printf ("makeMiniNtuple_EWK2L\t Non-option argument %s\n", argv[index]);
-  if (input_file==NULL) {
+  if (input_file==nullptr) {
     printf("makeMiniNtuple_EWK2L\t An input file must be provided with option -f (a list, a DIR or single file)\n");
     return 0;  
   }
@@ -134,8 +138,9 @@ int main(int argc, char* argv[])
   printf("makeMiniNtuple_EWK2L\t Running SusyAnalysis/makeMiniNtuple_EWK2L\n");
   printf("makeMiniNtuple_EWK2L\t =================================================================\n");
   printf("makeMiniNtuple_EWK2L\t   Flags:\n");
-  printf("makeMiniNtuple_EWK2L\t     Input file (-f)       : %s\n",input_file);
-  printf("makeMiniNtuple_EWK2L\t     Number of events (-n) : %i\n",n_events );
+  printf("makeMiniNtuple_EWK2L\t     Input file (-f)         : %s\n",input_file);
+  printf("makeMiniNtuple_EWK2L\t     Output file suffix (-s) : %s\n",name_suffix);
+  printf("makeMiniNtuple_EWK2L\t     Number of events (-n)   : %i\n",n_events );
   printf("makeMiniNtuple_EWK2L\t =================================================================\n");
   ///////////////////////////////////////////////////////////////////////
 
@@ -167,6 +172,8 @@ int main(int argc, char* argv[])
   cutflow->setSampleName(input_file);                 // sample name, check to make sure it's set OK
   cutflow->setRunMode(run_mode);                      // make configurable via run_mode
   cutflow->setCountWeights(true);                     // print the weighted cutflows
+  if(name_suffix != nullptr)
+    cutflow->setFileSuffix(name_suffix);              // setting a suffix to the file name    
   cutflow->setChain(chain);
   cutflow->nttools().initTriggerTool(ChainHelper::firstFile(input_file,0.)); 
 
@@ -202,6 +209,10 @@ int main(int argc, char* argv[])
       return (sl->tools->passSCTErr(cutflags));
   };
  
+  *cutflow << CutName("pass good vertex") << [&](Superlink* sl) -> bool {
+      return (sl->tools->passGoodVtx(cutflags));
+  };
+
   *cutflow << CutName("bad muon veto") << [&](Superlink* sl) -> bool {
       return (sl->tools->passBadMuon(sl->preMuons));
   };
@@ -213,10 +224,6 @@ int main(int argc, char* argv[])
   *cutflow << CutName("jet cleaning") << [&](Superlink* sl) -> bool {
       return (sl->tools->passJetCleaning(sl->baseJets));
   };
-
-  *cutflow << CutName("pass good vertex") << [&](Superlink* sl) -> bool {
-      return (sl->tools->passGoodVtx(cutflags));
-  };
    
   //// MET Cleaning - temporary
   //#warning "MET CLEANING IS TURNED ON!!!"
@@ -225,6 +232,26 @@ int main(int argc, char* argv[])
   //};
 
   //  Analysis Cuts
+  //*cutflow << CutName("at least one baseline jet") << [](Superlink* sl) -> bool {
+  //  return (sl->baseJets->size()>=1);
+  //};
+
+  //*cutflow << CutName("at least one signal jet") << [](Superlink* sl) -> bool {
+  //  int nSignalJets = 0;
+  //  for(auto& jet : *sl->baseJets) {
+  //    if(fabs(jet->Eta())<4.5)  { nSignalJets++; } 
+  //  }
+  //  return (nSignalJets>=1);
+  //};
+
+  //*cutflow << CutName("at least one b jet") << [](Superlink* sl) -> bool {
+  //  int nSignalJets = 0;
+  //  for(auto& jet : *sl->baseJets) {
+  //    if(sl->tools->m_jetSelector->isB(jet))  { nSignalJets++; } 
+  //  }
+  //  return (nSignalJets>=1);
+  //};
+
   *cutflow << CutName("exactly two baseline leptons") << [](Superlink* sl) -> bool {
       //if(sl->nt->evt()->eventNumber == 150148 || 
       //   sl->nt->evt()->eventNumber == 154664 //||
@@ -235,21 +262,6 @@ int main(int argc, char* argv[])
       //}
       return (sl->baseLeptons->size() == 2);
   };
-
-  ////
-  //// For Andreas
-  ////
-  //*cutflow << CutName("Met > 50 geV") << [](Superlink* sl) -> bool {
-  //    return (sl->met->Et > 50.0);
-  //};
-  //*cutflow << CutName("b-veto") << [](Superlink* sl) -> bool {
-  //  bool veto = false;
-  //  for(auto& jet : *sl->baseJets) {
-  //    if(sl->tools->m_jetSelector->isCentralB(jet))  { veto = true; break; } 
-  //  }
-  //  return !veto;
-  //};
-  ////
 
   *cutflow << CutName("exactly two signal leptons") << [](Superlink* sl) -> bool {
       //std::cout << "SERHAN " << sl->nt->evt()->eventNumber; // << std::endl;
@@ -266,18 +278,42 @@ int main(int argc, char* argv[])
       return ((sl->leptons->at(0)->Pt()>20) && (sl->leptons->at(1)->Pt()>20));
   };
 
-  *cutflow << CutName("mll > 20 GeV") << [](Superlink* sl) -> bool {
-      return ((*sl->leptons->at(0) + *sl->leptons->at(1)).M() > 20.);
+  *cutflow << CutName("mll > 40 GeV") << [](Superlink* sl) -> bool {
+      return ((*sl->leptons->at(0) + *sl->leptons->at(1)).M() > 40.);
   };
 
-  *cutflow << CutName("loose jet-veto") << [](Superlink* sl) -> bool {
-    bool veto = false;
-    for(auto& jet : *sl->baseJets) {
-      if(sl->tools->m_jetSelector->isCentralLight(jet))  { veto = jet->Pt()>50. ? true : false; if(veto) break; } 
-      else if(sl->tools->m_jetSelector->isForward(jet))  { veto = true; break; } 
-    }
-    return !veto;
-  };
+  //*cutflow << CutName("loose jet-veto") << [](Superlink* sl) -> bool {
+  //  bool veto = false;
+  //  for(auto& jet : *sl->baseJets) {
+  //    if(sl->tools->m_jetSelector->isCentralLight(jet))  { veto = jet->Pt()>50. ? true : false; if(veto) break; } 
+  //    else if(sl->tools->m_jetSelector->isForward(jet))  { veto = true; break; } 
+  //  }
+  //  return !veto;
+  //};
+  //*cutflow << CutName("b-veto") << [](Superlink* sl) -> bool {
+  //  int nSignalJets = 0;
+  //  for(auto& jet : *sl->baseJets) {
+  //    if(sl->tools->m_jetSelector->isB(jet))  { nSignalJets++; } 
+  //  }
+  //  return (nSignalJets==0);
+  //};
+
+  //*cutflow << CutName("MET > 50 GeV") << [](Superlink* sl) -> bool {
+  //    return (sl->met->Et > 50.0);
+  //};
+
+  //*cutflow << CutName("mT2 > 75 GeV") << [](Superlink* sl) -> bool {
+  //    TLorentzVector lepton0 = *(*sl->leptons).at(0);
+  //    TLorentzVector lepton1 = *(*sl->leptons).at(1);
+  //    TLorentzVector met;
+  //    met.SetPxPyPzE(sl->met->Et*cos(sl->met->phi),
+  //                   sl->met->Et*sin(sl->met->phi),
+  //                   0.,
+  //                   sl->met->Et);
+  //    ComputeMT2 mycalc = ComputeMT2(lepton0,lepton1,met,0.,0.); // masses 0. 0.
+  //    double mT2 = mycalc.Compute();
+  //    return (mT2 > 75.0);
+  //};
 
   //  Output Ntuple Setup
   //      > Ntuple variables
@@ -353,6 +389,7 @@ int main(int argc, char* argv[])
       *cutflow << HFTname("eventweight");
       *cutflow << [](Superlink* sl, var_double*) -> double { 
           return sl->weights->product() * sl->nt->evt()->wPileup;
+          //return sl->weights->product();
       };
       *cutflow << SaveVar();
   }
@@ -719,6 +756,29 @@ int main(int argc, char* argv[])
   }
 
   // Other event variables
+
+  // DeltaPhi(ll,met)
+  *cutflow << NewVar("deltaPhi(ll,met)"); {
+    *cutflow << HFTname("dphi_ll_met");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+        return dileptonP4.DeltaPhi(met);
+    };
+    *cutflow << SaveVar();
+  }
+
+  // DeltaPhi(leading light jet,met)
+  *cutflow << NewVar("deltaPhi(leading light jet,met)"); {
+    *cutflow << HFTname("dphi_ljet_met");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+        double result = -999.;
+        if(centralLightJets.size()>0) {
+          TLorentzVector leadingLightJet = *centralLightJets.at(0);
+          result = leadingLightJet.DeltaPhi(met);
+        }
+        return result;
+    };
+    *cutflow << SaveVar();
+  }
 
   // meff 
   double meff = 0.;

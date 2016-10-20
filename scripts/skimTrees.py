@@ -4,10 +4,10 @@ from combineHFTs import Background
 
 def main():
     files=[]
-    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0226/inputs_EWK2L/"
-    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0226_run/EWK2L/outputs/" 
-    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0226_run/EWK2L/outputs/" 
-    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0226_run/EWK2L/outputs_skimmed/" 
+    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0228/inputs_EWK2L/"
+    data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs/" 
+    mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs/" 
+    output_dir       = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs_skimmed/" 
     trigger          = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))";
     ptCuts           = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
     isOS             = "(l_q[0]*l_q[1])<0";
@@ -17,77 +17,78 @@ def main():
     cbjVeto          = "nCentralBJets==0";
     cbjSelect        = "nCentralBJets>0";
     fjVeto           = "nForwardJets==0";
-    selection        = "(%s&&%s&&%s&&%s&&%s)"%(trigger,ptCuts,isOS,cljVeto,fjVeto)
-    selection       += "&&((%s&&%s&&mT2lep>50.)||(%s&&%s&&mT2lep>90.)||(%s&&%s&&mT2lep>70.))"%(zVeto,cbjVeto,zSelect,cbjVeto,zVeto,cbjSelect) 
+    #selection        = "(%s&&%s&&%s&&%s&&%s)"%(trigger,ptCuts,isOS,cljVeto,fjVeto)
+    #selection       += "&&((%s&&%s&&mT2lep>50.)||(%s&&%s&&mT2lep>90.)||(%s&&%s&&mT2lep>70.))"%(zVeto,cbjVeto,zSelect,cbjVeto,zVeto,cbjSelect) 
+    selection = "1"
 
     ###########################
     ## available samples
     backgrounds = []
-    ## data
-    #bkg_data    = Background("Data"     , filelist_dir + "dataDS2/"          )
-    #backgrounds.append(bkg_data)
+    # data
+    bkg_data    = Background("Data"     , filelist_dir + "dataI5/"          )
+    backgrounds.append(bkg_data)
     ## ttbar
     #bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")
     #backgrounds.append(bkg_ttbar_dl)
-    ## ttbar
-    #bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
-    #backgrounds.append(bkg_ttbar)
-    ## ttv
-    #bkg_ttv     = Background("ttv"      , filelist_dir + "mc15_ttv/"        )
-    #backgrounds.append(bkg_ttv)
-    ## diboson
-    #bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
-    #backgrounds.append(bkg_diboson)
-    ## triboson
-    #bkg_triboson = Background("VVV"     , filelist_dir + "mc15_tribosons/"  )
-    #backgrounds.append(bkg_triboson)
-    ## single top
-    #bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/"  )
-    #backgrounds.append(bkg_st)
-    ## higgs 
-    #bkg_hg      = Background("higgs"    , filelist_dir + "mc15_higgs/"      )
-    #backgrounds.append(bkg_hg)
-    ## wjets
-    #bkg_wjets   = Background("W"        , filelist_dir + "mc15_wjets/"      )
-    #backgrounds.append(bkg_wjets)
-    ## zjets
-    #bkg_zjets   = Background("Z"        , filelist_dir + "mc15_zjets/"      )
-    #backgrounds.append(bkg_zjets)
-    ## signal
-    #sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
-    #backgrounds.append(sig_c1c1_slepslep)
-    sig_slepslep = Background("SlepSlep", filelist_dir + "mc15_SlepSlep/")
-    backgrounds.append(sig_slepslep)
+    # ttbar
+    bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/"      )
+    backgrounds.append(bkg_ttbar)
+    # ttv
+    bkg_ttv     = Background("ttv"      , filelist_dir + "mc15_ttv/"        )
+    backgrounds.append(bkg_ttv)
+    # diboson
+    bkg_diboson = Background("VV"       , filelist_dir + "mc15_dibosons/"   )
+    backgrounds.append(bkg_diboson)
+    # triboson
+    bkg_triboson = Background("VVV"     , filelist_dir + "mc15_tribosons/"  )
+    backgrounds.append(bkg_triboson)
+    # single top
+    bkg_st      = Background("singletop", filelist_dir + "mc15_singletop/"  )
+    backgrounds.append(bkg_st)
+    # higgs 
+    bkg_hg      = Background("higgs"    , filelist_dir + "mc15_higgs/"      )
+    backgrounds.append(bkg_hg)
+    # wjets
+    bkg_wjets   = Background("W"        , filelist_dir + "mc15_wjets/"      )
+    backgrounds.append(bkg_wjets)
+    # zjets
+    bkg_zjets   = Background("Z"        , filelist_dir + "mc15_zjets/"      )
+    backgrounds.append(bkg_zjets)
+    # signal
+    sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
+    backgrounds.append(sig_c1c1_slepslep)
+    #sig_slepslep = Background("SlepSlep", filelist_dir + "mc15_SlepSlep/")
+    #backgrounds.append(sig_slepslep)
  
     ###########################
     ## available systematics
     syst = []
     syst.append('CENTRAL')
 
-    # egamma
-    syst.append('EG_RESOLUTION_ALL_UP')
-    syst.append('EG_RESOLUTION_ALL_DN')
-    syst.append('EG_SCALE_ALL_UP')
-    syst.append('EG_SCALE_ALL_DN')
-    
-    # muons
-    syst.append('MUONS_ID_DN')
-    syst.append('MUONS_ID_UP')
-    syst.append('MUONS_MS_DN')
-    syst.append('MUONS_MS_UP')
-    syst.append('MUONS_SCALE_DN')
-    syst.append('MUONS_SCALE_UP')
+    ## egamma
+    #syst.append('EG_RESOLUTION_ALL_UP')
+    #syst.append('EG_RESOLUTION_ALL_DN')
+    #syst.append('EG_SCALE_ALL_UP')
+    #syst.append('EG_SCALE_ALL_DN')
+    #
+    ## muons
+    #syst.append('MUONS_ID_DN')
+    #syst.append('MUONS_ID_UP')
+    #syst.append('MUONS_MS_DN')
+    #syst.append('MUONS_MS_UP')
+    #syst.append('MUONS_SCALE_DN')
+    #syst.append('MUONS_SCALE_UP')
 
-    # jet
-    syst.append('JER')
-    syst.append('JET_GroupedNP_1_DN')
-    syst.append('JET_GroupedNP_1_UP')
-    
-    # met
-    syst.append('MET_SoftTrk_ResoPara')
-    syst.append('MET_SoftTrk_ResoPerp')
-    syst.append('MET_SoftTrk_ScaleDown')
-    syst.append('MET_SoftTrk_ScaleUp')
+    ## jet
+    #syst.append('JER')
+    #syst.append('JET_GroupedNP_1_DN')
+    #syst.append('JET_GroupedNP_1_UP')
+    #
+    ## met
+    #syst.append('MET_SoftTrk_ResoPara')
+    #syst.append('MET_SoftTrk_ResoPerp')
+    #syst.append('MET_SoftTrk_ScaleDown')
+    #syst.append('MET_SoftTrk_ScaleUp')
     
     ## load the backgrounds and locate the files
     for bkg in backgrounds :

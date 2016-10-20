@@ -23,8 +23,6 @@ using namespace std;
 typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
-//TString trigger   = "(pass_HLT_mu18_mu8noL1||pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14)";
-//TString trigger   = "(pass_HLT_mu20_mu8noL1||pass_HLT_2e15_lhvloose_L12EM13VH||pass_HLT_e17_lhloose_mu14)";
 TString trigger   = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))";
 TString ptCuts    = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
 TString isOS      = "(l_q[0]*l_q[1])<0";
@@ -40,9 +38,10 @@ TString cbjSelect = "nCentralBJets>0";
 TString fjVeto    = "nForwardJets==0";
 
 /// \brief Region Cut Definitions
-TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2LOS"         , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&mll>60.")
-                                                 ("CRTTbarLike"    , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&nCentralBJets>=1&&mll>20." )
-                                                 ("CRWWLike"       , "nBaseLeptons==2&&l_pt[0]>25.&&l_pt[1]>25.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0" )
+TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2L-inc"       , "1"                    ) // Skimming requires ==2 signal leptons w/ pT > 20 GeV and OS + mll > 40 GeV
+                                                 ("CR2L-bselect"   , cbjSelect              ) // Same skimming as above
+                                                 ("CR2L-bveto"     , cbjVeto                ) // Same skimming as above
+                                                 ("CR2L-zbveto"    , zVeto + "&&" + cbjVeto ) // Same skimming as above
                                                  ("SR2LA-pre"      , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0" )
                                                  ("SR2LA-V1"       , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8" )
                                                  ("SR2LA-V2"       , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8&&DPB>1.5" )
@@ -170,6 +169,8 @@ TS2TSMap VariableNames = boost::assign::map_list_of ("ptL0"                , "l_
                                                     ("softestForwardJetPt" , "softestForwardJetPt" )
                                                     ("hardestCentralLJetPt", "hardestCentralLJetPt")
                                                     ("hardestForwardJetPt" , "hardestForwardJetPt" )
+                                                    ("dphi_ll_met"         , "dphi_ll_met"         )
+                                                    ("dphi_ljet_met"       , "dphi_ljet_met"       )
 ;
 
 #endif
