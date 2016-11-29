@@ -11,21 +11,22 @@ def main():
     trigger          = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))";
     ptCuts           = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
     isOS             = "(l_q[0]*l_q[1])<0";
-    zVeto            = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)";
-    zSelect          = "TMath::Abs(mll-90.2)<10.";
+    zVeto            = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-91.2)<10.)";
+    zSelect          = "TMath::Abs(mll-91.2)<10.";
     cljVeto          = "((l_flav[0]==l_flav[1]&&nCentralLJets==0)||(l_flav[0]!=l_flav[1]&&nCentralLJets30==0))";
     cbjVeto          = "nCentralBJets==0";
     cbjSelect        = "nCentralBJets>0";
-    fjVeto           = "nForwardJets==0";
-    #selection        = "(%s&&%s&&%s&&%s&&%s)"%(trigger,ptCuts,isOS,cljVeto,fjVeto)
-    #selection       += "&&((%s&&%s&&mT2lep>50.)||(%s&&%s&&mT2lep>90.)||(%s&&%s&&mT2lep>70.))"%(zVeto,cbjVeto,zSelect,cbjVeto,zVeto,cbjSelect) 
-    selection = "1"
+    #fjVeto           = "nForwardJets==0";
+    fjVeto           = "nForwardJets30==0"; # n0228 has 20 GeV
+    selection        = "(%s&&%s&&%s&&%s&&%s)"%(trigger,ptCuts,isOS,cljVeto,fjVeto)
+    selection       += "&&((%s&&%s&&mT2lep>50.)||(%s&&%s&&mT2lep>90.)||(%s&&%s&&mT2lep>70.))"%(zVeto,cbjVeto,zSelect,cbjVeto,zVeto,cbjSelect) 
+    #selection = "1"
 
     ###########################
     ## available samples
     backgrounds = []
     # data
-    bkg_data    = Background("Data"     , filelist_dir + "dataI5/"          )
+    bkg_data    = Background("Data"     , filelist_dir + "data_all/"          )
     backgrounds.append(bkg_data)
     ## ttbar
     #bkg_ttbar_dl= Background("ttbar_dl" , filelist_dir + "mc15_ttbar_dilep/")

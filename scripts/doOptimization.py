@@ -1,9 +1,10 @@
 #!/usr/bin/python
 import ROOT,sys,math
 
+LUMI    = 35000.
 VERBOSE = False
-CHANNEL = "sf"
-BINNED  = False
+CHANNEL = "df"
+BINNED  = True 
 SIGNAL  = "LOWDM" # "LOWDM" "HIGHDM"
 
 # Define the cuts
@@ -47,12 +48,10 @@ def fjveto(cut):
     return "nForwardJets%s==0"%(cut)
 
 # Calculate ZBi
-def calculateZBi(selection,lumi,signalList,backgroundList):
+def calculateZBi(selection,lumi,signal,backgroundList):
     if VERBOSE:
-        print "="*100
+        print "="*35
     # Get Total BG
-    significances = []
-    signalyields  = []
     total_bg = 0.
     for bkg in backgroundList:
         htemp = ROOT.TH1F('htemp','htemp',1,0.5,1.5)
@@ -65,25 +64,22 @@ def calculateZBi(selection,lumi,signalList,backgroundList):
             print '%*s = %*.2f +/- %*.2f'%(10,bkg,5,integral,5,error)       
         htemp.Clear()
     if VERBOSE:
-        print "="*100
+        print "="*35
         print '%*s = %.2f'%(10,"Total BG",total_bg)       
-        print "="*100
+        print "="*35
     # Get the signal and calculate
-    for sig in signalList:
-        htemp = ROOT.TH1F('htemp','htemp',1,0.5,1.5)
-        htemp.Sumw2()
-        signalList[sig].Draw('1>>htemp','%s*eventweight*(%s)'%(lumi,selection),'goff') 
-        error    = ROOT.Double(0.)
-        integral = htemp.IntegralAndError(0,-1,error);
-        significance = ROOT.RooStats.NumberCountingUtils.BinomialExpZ(integral,total_bg,0.3)
-        significances.append(significance)
-        signalyields.append(integral)
-        if VERBOSE:
-            print '%*s = %*.2f +/- %*.2f with ZBi = %.2f'%(10,sig,5,integral,5,error,significance)       
-        htemp.Clear()
+    htemp = ROOT.TH1F('htemp','htemp',1,0.5,1.5)
+    htemp.Sumw2()
+    signal.Draw('1>>htemp','%s*eventweight*(%s)'%(lumi,selection),'goff') 
+    error    = ROOT.Double(0.)
+    total_sig = htemp.IntegralAndError(0,-1,error);
+    significance = ROOT.RooStats.NumberCountingUtils.BinomialExpZ(total_sig,total_bg,0.3)
     if VERBOSE:
-        print "="*100
-    return significances,signalyields,total_bg
+        print '%*.2f +/- %*.2f with ZBi = %.2f'%(5,total_sig,5,error,significance)       
+    htemp.Clear()
+    if VERBOSE:
+        print "="*35
+    return significance,total_sig,total_bg
 
 # Main function
 def main():
@@ -110,9 +106,24 @@ def main():
     elif SIGNAL == "HIGHDM":
         signalList     = {'c1c1_slep_700.0_1.0'   : 0.}
     else:
-        signalList     = {'c1c1_slep_300.0_100.0' : 0., 
+        signalList     = {'c1c1_slep_150.0_50.0'  : 0.,
+                          'c1c1_slep_200.0_100.0' : 0.,
+                          'c1c1_slep_300.0_100.0' : 0.,
+                          'c1c1_slep_300.0_200.0' : 0.,
+                          'c1c1_slep_400.0_100.0' : 0.,
+                          'c1c1_slep_400.0_200.0' : 0.,
+                          'c1c1_slep_400.0_300.0' : 0.,
+                          'c1c1_slep_500.0_1.0'   : 0.,
+                          'c1c1_slep_500.0_100.0' : 0.,
                           'c1c1_slep_500.0_200.0' : 0.,
-                          'c1c1_slep_700.0_1.0'   : 0.}
+                          'c1c1_slep_500.0_300.0' : 0.,
+                          'c1c1_slep_600.0_1.0'   : 0.,
+                          'c1c1_slep_600.0_100.0' : 0.,
+                          'c1c1_slep_600.0_200.0' : 0.,
+                          'c1c1_slep_700.0_1.0'   : 0.,
+                          'c1c1_slep_700.0_100.0' : 0.,
+                          'c1c1_slep_700.0_300.0' : 0.}
+
     for sig in signalList:
        signalList[sig] = inputFile.Get('%s_CENTRAL'%(sig)) 
        if VERBOSE:
@@ -136,12 +147,12 @@ def main():
     # zcut   : |Mll-91.2| > X GeV
     # mllcut : X_1 < Mll < X_2 (BINNED-only)
     if "sf" in CHANNEL:
-        zcuts   = ["10"  ,"20", "30", "40", "50", "60", "70", "80", "90"]
+        zcuts   = ["10"]
         mllcuts = ["100","150","200","300"]
     else:
         zcuts   = ["-1"]
         mllcuts = ["-1"]
-    cljcuts = ["60"]
+    cljcuts = ["None","20","30","40","50","60"]
     cbjcuts = ["20"]
     fjcuts  = ["None"]
     mt2cuts = ["100","150","200","300"]
@@ -158,26 +169,31 @@ def main():
                                                                                      10,"Total BG", 
                                                                                      10,"ZBi") )
         outputFile.write( "="*150+"\n" )
-        for zcut in zcuts:
-            for cljcut in cljcuts:
-                for cbjcut in cbjcuts:
-                    for fjcut in fjcuts:
-                        for mtcut in mt2cuts:
-                            selection = baseSelection   + "&&" +\
-                                        zveto(zcut)     + "&&" +\
-                                        cljveto(cljcut) + "&&" +\
-                                        cbjveto(cbjcut) + "&&" +\
-                                        fjveto(fjcut)   + "&&" +\
-                                        mt2cut(mtcut)
-                            signs,syields,bgyield = calculateZBi(selection,35000.,signalList,backgroundList)  
-                            outputFile.write( "%*s \t %*s \t\t %*s \t\t %*s \t %*s \t %*.2f \t %*.2f \t %*.2f\n"%(10,zcut,
-                                                                                                                10,cljcut,
-                                                                                                                10,cbjcut,
-                                                                                                                10,fjcut,
-                                                                                                                10,mtcut,
-                                                                                                                10,syields[0],
-                                                                                                                10,bgyield,
-                                                                                                                10,signs[0]) )
+        for sig in signalList:
+            outputFile.write( "~"*150+"\n" )
+            outputFile.write( "%*s Analyzing Signal Point %s \n"%(50,"",sig) )
+            outputFile.write( "~"*150+"\n" )
+            for zcut in zcuts:
+                for cljcut in cljcuts:
+                    for cbjcut in cbjcuts:
+                        for fjcut in fjcuts:
+                            for mtcut in mt2cuts:
+                                selection = baseSelection   + "&&" +\
+                                            zveto(zcut)     + "&&" +\
+                                            cljveto(cljcut) + "&&" +\
+                                            cbjveto(cbjcut) + "&&" +\
+                                            fjveto(fjcut)   + "&&" +\
+                                            mt2cut(mtcut)
+                                sign,syield,bgyield = calculateZBi(selection,LUMI,signalList[sig],backgroundList)  
+                                outputFile.write( "%*s \t %*s \t\t %*s \t\t %*s \t %*s \t %*.2f \t %*.2f \t %*.2f\n"%(10,zcut,
+                                                                                                                      10,cljcut,
+                                                                                                                      10,cbjcut,
+                                                                                                                      10,fjcut,
+                                                                                                                      10,mtcut,
+                                                                                                                      10,syield,
+                                                                                                                      10,bgyield,
+                                                                                                                      10,sign) )
+                                outputFile.write( "%*s -  %*s    - COMBINED ZBi = %*.2f\n"%(60,sig,5,CHANNEL,10,sign) )
         outputFile.write( "="*150+"\n" )
     # Orthogonal mll-mT2 bins combined in quadrature
     else:
@@ -191,45 +207,49 @@ def main():
                                                                                      10,"Total BG", 
                                                                                      10,"ZBi") )
         outputFile.write( "="*150+"\n" )
-        for cljcut in cljcuts:
-            for cbjcut in cbjcuts:
-                for fjcut in fjcuts:
-                    outputFile.write( "\n"+"="*150+"\n" )
-                    combinedSign = 0.
-                    for jj,mtcut in enumerate(mt2cuts):
-                        lowercut_mt2 = "%s"%(mt2cuts[jj])
-                        uppercut_mt2 = "%s"%("1.e10")
-                        if jj < len(mt2cuts)-1: uppercut_mt2 = "%s"%(mt2cuts[jj+1])
-                        skipMll = False
-                        for ii,mcut in enumerate(mllcuts):
-                            lowercut_mll = "%s"%(mllcuts[ii])
-                            uppercut_mll = "%s"%("1.e10")
-                            if skipMll == True: break
-                            if lowercut_mt2 == "300": 
-                                skipMll = True
-                                if CHANNEL == "sf" : lowercut_mll = "150"
-                            elif ii < len(mllcuts)-1: uppercut_mll = "%s"%(mllcuts[ii+1])
-                            selection = baseSelection                     + "&&" +\
-                                        cljveto(cljcut)                   + "&&" +\
-                                        cbjveto(cbjcut)                   + "&&" +\
-                                        fjveto(fjcut)                     + "&&" +\
-                                        mllcut(lowercut_mll,uppercut_mll) + "&&" +\
-                                        mt2cut(lowercut_mt2,uppercut_mt2)
-                            signs,syields,bgyield = calculateZBi(selection,35000.,signalList,backgroundList)  
-                            outputFile.write( "%*s \t %*s \t\t %*s \t\t %*s%*s-%*s \t %*s%*s-%*s \t %*.2f \t %*.2f \t %*.2f\n"%(10,cljcut,
-                                                                                                                                10,cbjcut,
-                                                                                                                                10,fjcut,
-                                                                                                                                10,lowercut_mll,
-                                                                                                                                3,"", 7,uppercut_mll,
-                                                                                                                                10,lowercut_mt2,
-                                                                                                                                3,"", 7,uppercut_mt2,
-                                                                                                                                10,syields[0],
-                                                                                                                                10,bgyield,
-                                                                                                                                10,signs[0]) )
-                            if signs[0] > 0: combinedSign = combinedSign + signs[0]*signs[0]
-                    outputFile.write( "="*150+"\n" )
-                    outputFile.write( "%*sCOMBINED ZBi = %*.2f"%(50,"",10,math.sqrt(combinedSign)) )
-                    outputFile.write( "\n"+"="*150+"\n\n" )
+        for sig in signalList:
+            outputFile.write( "~"*150+"\n" )
+            outputFile.write( "%*s Analyzing Signal Point %s \n"%(50,"",sig) )
+            outputFile.write( "~"*150+"\n" )
+            for cljcut in cljcuts:
+                for cbjcut in cbjcuts:
+                    for fjcut in fjcuts:
+                        outputFile.write( "\n"+"="*150+"\n" )
+                        combinedSign = 0.
+                        for jj,mtcut in enumerate(mt2cuts):
+                            lowercut_mt2 = "%s"%(mt2cuts[jj])
+                            uppercut_mt2 = "%s"%("1.e10")
+                            if jj < len(mt2cuts)-1: uppercut_mt2 = "%s"%(mt2cuts[jj+1])
+                            skipMll = False
+                            for ii,mcut in enumerate(mllcuts):
+                                lowercut_mll = "%s"%(mllcuts[ii])
+                                uppercut_mll = "%s"%("1.e10")
+                                if skipMll == True: break
+                                if lowercut_mt2 == "300": 
+                                    skipMll = True
+                                    if CHANNEL == "sf" : lowercut_mll = "150"
+                                elif ii < len(mllcuts)-1: uppercut_mll = "%s"%(mllcuts[ii+1])
+                                selection = baseSelection                     + "&&" +\
+                                            cljveto(cljcut)                   + "&&" +\
+                                            cbjveto(cbjcut)                   + "&&" +\
+                                            fjveto(fjcut)                     + "&&" +\
+                                            mllcut(lowercut_mll,uppercut_mll) + "&&" +\
+                                            mt2cut(lowercut_mt2,uppercut_mt2)
+                                sign,syield,bgyield = calculateZBi(selection,LUMI,signalList[sig],backgroundList)  
+                                outputFile.write( "%*s \t %*s \t\t %*s \t\t %*s%*s-%*s \t %*s%*s-%*s \t %*.2f \t %*.2f \t %*.2f\n"%(10,cljcut,
+                                                                                                                                    10,cbjcut,
+                                                                                                                                    10,fjcut,
+                                                                                                                                    10,lowercut_mll,
+                                                                                                                                    3,"", 7,uppercut_mll,
+                                                                                                                                    10,lowercut_mt2,
+                                                                                                                                    3,"", 7,uppercut_mt2,
+                                                                                                                                    10,syield,
+                                                                                                                                    10,bgyield,
+                                                                                                                                    10,sign) )
+                                if sign > 0: combinedSign = combinedSign + sign*sign
+                        outputFile.write( "="*150+"\n" )
+                        outputFile.write( "%*s -  %*s    - COMBINED ZBi = %*.2f"%(60,sig,5,CHANNEL,10,math.sqrt(combinedSign)) )
+                        outputFile.write( "\n"+"="*150+"\n\n" )
         outputFile.write( "="*150+"\n" )
 
     # Once done close the files

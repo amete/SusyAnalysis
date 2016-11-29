@@ -41,8 +41,8 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  //float luminosity = 13277.26; // in pb-1
-  float luminosity = 24799.9; // in pb-1
+  float luminosity = 13277.26; // in pb-1
+  //float luminosity = 35180;//24799.9; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
   bool  countAbove = true;
   bool  blindData  = false;
@@ -393,7 +393,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   myText(0.20,0.88,kBlack,annoyingLabel1);
   myText(0.20,0.80,kBlack,annoyingLabel2);
   myText(0.20,0.72,kBlack,annoyingLabel3);
-  myText(0.50,0.72,kBlack,annoyingLabel4);
+  myText(0.53,0.72,kBlack,annoyingLabel4);
 
   // Bottom Pad
   if(drawRatio) {
@@ -410,7 +410,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     ratio_original->SetLineWidth(2);
     ratio_original->GetXaxis()->SetTitle(xlabel);
     if(drawRatio == 1) ratio_original->GetYaxis()->SetTitle("Data/SM");
-    else if(drawRatio == 2) ratio_original->GetYaxis()->SetTitle("Z_{Bi} (High-#Delta M)");
+    else if(drawRatio == 2) ratio_original->GetYaxis()->SetTitle("Z_{Bi} (Higher-#Delta M)");
     ratio_original->GetXaxis()->SetLabelSize(0.1);
     ratio_original->GetXaxis()->SetLabelOffset(0.02);
     ratio_original->GetXaxis()->SetTitleSize(0.12);
@@ -478,7 +478,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
         for(unsigned int isample=0; isample<m_sampleList.size(); ++isample) {
           //if( m_sampleList.at(isample).find("392510"/*"392508"*/)!=std::string::npos ) {
           if( /*m_sampleList.at(isample).find("SlepSlep_450.5_1.0")!=std::string::npos ||*/
-                m_sampleList.at(isample).find("c1c1_slep_500.0_1.0")!=std::string::npos ) {
+                m_sampleList.at(isample).find("c1c1_slep_700.0_1.0")!=std::string::npos ) {
             sigFromThrehold = countAbove ? histograms[isample]->Integral(kk,-1) : histograms[isample]->Integral(0,kk);
             break;
           }
@@ -518,7 +518,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     }
   } // end of drawRatio
 
-  TString plotName = channel + "_" + region + "_" + variable + "_highDM.eps" ;
+  TString plotName = channel + "_" + region + "_" + variable + ".eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 

@@ -108,11 +108,11 @@ syst.append('CENTRAL')
 ## backgrounds
 backgrounds = []
 filelist_dir      = "/data/uclhc/uci/user/amete/analysis_n0228/inputs_EWK2L/"
-mc_sample_dir     = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs/"
-data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs/"
+mc_sample_dir     = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs_skimmed/"
+data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs_skimmed/"
 
 # data
-bkg_data    = Background("Data"     , filelist_dir + "dataI5/")
+bkg_data    = Background("Data"     , filelist_dir + "data_all/")
 backgrounds.append(bkg_data)
 # ttbar
 bkg_ttbar   = Background("ttbar"    , filelist_dir + "mc15_ttbar/")
@@ -157,8 +157,8 @@ signals.append(sig_c1c1_slepslep)
 ###################################
 ## setup the output file name and location
 output_dir  = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/hfts/" 
-output_name = "HFT_BG_13TeV.root"
-output_name_sig = "HFT_C1C1_13TeV.root"
+output_name = "HFT_BG_13TeV_skimmed.root"
+output_name_sig = "HFT_C1C1_13TeV_skimmed.root"
 #output_name_sig = "HFT_SlepSlep_13TeV.root"
 
 
@@ -202,10 +202,10 @@ if __name__=="__main__" :
             print "       (Bkg, Sys) : (%s, %s)         "%(bkg.name, sys_)
             print ""
             merge_chain = r.TChain(bkg.name + "_" + sys_)
-            #if(bkg.name == "VV"):
-            #    merge_chain_1 = r.TChain(bkg.name + "SF_" + sys_)
-            #    merge_chain_2 = r.TChain(bkg.name + "DF_" + sys_)
-            ##r.TTree.SetMaxtreeSize(137438953472LL)
+            if(bkg.name == "VV"):
+                merge_chain_1 = r.TChain(bkg.name + "SF_" + sys_)
+                merge_chain_2 = r.TChain(bkg.name + "DF_" + sys_)
+            #r.TTree.SetMaxtreeSize(137438953472LL)
 
             outfile = r.TFile(output_dir+output_name, "UPDATE")
             outfile.cd()
@@ -227,9 +227,9 @@ if __name__=="__main__" :
                     num_files += 1
 
                 merge_chain.AddFile(sample, 0,  treename)
-                #if(bkg.name == "VV"):
-                #    merge_chain_1.AddFile(sample, 0,  treename+"SF")
-                #    merge_chain_2.AddFile(sample, 0,  treename+"DF")
+                if(bkg.name == "VV"):
+                    merge_chain_1.AddFile(sample, 0,  treename+"SF")
+                    merge_chain_2.AddFile(sample, 0,  treename+"DF")
 
             print "sum entries : ", sum_entries
             print "    Sample summary"
@@ -237,13 +237,13 @@ if __name__=="__main__" :
             print "         total number of entries      : ", sum_entries
             outfile.cd() 
             merge_chain.Merge(outfile, 0, "fast")
-            #if(bkg.name == "VV"):
-            #    outfile = r.TFile(output_dir+output_name, "UPDATE")
-            #    outfile.cd()
-            #    merge_chain_1.Merge(outfile, 0, "fast")
-            #    outfile = r.TFile(output_dir+output_name, "UPDATE")
-            #    outfile.cd()
-            #    merge_chain_2.Merge(outfile, 0, "fast")
+            if(bkg.name == "VV"):
+                outfile = r.TFile(output_dir+output_name, "UPDATE")
+                outfile.cd()
+                merge_chain_1.Merge(outfile, 0, "fast")
+                outfile = r.TFile(output_dir+output_name, "UPDATE")
+                outfile.cd()
+                merge_chain_2.Merge(outfile, 0, "fast")
 
     ######################################################
     ## now merge the signal files

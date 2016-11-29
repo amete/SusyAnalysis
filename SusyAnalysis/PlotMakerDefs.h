@@ -23,25 +23,27 @@ using namespace std;
 typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
-TString trigger   = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))";
-TString ptCuts    = "l_pt[0]>25.&&l_pt[1]>20.&&mll>20.";
+TString trigger   = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))&&((!isMC&&runNumber<303560)||isMC)";
+TString ptCuts    = "l_pt[0]>25.&&l_pt[1]>20.&&mll>40.";
 TString isOS      = "(l_q[0]*l_q[1])<0";
-TString zVeto     = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-90.2)<10.)";
-TString zSelect   = "TMath::Abs(mll-90.2)<10.";
+TString zVeto     = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-91.2)<10.)";
+TString zSelect   = "TMath::Abs(mll-91.2)<10.";
 TString cljVeto   = "((l_flav[0]==l_flav[1]&&nCentralLJets==0)||(l_flav[0]!=l_flav[1]&&nCentralLJets30==0))";
 TString cljVeto20 = "nCentralLJets==0";
 TString cljVeto30 = "nCentralLJets30==0";
 TString cljVeto40 = "nCentralLJets40==0";
 TString cljVeto50 = "nCentralLJets50==0";
+TString cljVeto60 = "nCentralLJets60==0";
 TString cbjVeto   = "nCentralBJets==0";
 TString cbjSelect = "nCentralBJets>0";
-TString fjVeto    = "nForwardJets==0";
+//TString fjVeto    = "nForwardJets==0";
+TString fjVeto    = "nForwardJets30==0"; // in n0228 the nForwardJets has 20 GeV threshold!!!
 
 /// \brief Region Cut Definitions
-TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2L-inc"       , "1"                    ) // Skimming requires ==2 signal leptons w/ pT > 20 GeV and OS + mll > 40 GeV
-                                                 ("CR2L-bselect"   , cbjSelect              ) // Same skimming as above
-                                                 ("CR2L-bveto"     , cbjVeto                ) // Same skimming as above
-                                                 ("CR2L-zbveto"    , zVeto + "&&" + cbjVeto ) // Same skimming as above
+TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2L-inc"       , trigger                           ) // Skimming requires ==2 signal leptons w/ pT > 20 GeV and OS + mll > 40 GeV
+                                                 ("CR2L-bselect"   , trigger+"&&"+cbjSelect            ) // Same skimming as above
+                                                 ("CR2L-bveto"     , trigger+"&&"+cbjVeto              ) // Same skimming as above
+                                                 ("CR2L-zbveto"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto +"&&nStop2lBJets==0" ) // Same skimming as above
                                                  ("SR2LA-pre"      , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0" )
                                                  ("SR2LA-V1"       , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8" )
                                                  ("SR2LA-V2"       , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8&&DPB>1.5" )
@@ -75,6 +77,15 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2L-inc"       , "1"        
                                                  ("SR2L-MT290"     , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>90." )
                                                  ("SR2L-MT2120"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>120." )
                                                  ("SR2L-MT2150"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto  +"&&"+cljVeto  +"&&"+cbjVeto  +"&&"+fjVeto+"&&mT2lep>150." )
+                                                 ("SR2L-preMT2J-new", trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cbjVeto )
+                                                 ("SR2L-preMT2-new" , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjVeto )
+                                                 ("SR2L-NewSF"      , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjVeto  +"&&l_flav[0]==l_flav[1]&&mll>100&&mT2lep>100"    )
+                                                 ("CR2L-NewVVSF"    , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjVeto  +"&&l_flav[0]==l_flav[1]&&mll<100&&mT2lep>100."   )
+                                                 ("VR2L-NewVVSF"    , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjVeto  +"&&l_flav[0]==l_flav[1]&&mll>100&&mT2lep>75.&&mT2lep<100." )
+                                                 ("SR2L-NewDF"      , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjVeto  +"&&l_flav[0]!=l_flav[1]&&mll>40&&mT2lep>100"     )
+                                                 ("CR2L-NewVVDF"    , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjVeto  +"&&l_flav[0]!=l_flav[1]&&mll>40&&mT2lep>50.&&mT2lep<75." )
+                                                 ("VR2L-NewVVDF"    , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjVeto  +"&&l_flav[0]!=l_flav[1]&&mll>40&&mT2lep>75.&&mT2lep<100.")
+                                                 ("CR2L-NewTop"     , trigger+"&&"+ptCuts+"&&"+isOS             +"&&"+cljVeto60+"&&"+cbjSelect+"&&l_flav[0]!=l_flav[1]&&mll>40&&mT2lep>70.&&mT2lep<120.")
 ;
 
 /// \brief Sample Colors
@@ -89,9 +100,11 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"                 , (in
                                                    ("VV"                   , (int)kSpring+1  )
                                                    ("VVV"                  , (int)kSpring+3  )
                                                    ("c1c1_slep_200.0_100.0", (int)kGreen+1   )
+                                                   ("c1c1_slep_300.0_100.0", (int)kGreen+1   )
                                                    ("c1c1_slep_300.0_200.0", (int)kGreen+1   )
                                                    ("c1c1_slep_400.0_200.0", (int)kGreen+1   )
                                                    ("c1c1_slep_500.0_1.0"  , (int)kMagenta+1 )
+                                                   ("c1c1_slep_700.0_1.0"  , (int)kMagenta+1 )
                                                    ("SlepSlep_350.5_1.0"   , (int)kGreen+1   )
                                                    ("SlepSlep_450.5_1.0"   , (int)kGreen+1   )
                                                    ("406009"               , (int)kRed+1     )
@@ -111,9 +124,11 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"                  , "Da
                                                   ("VV"                    , "VV"               )
                                                   ("VVV"                   , "VVV"              )
                                                   ("c1c1_slep_200.0_100.0" , "C1C1 200, 100 GeV")
+                                                  ("c1c1_slep_300.0_100.0" , "C1C1 300, 100 GeV")
                                                   ("c1c1_slep_300.0_200.0" , "C1C1 300, 200 GeV")
                                                   ("c1c1_slep_400.0_200.0" , "C1C1 400, 200 GeV")
                                                   ("c1c1_slep_500.0_1.0"   , "C1C1 500, 1 GeV"  )
+                                                  ("c1c1_slep_700.0_1.0"   , "C1C1 700, 1 GeV"  )
                                                   ("SlepSlep_350.5_1.0"    , "SlSl 350.5, 1 GeV"  )
                                                   ("SlepSlep_450.5_1.0"    , "SlSl 450.5, 1 GeV"  )
                                                   ("406009"                , "t1t1 250, 160 GeV")
@@ -146,10 +161,13 @@ TS2TSMap VariableNames = boost::assign::map_list_of ("ptL0"                , "l_
                                                     ("flavJ0"              , "j_flav[0]"           )
                                                     ("flavJ1"              , "j_flav[1]"           )
                                                     ("met"                 , "met"                 )
+                                                    ("metRel"              , "metRel"              )
                                                     ("meff"                , "meff"                )
                                                     ("mT2lep"              , "mT2lep"              )
                                                     ("R1"                  , "R1"                  )
                                                     ("R2"                  , "R2"                  )
+                                                    ("S1"                  , "S1"                  )
+                                                    ("S2"                  , "S2"                  )
                                                     ("MDR_jigsaw"          , "MDR_jigsaw"          )
                                                     ("RPT_jigsaw"          , "RPT_jigsaw"          )
                                                     ("gamInvRp1_jigsaw"    , "gamInvRp1_jigsaw"    )
@@ -161,8 +179,11 @@ TS2TSMap VariableNames = boost::assign::map_list_of ("ptL0"                , "l_
                                                     ("nCentralLJets30"     , "nCentralLJets30"     )
                                                     ("nCentralLJets40"     , "nCentralLJets40"     )
                                                     ("nCentralLJets50"     , "nCentralLJets50"     )
+                                                    ("nCentralLJets60"     , "nCentralLJets60"     )
                                                     ("nCentralBJets"       , "nCentralBJets"       )
                                                     ("nForwardJets"        , "nForwardJets"        )
+                                                    ("nForwardJets30"      , "nForwardJets30"      )
+                                                    ("nForwardJets50"      , "nForwardJets50"      )
                                                     ("nStop2lLJets"        , "nStop2lLJets"        )
                                                     ("nStop2lBJets"        , "nStop2lBJets"        )
                                                     ("softestCentralLJetPt", "softestCentralLJetPt")

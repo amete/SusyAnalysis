@@ -302,7 +302,14 @@ int main(int argc, char* argv[])
   //    return (sl->met->Et > 50.0);
   //};
 
-  //*cutflow << CutName("mT2 > 75 GeV") << [](Superlink* sl) -> bool {
+  //*cutflow << CutName("z-veto") << [](Superlink* sl) -> bool {
+  //    TLorentzVector lepton0 = *(*sl->leptons).at(0);
+  //    TLorentzVector lepton1 = *(*sl->leptons).at(1);
+  //    bool isSF =  (*sl->leptons).at(0)->isEle() == (*sl->leptons).at(1)->isEle() ? true : false;
+  //    return ((isSF && fabs((lepton0+lepton1).M() - 91.2) > 10.) || !isSF);
+  //};
+
+  //*cutflow << CutName("mT2 > 90 GeV") << [](Superlink* sl) -> bool {
   //    TLorentzVector lepton0 = *(*sl->leptons).at(0);
   //    TLorentzVector lepton1 = *(*sl->leptons).at(1);
   //    TLorentzVector met;
@@ -312,7 +319,7 @@ int main(int argc, char* argv[])
   //                   sl->met->Et);
   //    ComputeMT2 mycalc = ComputeMT2(lepton0,lepton1,met,0.,0.); // masses 0. 0.
   //    double mT2 = mycalc.Compute();
-  //    return (mT2 > 75.0);
+  //    return (mT2 > 90.0);
   //};
 
   //  Output Ntuple Setup
@@ -566,7 +573,11 @@ int main(int argc, char* argv[])
   }
 
   // Jet variables
-  JetVector baseJets, signalJets, centralLightJets, centralLightJets30, centralLightJets40, centralLightJets50, centralBJets, forwardJets, stop2lLightJets, stop2lBJets;
+  JetVector baseJets, signalJets, 
+            centralLightJets, centralLightJets30, centralLightJets40, centralLightJets50, centralLightJets60, centralLightJets70,
+            centralBJets,  
+            forwardJets, forwardJets30, forwardJets40, forwardJets50,
+            stop2lLightJets, stop2lBJets;
   *cutflow << [&](Superlink* sl, var_void*) { 
     baseJets = *sl->baseJets; 
     signalJets = *sl->jets; 
@@ -575,16 +586,27 @@ int main(int argc, char* argv[])
                                                            if(jet->Pt()>30.) { centralLightJets30.push_back(jet); } 
                                                            if(jet->Pt()>40.) { centralLightJets40.push_back(jet); } 
                                                            if(jet->Pt()>50.) { centralLightJets50.push_back(jet); } 
+                                                           if(jet->Pt()>60.) { centralLightJets60.push_back(jet); } 
+                                                           if(jet->Pt()>70.) { centralLightJets70.push_back(jet); } 
                                                          } 
       else if(sl->tools->m_jetSelector->isCentralB(jet)) { centralBJets.push_back(jet);     } 
-      else if(sl->tools->m_jetSelector->isForward(jet))  { forwardJets.push_back(jet);      } 
+      else if(sl->tools->m_jetSelector->isForward(jet))  { forwardJets.push_back(jet);      
+                                                           if(jet->Pt()>30.) { forwardJets30.push_back(jet); } 
+                                                           if(jet->Pt()>40.) { forwardJets40.push_back(jet); } 
+                                                           if(jet->Pt()>50.) { forwardJets50.push_back(jet); } 
+                                                         } 
     }
     std::sort(centralLightJets.begin()  , centralLightJets.end()  , comparePt);
     std::sort(centralLightJets30.begin(), centralLightJets30.end(), comparePt);
     std::sort(centralLightJets40.begin(), centralLightJets40.end(), comparePt);
     std::sort(centralLightJets50.begin(), centralLightJets50.end(), comparePt);
+    std::sort(centralLightJets60.begin(), centralLightJets60.end(), comparePt);
+    std::sort(centralLightJets70.begin(), centralLightJets70.end(), comparePt);
     std::sort(centralBJets.begin()      , centralBJets.end()      , comparePt);
     std::sort(forwardJets.begin()       , forwardJets.end()       , comparePt);
+    std::sort(forwardJets30.begin()     , forwardJets30.end()     , comparePt);
+    std::sort(forwardJets40.begin()     , forwardJets40.end()     , comparePt);
+    std::sort(forwardJets50.begin()     , forwardJets50.end()     , comparePt);
     for(auto& jet : signalJets) {
       if(!sl->tools->jetSelector().isB(jet)) { stop2lLightJets.push_back(jet); }
       else                                   { stop2lBJets.push_back(jet);     }
@@ -659,6 +681,18 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
+  *cutflow << NewVar("number of central light jets pt 60"); {
+    *cutflow << HFTname("nCentralLJets60");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return centralLightJets60.size(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of central light jets pt 70"); {
+    *cutflow << HFTname("nCentralLJets70");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return centralLightJets70.size(); };
+    *cutflow << SaveVar();
+  }
+
   *cutflow << NewVar("number of central b jets"); {
     *cutflow << HFTname("nCentralBJets");
     *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfCBJets(*sl->baseJets)/*(*baseJets)*/; };
@@ -668,6 +702,24 @@ int main(int argc, char* argv[])
   *cutflow << NewVar("number of forward jets"); {
     *cutflow << HFTname("nForwardJets");
     *cutflow << [](Superlink* sl, var_int*) -> int { return sl->tools->numberOfFJets(*sl->baseJets)/*(*baseJets)*/; };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of forward jets pt 30 GeV"); {
+    *cutflow << HFTname("nForwardJets30");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return forwardJets30.size(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of forward jets pt 40 GeV"); {
+    *cutflow << HFTname("nForwardJets40");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return forwardJets40.size(); };
+    *cutflow << SaveVar();
+  }
+
+  *cutflow << NewVar("number of forward jets 50 GeV"); {
+    *cutflow << HFTname("nForwardJets50");
+    *cutflow << [&](Superlink* /*sl*/, var_int*) -> int { return forwardJets50.size(); };
     *cutflow << SaveVar();
   }
 
@@ -827,6 +879,42 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
+  // S1
+  *cutflow << NewVar("lep_pt/(jet_pt + met)"); {
+    *cutflow << HFTname("S1");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+      // Leptons
+      TLorentzVector leps(0.,0.,0.,0.); TLorentzVector jets(0.,0.,0.,0.);
+      for(auto& lepton : signalLeptons) {
+        leps += *lepton;
+      }
+      // Jets
+      for(auto& jet : signalJets) {
+        jets += *jet;
+      }
+      double num   = leps.Pt();
+      double denom = jets.Pt()+met.Pt();
+      return denom > 0. ? num/denom : -999.;
+    };
+    *cutflow << SaveVar();
+  }
+
+  // S2
+  *cutflow << NewVar("met/jet_pt"); {
+    *cutflow << HFTname("S2");
+    *cutflow << [&](Superlink* /*sl*/, var_float*) -> double { 
+      TLorentzVector jets(0.,0.,0.,0.);
+      // Jets
+      for(auto& jet : signalJets) {
+        jets += *jet;
+      }
+      double num   = met.Pt();
+      double denom = jets.Pt();
+      return denom > 0. ? num/denom : -999.;
+    };
+    *cutflow << SaveVar();
+  }
+
   // deltaX  
   double deltaX = 0.;
   *cutflow << NewVar("pz0 + pz1 / sqrt(s)"); {
@@ -846,6 +934,17 @@ int main(int argc, char* argv[])
       ComputeMT2 mycalc = ComputeMT2(lepton0,lepton1,met,0.,0.); // masses 0. 0.
       mT2 = mycalc.Compute();
       return mT2; 
+    };
+    *cutflow << SaveVar();
+  }
+
+  // metRel
+  double metRel = 0.;
+  *cutflow << NewVar("met rel."); {
+    *cutflow << HFTname("metRel");
+    *cutflow << [&](Superlink* sl, var_float*) -> double { 
+      metRel = kin::getMetRel(sl->met,signalLeptons,signalJets);
+      return metRel;
     };
     *cutflow << SaveVar();
   }
@@ -1046,8 +1145,9 @@ int main(int argc, char* argv[])
   // Clear 
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
     baseLeptons.clear();signalLeptons.clear(); 
-    baseJets.clear(); signalJets.clear(); centralLightJets.clear(); centralLightJets30.clear(); centralLightJets40.clear(); centralLightJets50.clear(); centralBJets.clear(); forwardJets.clear(); stop2lLightJets.clear(); stop2lBJets.clear();
-    meff=0.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.,MDR_jigsaw=0.,RPT_jigsaw=0.,gamInvRp1_jigsaw=0.,DPB_vSS_jigsaw=0.;
+    baseJets.clear(); signalJets.clear(); centralLightJets.clear(); centralLightJets30.clear(); centralLightJets40.clear(); centralLightJets50.clear(); centralLightJets60.clear(); centralLightJets70.clear();  
+    centralBJets.clear(); forwardJets.clear(); forwardJets30.clear(); forwardJets40.clear(); forwardJets50.clear(); stop2lLightJets.clear(); stop2lBJets.clear();
+    meff=0.,R1=0.,R2=0.,deltaX=0.,mT2=0.,cthllb=0.,MDR_jigsaw=0.,RPT_jigsaw=0.,gamInvRp1_jigsaw=0.,DPB_vSS_jigsaw=0.,metRel=0.;
   };
 
   ///////////////////////////////////////////////////////////////////////
