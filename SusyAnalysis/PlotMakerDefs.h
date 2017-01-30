@@ -23,7 +23,8 @@ using namespace std;
 typedef map<TString, TString> TS2TSMap;
 typedef map<TString, int>     ColorMap;
 
-TString trigger   = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))&&((!isMC&&runNumber<303560)||isMC)";
+//TString trigger   = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))&&((!isMC&&runNumber<303560)||isMC)";
+TString trigger   = "(((pass_HLT_2e12_lhloose_L12EM10VH||pass_HLT_e17_lhloose_mu14||pass_HLT_mu18_mu8noL1)&&treatAsYear==2015)||((pass_HLT_2e17_lhvloose_nod0||pass_HLT_e17_lhloose_nod0_mu14||pass_HLT_mu22_mu8noL1)&&treatAsYear==2016))";
 TString ptCuts    = "l_pt[0]>25.&&l_pt[1]>20.&&mll>40.";
 TString isOS      = "(l_q[0]*l_q[1])<0";
 TString zVeto     = "!(l_flav[0]==l_flav[1]&&TMath::Abs(mll-91.2)<10.)";
@@ -44,6 +45,8 @@ TS2TSMap RegionCuts = boost::assign::map_list_of ("CR2L-inc"       , trigger    
                                                  ("CR2L-bselect"   , trigger+"&&"+cbjSelect            ) // Same skimming as above
                                                  ("CR2L-bveto"     , trigger+"&&"+cbjVeto              ) // Same skimming as above
                                                  ("CR2L-zbveto"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&"+zVeto +"&&nStop2lBJets==0" ) // Same skimming as above
+                                                 ("CR2L-Sonia1"    , trigger+"&&"+ptCuts+"&&"+isOS ) // Same skimming as above
+                                                 ("CR2L-Sonia2"    , trigger+"&&"+ptCuts+"&&"+isOS+"&&mT2lep>100." ) // Same skimming as above
                                                  ("SR2LA-pre"      , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0" )
                                                  ("SR2LA-V1"       , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8" )
                                                  ("SR2LA-V2"       , "l_pt[0]>20.&&l_pt[1]>20.&&(l_q[0]*l_q[1])<0&&nCentralBJets==0&&R1>0.2&&mT2lep>30.&&TMath::Abs(cthllb)<0.8&&DPB>1.5" )

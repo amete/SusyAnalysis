@@ -79,37 +79,37 @@ isCondor = True
 syst = []
 syst.append('CENTRAL')
 
-### egamma
-##syst.append('EG_RESOLUTION_ALL_UP')
-##syst.append('EG_RESOLUTION_ALL_DN')
-##syst.append('EG_SCALE_ALL_UP')
-##syst.append('EG_SCALE_ALL_DN')
-##
-### muons
-##syst.append('MUONS_ID_DN')
-##syst.append('MUONS_ID_UP')
-##syst.append('MUONS_MS_DN')
-##syst.append('MUONS_MS_UP')
-##syst.append('MUONS_SCALE_DN')
-##syst.append('MUONS_SCALE_UP')
-##
-### jet
-##syst.append('JER')
-##syst.append('JET_GroupedNP_1_DN')
-##syst.append('JET_GroupedNP_1_UP')
-##
-### met
-##syst.append('MET_SoftTrk_ResoPara')
-##syst.append('MET_SoftTrk_ResoPerp')
-##syst.append('MET_SoftTrk_ScaleDown')
-##syst.append('MET_SoftTrk_ScaleUp')
+# egamma
+syst.append('EG_RESOLUTION_ALL_UP')
+syst.append('EG_RESOLUTION_ALL_DN')
+syst.append('EG_SCALE_ALL_UP')
+syst.append('EG_SCALE_ALL_DN')
+
+# muons
+syst.append('MUONS_ID_DN')
+syst.append('MUONS_ID_UP')
+syst.append('MUONS_MS_DN')
+syst.append('MUONS_MS_UP')
+syst.append('MUONS_SCALE_DN')
+syst.append('MUONS_SCALE_UP')
+
+# jet
+syst.append('JER')
+syst.append('JET_GroupedNP_1_DN')
+syst.append('JET_GroupedNP_1_UP')
+
+# met
+syst.append('MET_SoftTrk_ResoPara')
+syst.append('MET_SoftTrk_ResoPerp')
+syst.append('MET_SoftTrk_ScaleDown')
+syst.append('MET_SoftTrk_ScaleUp')
 
 ###########################
 ## backgrounds
 backgrounds = []
-filelist_dir      = "/data/uclhc/uci/user/amete/analysis_n0228/inputs_EWK2L/"
+filelist_dir      = "/data/uclhc/uci/user/amete/analysis_n0228/inputs_EWK2L_sys/"
 mc_sample_dir     = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs_skimmed/"
-data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs_skimmed/"
+data_sample_dir   = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs_skimmed_7/"
 
 # data
 bkg_data    = Background("Data"     , filelist_dir + "data_all/")
@@ -147,12 +147,12 @@ backgrounds.append(bkg_zjets)
 
 ## will parse through ./LimitScripts/susyinfo/
 signals = []
-grid = "c1c1_slep"
-sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
-signals.append(sig_c1c1_slepslep)
-#grid = "SlepSlep"
-#sig_slepslep = Background("SlepSlep", filelist_dir + "mc15_SlepSlep/")
-#signals.append(sig_slepslep)
+#grid = "c1c1_slep"
+#sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
+#signals.append(sig_c1c1_slepslep)
+##grid = "SlepSlep"
+##sig_slepslep = Background("SlepSlep", filelist_dir + "mc15_SlepSlep/")
+##signals.append(sig_slepslep)
 
 ###################################
 ## setup the output file name and location

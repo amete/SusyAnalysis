@@ -41,8 +41,8 @@ PlotMaker::~PlotMaker()
 /// \brief Main Function that plots and saves histograms
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
-  float luminosity = 13277.26; // in pb-1
-  //float luminosity = 35180;//24799.9; // in pb-1
+  //float luminosity = 13277.26; // in pb-1
+  float luminosity = 35180;//24799.9; // in pb-1
   int   drawRatio  = 1; // 0 : no - 1 : data/mc - 2 : zbi
   bool  countAbove = true;
   bool  blindData  = false;
@@ -117,6 +117,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   double binWidth = ( atof(m_binValuesList.at(2).c_str()) - atof(m_binValuesList.at(1).c_str()) ) / atof(m_binValuesList.at(0).c_str()); 
 
   // Get the central histograms 
+  std::cout << cut << std::endl;
   TH1D     *histograms[100];
   getHistogramsSimple(m_inputROOTFile, observable, cut, histograms,"CENTRAL");
 
@@ -642,6 +643,7 @@ void PlotMaker::getHistogramsSimple(TFile* input, TString varToPlot, TString cut
     if(m_convertToGeV)
       tree->Draw( varToPlot + "/1000.>>temp" , "eventweight*(" + cutToApply + ")" );
     else
+      //tree->Draw( varToPlot + ">>temp"       , "(" + cutToApply + ")" );
       tree->Draw( varToPlot + ">>temp"       , "eventweight*(" + cutToApply + ")" );
       //tree->Draw( varToPlot + ">>temp"       , "eventweight_nopileup*(" + cutToApply + ")" );
 

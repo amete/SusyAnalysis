@@ -12,8 +12,8 @@ tar_location        = "/data/uclhc/uci/user/amete/"
 out_dir             = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/outputs/"%(susyNtType,ana_type)
 log_dir             = "/data/uclhc/uci/user/amete/analysis_%s_run/%s/logs/"%(susyNtType,ana_type)
 tarred_dir          = "analysis_%s/"%(susyNtType)
-filelist_dir        = "/data/uclhc/uci/user/amete/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
-in_job_filelist_dir = "/analysis_%s/inputs_%s/"%(susyNtType,ana_type)
+filelist_dir        = "/data/uclhc/uci/user/amete/analysis_%s/inputs_%s_sys/"%(susyNtType,ana_type)
+in_job_filelist_dir = "/analysis_%s/inputs_%s_sys/"%(susyNtType,ana_type)
 samples             = [ "mc15_dibosons"      ,
                         "mc15_tribosons"      ,
                         "mc15_ttbar"         ,

@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
   unsigned int n_skip_events  = 0;
   char *input_file  = nullptr;
   char *name_suffix = nullptr;
-  SuperflowRunMode run_mode = SuperflowRunMode::nominal; // SuperflowRunMode::all_syst; //SuperflowRunMode::nominal;
+  SuperflowRunMode run_mode = SuperflowRunMode::all_syst; // SuperflowRunMode::all_syst; //SuperflowRunMode::nominal;
   int c;
 
   opterr = 0;
@@ -1142,6 +1142,16 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
+  // CUTFLOWWWW
+  *cutflow << [&](Superlink* sl, var_void*) {
+      std::cout <<  "EVENT :: " <<  sl->nt->evt()->eventNumber  << " " << 
+                    centralLightJets.size()     << " " <<
+                    centralBJets.size()         << " " <<
+                    forwardJets30.size()        << " " <<
+                    mT2                         << " "
+                    << std::endl;
+  };
+
   // Clear 
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
     baseLeptons.clear();signalLeptons.clear(); 
@@ -1344,7 +1354,6 @@ int main(int argc, char* argv[])
       *cutflow << TreeName("MET_SoftTrk_ScaleDown");
       *cutflow << SaveSystematic();
   }
-
   ///////////////////////////////////////////////////////////////////////
   // Superflow methods end here
   ///////////////////////////////////////////////////////////////////////

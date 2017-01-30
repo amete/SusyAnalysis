@@ -4,7 +4,7 @@ from combineHFTs import Background
 
 def main():
     files=[]
-    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0228/inputs_EWK2L/"
+    filelist_dir     = "/data/uclhc/uci/user/amete/analysis_n0228/inputs_EWK2L_sys/"
     data_sample_dir  = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs/" 
     mc_sample_dir    = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs/" 
     output_dir       = "/data/uclhc/uci/user/amete/analysis_n0228_run/EWK2L/outputs_skimmed/" 
@@ -55,41 +55,41 @@ def main():
     # zjets
     bkg_zjets   = Background("Z"        , filelist_dir + "mc15_zjets/"      )
     backgrounds.append(bkg_zjets)
-    # signal
-    sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
-    backgrounds.append(sig_c1c1_slepslep)
-    #sig_slepslep = Background("SlepSlep", filelist_dir + "mc15_SlepSlep/")
-    #backgrounds.append(sig_slepslep)
+    ## signal
+    #sig_c1c1_slepslep = Background("C1C1_slepslep", filelist_dir + "mc15_c1c1_slepslep/")
+    #backgrounds.append(sig_c1c1_slepslep)
+    ##sig_slepslep = Background("SlepSlep", filelist_dir + "mc15_SlepSlep/")
+    ##backgrounds.append(sig_slepslep)
  
     ###########################
     ## available systematics
     syst = []
     syst.append('CENTRAL')
 
-    ## egamma
-    #syst.append('EG_RESOLUTION_ALL_UP')
-    #syst.append('EG_RESOLUTION_ALL_DN')
-    #syst.append('EG_SCALE_ALL_UP')
-    #syst.append('EG_SCALE_ALL_DN')
-    #
-    ## muons
-    #syst.append('MUONS_ID_DN')
-    #syst.append('MUONS_ID_UP')
-    #syst.append('MUONS_MS_DN')
-    #syst.append('MUONS_MS_UP')
-    #syst.append('MUONS_SCALE_DN')
-    #syst.append('MUONS_SCALE_UP')
+    # egamma
+    syst.append('EG_RESOLUTION_ALL_UP')
+    syst.append('EG_RESOLUTION_ALL_DN')
+    syst.append('EG_SCALE_ALL_UP')
+    syst.append('EG_SCALE_ALL_DN')
+    
+    # muons
+    syst.append('MUONS_ID_DN')
+    syst.append('MUONS_ID_UP')
+    syst.append('MUONS_MS_DN')
+    syst.append('MUONS_MS_UP')
+    syst.append('MUONS_SCALE_DN')
+    syst.append('MUONS_SCALE_UP')
 
-    ## jet
-    #syst.append('JER')
-    #syst.append('JET_GroupedNP_1_DN')
-    #syst.append('JET_GroupedNP_1_UP')
-    #
-    ## met
-    #syst.append('MET_SoftTrk_ResoPara')
-    #syst.append('MET_SoftTrk_ResoPerp')
-    #syst.append('MET_SoftTrk_ScaleDown')
-    #syst.append('MET_SoftTrk_ScaleUp')
+    # jet
+    syst.append('JER')
+    syst.append('JET_GroupedNP_1_DN')
+    syst.append('JET_GroupedNP_1_UP')
+    
+    # met
+    syst.append('MET_SoftTrk_ResoPara')
+    syst.append('MET_SoftTrk_ResoPerp')
+    syst.append('MET_SoftTrk_ScaleDown')
+    syst.append('MET_SoftTrk_ScaleUp')
     
     ## load the backgrounds and locate the files
     for bkg in backgrounds :
