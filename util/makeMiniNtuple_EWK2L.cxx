@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
   unsigned int n_skip_events  = 0;
   char *input_file  = nullptr;
   char *name_suffix = nullptr;
-  SuperflowRunMode run_mode = SuperflowRunMode::all_syst; // SuperflowRunMode::all_syst; //SuperflowRunMode::nominal;
+  SuperflowRunMode run_mode = SuperflowRunMode::nominal; // SuperflowRunMode::all_syst; //SuperflowRunMode::nominal;
   int c;
 
   opterr = 0;
@@ -302,25 +302,25 @@ int main(int argc, char* argv[])
   //    return (sl->met->Et > 50.0);
   //};
 
-  //*cutflow << CutName("z-veto") << [](Superlink* sl) -> bool {
-  //    TLorentzVector lepton0 = *(*sl->leptons).at(0);
-  //    TLorentzVector lepton1 = *(*sl->leptons).at(1);
-  //    bool isSF =  (*sl->leptons).at(0)->isEle() == (*sl->leptons).at(1)->isEle() ? true : false;
-  //    return ((isSF && fabs((lepton0+lepton1).M() - 91.2) > 10.) || !isSF);
-  //};
+  *cutflow << CutName("z-veto") << [](Superlink* sl) -> bool {
+      TLorentzVector lepton0 = *(*sl->leptons).at(0);
+      TLorentzVector lepton1 = *(*sl->leptons).at(1);
+      bool isSF =  (*sl->leptons).at(0)->isEle() == (*sl->leptons).at(1)->isEle() ? true : false;
+      return ((isSF && fabs((lepton0+lepton1).M() - 91.2) > 10.) || !isSF);
+  };
 
-  //*cutflow << CutName("mT2 > 90 GeV") << [](Superlink* sl) -> bool {
-  //    TLorentzVector lepton0 = *(*sl->leptons).at(0);
-  //    TLorentzVector lepton1 = *(*sl->leptons).at(1);
-  //    TLorentzVector met;
-  //    met.SetPxPyPzE(sl->met->Et*cos(sl->met->phi),
-  //                   sl->met->Et*sin(sl->met->phi),
-  //                   0.,
-  //                   sl->met->Et);
-  //    ComputeMT2 mycalc = ComputeMT2(lepton0,lepton1,met,0.,0.); // masses 0. 0.
-  //    double mT2 = mycalc.Compute();
-  //    return (mT2 > 90.0);
-  //};
+  *cutflow << CutName("mT2 > 90 GeV") << [](Superlink* sl) -> bool {
+      TLorentzVector lepton0 = *(*sl->leptons).at(0);
+      TLorentzVector lepton1 = *(*sl->leptons).at(1);
+      TLorentzVector met;
+      met.SetPxPyPzE(sl->met->Et*cos(sl->met->phi),
+                     sl->met->Et*sin(sl->met->phi),
+                     0.,
+                     sl->met->Et);
+      ComputeMT2 mycalc = ComputeMT2(lepton0,lepton1,met,0.,0.); // masses 0. 0.
+      double mT2 = mycalc.Compute();
+      return (mT2 > 90.0);
+  };
 
   //  Output Ntuple Setup
   //      > Ntuple variables
@@ -1142,15 +1142,15 @@ int main(int argc, char* argv[])
     *cutflow << SaveVar();
   }
 
-  // CUTFLOWWWW
-  *cutflow << [&](Superlink* sl, var_void*) {
-      std::cout <<  "EVENT :: " <<  sl->nt->evt()->eventNumber  << " " << 
-                    centralLightJets.size()     << " " <<
-                    centralBJets.size()         << " " <<
-                    forwardJets30.size()        << " " <<
-                    mT2                         << " "
-                    << std::endl;
-  };
+  //// CUTFLOWWWW
+  //*cutflow << [&](Superlink* sl, var_void*) {
+  //    std::cout <<  "EVENT :: " <<  sl->nt->evt()->eventNumber  << " " << 
+  //                  centralLightJets.size()     << " " <<
+  //                  centralBJets.size()         << " " <<
+  //                  forwardJets30.size()        << " " <<
+  //                  mT2                         << " "
+  //                  << std::endl;
+  //};
 
   // Clear 
   *cutflow << [&](Superlink* /*sl*/, var_void*) { 
@@ -1286,32 +1286,32 @@ int main(int argc, char* argv[])
   }
   // muon
   *cutflow << NewSystematic("muon ID (UP)"); {
-      *cutflow << EventSystematic(NtSys::MUONS_ID_UP);
+      *cutflow << EventSystematic(NtSys::MUON_ID_UP);
       *cutflow << TreeName("MUONS_ID_UP");
       *cutflow << SaveSystematic();
   }
   *cutflow << NewSystematic("muon ID (DOWN)"); {
-      *cutflow << EventSystematic(NtSys::MUONS_ID_DN);
+      *cutflow << EventSystematic(NtSys::MUON_ID_DN);
       *cutflow << TreeName("MUONS_ID_DN");
       *cutflow << SaveSystematic();
   }
   *cutflow << NewSystematic("muon MS (UP)"); {
-      *cutflow << EventSystematic(NtSys::MUONS_MS_UP);
+      *cutflow << EventSystematic(NtSys::MUON_MS_UP);
       *cutflow << TreeName("MUONS_MS_UP");
       *cutflow << SaveSystematic();
   }
   *cutflow << NewSystematic("muon MS (DOWN)"); {
-      *cutflow << EventSystematic(NtSys::MUONS_MS_DN);
+      *cutflow << EventSystematic(NtSys::MUON_MS_DN);
       *cutflow << TreeName("MUONS_MS_DN");
       *cutflow << SaveSystematic();
   }
   *cutflow << NewSystematic("muon scale shift (UP)"); {
-      *cutflow << EventSystematic(NtSys::MUONS_SCALE_UP);
+      *cutflow << EventSystematic(NtSys::MUON_SCALE_UP);
       *cutflow << TreeName("MUONS_SCALE_UP");
       *cutflow << SaveSystematic();
   }
   *cutflow << NewSystematic("muon scale shift (DN)"); {
-      *cutflow << EventSystematic(NtSys::MUONS_SCALE_DN);
+      *cutflow << EventSystematic(NtSys::MUON_SCALE_DN);
       *cutflow << TreeName("MUONS_SCALE_DN");
       *cutflow << SaveSystematic();
   }

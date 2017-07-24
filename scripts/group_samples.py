@@ -11,8 +11,9 @@ def get_samples(analysis,rootcoredir):
 # Main function
 def main():
     #prodTag='n0228'
-    prodTag='n0229'
-    analysis='EWK2L'
+    #analysis='EWK2L'
+    prodTag='n0232'
+    analysis='Stop2L'
 
     # Stable below
     import os
@@ -21,10 +22,10 @@ def main():
         print "ROOTCOREDIR is not set, quitting..."
         os._exit(0)
     executable ="%s/../susynt-read/python/make_condor_lists.py" % (rootcoredir)
-    #inputdir   ="%s/../inputs_%s" % (rootcoredir,analysis)
-    #outputdir  ="%s/../inputs_%s" % (rootcoredir,analysis)
-    inputdir   ="%s/../inputs_%s_sys" % (rootcoredir,analysis)
-    outputdir  ="%s/../inputs_%s_sys" % (rootcoredir,analysis)
+    inputdir   ="%s/../inputs_%s" % (rootcoredir,analysis)
+    outputdir  ="%s/../inputs_%s" % (rootcoredir,analysis)
+    #inputdir   ="%s/../inputs_%s_sys" % (rootcoredir,analysis)
+    #outputdir  ="%s/../inputs_%s_sys" % (rootcoredir,analysis)
 
     # Print information
     print '\n\n production tag : %s \n analysis       : %s \n inputdir       : %s \n outputdir      : %s \n\n' % (prodTag,analysis,inputdir,outputdir)
